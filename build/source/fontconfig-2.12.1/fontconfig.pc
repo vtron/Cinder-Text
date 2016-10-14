@@ -1,0 +1,18 @@
+prefix=/Users/stevevarga/Desktop/Cinder/blocks/Cinder-Typography/build/build
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+sysconfdir=${prefix}/etc
+localstatedir=${prefix}/var
+PACKAGE=fontconfig
+confdir=${sysconfdir}/fonts
+cachedir=${localstatedir}/cache/${PACKAGE}
+
+Name: Fontconfig
+Description: Font configuration and customization library
+Version: 2.12.1
+Requires:  freetype2
+Requires.private: 
+Libs: -L${libdir} -lfontconfig
+Libs.private: -lexpat -L/Users/stevevarga/Desktop/Cinder/blocks/Cinder-Typography/build/build/lib -lfreetype  
+Cflags: -I${includedir}  -I/Users/stevevarga/Desktop/Cinder/blocks/Cinder-Typography/build/build/include/freetype2  

@@ -1,0 +1,14 @@
+prefix=/Users/stevevarga/Desktop/Cinder/blocks/Cinder-Typography/build/build
+exec_prefix=/Users/stevevarga/Desktop/Cinder/blocks/Cinder-Typography/build/build
+libdir=/Users/stevevarga/Desktop/Cinder/blocks/Cinder-Typography/build/build/lib
+includedir=/Users/stevevarga/Desktop/Cinder/blocks/Cinder-Typography/build/build/include
+
+Name: FreeType 2
+URL: http://freetype.org
+Description: A free, high-quality, and portable font engine.
+Version: 18.5.12
+Requires:
+Requires.private: libpng
+Libs: -L${libdir} -lfreetype
+Libs.private: -lz -lbz2
+Cflags: -I${includedir}/freetype2
