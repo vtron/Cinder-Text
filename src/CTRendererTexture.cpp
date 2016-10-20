@@ -20,10 +20,10 @@ namespace typography {
     
     void RendererTexture::draw() {
         if(mLayout != nullptr) {
-            for(auto glyph : mLayout->glyphs) {
+            for(auto glyph : mLayout->getAllGlyphs()) {
                 ci::gl::pushModelMatrix();
-                ci::gl::translate(glyph.position);
-                ci::gl::draw(RendererTexture::glyphTextures[glyph.font][glyph.index]);
+                ci::gl::translate(glyph->position);
+                ci::gl::draw(RendererTexture::glyphTextures[glyph->font][glyph->index]);
                 
                 ci::gl::popModelMatrix();
             }
@@ -33,8 +33,8 @@ namespace typography {
     void RendererTexture::setLayout(LayoutRef layout) {
         Renderer::setLayout(layout);
         
-        for(auto layoutGlyph : layout->glyphs) {
-            generateTexturesForFont(layoutGlyph.font);
+        for(auto layoutGlyph : layout->getAllGlyphs()) {
+            generateTexturesForFont(layoutGlyph->font);
         }
     }
     

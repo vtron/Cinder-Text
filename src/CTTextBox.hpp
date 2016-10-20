@@ -22,7 +22,7 @@ namespace typography {
         
     protected:
     private:
-        TextBox(Font font, std::string text, int width, int height);
+        TextBox(FontRef font, std::string text, int width, int height);
         
         void generateLayout();
         
@@ -30,7 +30,6 @@ namespace typography {
         
         FontRef mFont;
         std::string mText;
-        ci::vec2 size;
         LayoutRef mLayout;
     };
 }
