@@ -37,7 +37,6 @@ namespace typography {
     
     // Layout
     // Describes the positions of glyphs
-    // associated with a font
     
     typedef std::shared_ptr<class Layout> LayoutRef;
     
@@ -66,7 +65,7 @@ namespace typography {
     // Layout Generator
     class LayoutGenerator {
     public:
-        static LayoutRef generateLayout(FontRef font, std::string text, ci::Rectf bounds);
+        static LayoutRef generateLayout(FontRef font, std::string text, unsigned int width, unsigned int height);
         
     private:
         LayoutGenerator();

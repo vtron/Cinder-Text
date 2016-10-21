@@ -12,24 +12,27 @@
 #include "CTLayout.hpp"
 
 namespace typography {
-    typedef std::shared_ptr<class TextBox> TextBoxRef;
+    class TextBox;
+    typedef std::shared_ptr<TextBox> TextBoxRef;
     
     class TextBox {
     public:
-        TextBoxRef create(FontRef font, std::string text, int width, int height);
+        static TextBoxRef create(FontRef font, std::string text, unsigned int width, unsigned int height);
+        
+        void setSize(unsigned int width, unsigned int height) { mSize = ci::vec2(width, height); };
+        
+        void generateLayout();
         
         void draw();
         
-    protected:
     private:
-        TextBox(FontRef font, std::string text, int width, int height);
-        
-        void generateLayout();
+        TextBox(FontRef font, std::string text, unsigned int width, unsigned int height);
         
         RendererRef mRenderer;
         
         FontRef mFont;
         std::string mText;
         LayoutRef mLayout;
+        ci::ivec2 mSize;
     };
 }

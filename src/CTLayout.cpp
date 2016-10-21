@@ -9,6 +9,10 @@
 #include "CTLayout.hpp"
 
 #include "harfbuzz/hb.h"
+#include "freetype2/ft2build.h"
+
+#include FT_FREETYPE_H
+#include FT_GLYPH_H
 
 namespace typography {
     // Harfbuzz shaped text
@@ -68,34 +72,13 @@ namespace typography {
         return std::shared_ptr<Layout>(new Layout());
     }
     
+    // Detect whitespace, for now just English spaces
+    bool isWhitespace(FontRef font, int codepoint) {
+        FT_UInt spaceIndex = FT_Get_Char_Index(font->getFace(), ' ');
+        return codepoint == spaceIndex;
+    }
     
-    // Single line, no breaks or constraints
-//    LayoutRef layoutSingleLine(typography::FontRef font, std::string text) {
-//        HarfbuzzShapedTextRef hbText = HarfbuzzShapedText::create(font, text);
-//        
-//        LayoutRef layout = Layout::create();
-//        
-//        int xPos = 0;
-//        
-//        for(int i=0; i<hbText->getTotalGlyphs(); i++) {
-//            unsigned int glyphIndex = hbText->getGlyphCodepoint(i);
-//            FT_Glyph_Metrics metrics = hbText->getFont()->getMetrics(glyphIndex);
-//            
-//            float xOffset = metrics.horiBearingX/64.0 + hbText->getGlyphPosition(i).x_offset;
-//            float xAdvance = hbText->getGlyphPosition(i).x_advance/64.0;
-//            xPos += xOffset;
-//            
-//            float yPos = hbText->getFont()->getSize() - metrics.horiBearingY/64.0f;
-//            
-//            layout->glyphs.push_back(LayoutGlyph(hbText->getFont(), glyphIndex, ci::vec2(xPos, yPos)));
-//            
-//            xPos += xAdvance - xOffset;
-//        }
-//
-//        return layout;
-//    }
-    
-    LayoutRef layoutTextBox(typography::FontRef font, std::string text, ci::Rectf bounds) {
+    LayoutRef layoutTextBox(typography::FontRef font, std::string text, unsigned int width, unsigned int height) {
         LayoutRef layout = Layout::create();
         
         HarfbuzzShapedTextRef hbText = HarfbuzzShapedText::create(font, text);
@@ -104,12 +87,21 @@ namespace typography {
         int xPos = 0;
         int yPos = 0;
         
-        
         LayoutLineRef currentLine(new LayoutLine());
+        int currentWordStartPos = 0;
+        std::vector<LayoutGlyphRef> currentWord;
         
         for(int i=0; i<hbText->getTotalGlyphs(); i++) {
-            // Get the glyph metrics
+            // Get the glyph index, see if we're at a word breakpoint
             unsigned int glyphIndex = hbText->getGlyphCodepoint(i);
+            
+            if(isWhitespace(font, glyphIndex)) {
+                currentLine->insert(currentLine->end(), currentWord.begin(), currentWord.end());
+                currentWord.clear();
+                currentWordStartPos = i;
+            }
+            
+            // Metrics
             FT_Glyph_Metrics metrics = hbText->getFont()->getMetrics(glyphIndex);
             
             float xOffset = metrics.horiBearingX/64.0 + hbText->getGlyphPosition(i).x_offset;
@@ -119,32 +111,34 @@ namespace typography {
             xPos += xOffset;
             
             // Get a vector for the position this glyph should start
-            ci::vec2 glyphPos(xPos, hbText->getFont()->getSize() - metrics.horiBearingY/64.0f);
+            ci::vec2 glyphPos(xPos, yPos + hbText->getFont()->getSize() - metrics.horiBearingY/64.0f);
             
             // Advance our position to the end of glyph
             xPos += xAdvance - xOffset;
             
             // Check to see if we went over the bounds,
             // if so step back the character
-//            if(xPos > bounds.getWidth()) {
-//                xPos = 0;
-//                yPos += font->getSize() + leading;
-//                
-//                while(hbText->gethbText->getGlyphCodepoint(previousSpace)
-//            }
-            
-            currentLine->push_back(LayoutGlyph::create(hbText->getFont(), glyphIndex, glyphPos));
+            if(xPos > width) {
+                xPos = 0;
+                yPos += hbText->getFont()->getFace()->size->metrics.height/64.0 + leading;
+                
+                i = currentWordStartPos;
+                currentWord.clear();
+            } else {
+                currentWord.push_back(LayoutGlyph::create(hbText->getFont(), glyphIndex, glyphPos));
+            }
         }
         
+        currentLine->insert(currentLine->end(), currentWord.begin(), currentWord.end());
         layout->lines.push_back(currentLine);
         
         return layout;
     }
+                      
     
-    
-    LayoutRef LayoutGenerator::generateLayout(typography::FontRef font, std::string text, ci::Rectf bounds) {
+    LayoutRef LayoutGenerator::generateLayout(typography::FontRef font, std::string text, unsigned int width, unsigned int height) {
         HarfbuzzShapedTextRef harfbuzzText = HarfbuzzShapedText::create(font, text);
-        return layoutTextBox(font, text, bounds);
+        return layoutTextBox(font, text, width, height);
     }
     
 }

@@ -299,15 +299,17 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_LDFLAGS = (
-					"\"$(CINDER_PATH)/lib/libcinder_d.a\"",
-					"\"../../../lib/freetype/macosx/libfreetype.a\"",
-					"\"../../../lib/harfbuzz/macosx/libharfbuzz.a\"",
+					"\"$(CINDER_PATH)/lib/macosx/Debug/libcinder.a\"",
+					"\"$(CINDER_PATH)/lib/macosx/libboost_system.a\"",
+					"\"$(CINDER_PATH)/lib/macosx/libboost_filesystem.a\"",
+					"\"$(CINDER_PATH)/lib/macosx/libz.a\"",
+					"\"$(CINDER_PATH)/blocks/Cinder-Harfbuzz/lib/macosx/libharfbuzz.a\"",
 				);
 				PRELINK_LIBS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.libcinder.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = FreetypeBasicLoading;
 				SYMROOT = ./build;
-				USER_HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\" ../include ../../../include";
+				USER_HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\" \"$(CINDER_PATH)/blocks/Cinder-Harfbuzz/include\" \"$(CINDER_PATH)/include/freetype\" ../include ../../../include";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -335,14 +337,14 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_LDFLAGS = (
 					"\"$(CINDER_PATH)/lib/libcinder.a\"",
-					"\"../../../lib/freetype/macosx/libfreetype.a\"",
+					"\"$(CINDER_PATH)/blocks/Cinder-Harfbuzz/lib/macosx/libharfbuzz.a\"",
 				);
 				PRELINK_LIBS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.libcinder.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = FreetypeBasicLoading;
 				STRIP_INSTALLED_PRODUCT = YES;
 				SYMROOT = ./build;
-				USER_HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\" ../include ../../../include";
+				USER_HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\" \"$(CINDER_PATH)/blocks/Cinder-Harfbuzz/include\" \"$(CINDER_PATH)/include/freetype\" ../include ../../../include";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

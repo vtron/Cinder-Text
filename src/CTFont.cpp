@@ -30,7 +30,6 @@ namespace typography {
     
     FontRef Font::create(ci::DataSourceRef dataSource, float size) {
         FontRef ref(new Font(dataSource, size));
-        
         return ref;
     }
     

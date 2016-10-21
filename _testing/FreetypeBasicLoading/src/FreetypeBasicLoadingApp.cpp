@@ -3,8 +3,7 @@
 #include "cinder/gl/gl.h"
 
 #include "CTFont.hpp"
-#include "CTLayout.hpp"
-#include "CTRendererTexture.hpp"
+#include "CTTextBox.hpp"
 
 using namespace ci;
 using namespace ci::app;
@@ -23,14 +22,13 @@ class FreetypeBasicLoadingApp : public App {
 	void update() override;
 	void draw() override;
     
+    void mouseDown(MouseEvent event) override;
+    
     //"NotoSans-unhinted/NotoSans-Regular.ttf"
     std::string testFont = "AGaramondPro Regular.otf";
-    std::string testText = "The quick brown fox infinitely jumps over the lazy dog.";
-    typography::LayoutRef mLayout;
-    typography::RendererTextureRef mRenderer;
+    std::string testText = "The quick brown fox infinitely jumps over the lazy dog. Lorem ipsum dolor sit amet, te mel alia elit disputationi, sit ne possit invenire, meliore definiebas reprimique usu te. In eam sale delicatissimi, an diceret vivendo est. Ad solet nonumy scriptorem qui. No alia munere efficiendi vim, te qui labitur principes, in has harum erroribus.";
+    typography::TextBoxRef testTextBox;
     int typeSize = 30;
-    
-    vec3 mousePosition;
     
     void listFonts();
     
@@ -44,24 +42,22 @@ void FreetypeBasicLoadingApp::setup()
     ci::DataSourceRef fontFile = ci::app::loadAsset(testFont);
     typography::FontRef font = typography::Font::create(fontFile, typeSize);
     
-    mLayout = typography::LayoutGenerator::generateLayout(font, testText, ci::Rectf());
-    mRenderer = typography::RendererTexture::create();
-    mRenderer->setLayout(mLayout);
+    testTextBox = typography::TextBox::create(font, testText, 300, 300);
     
-    // Freetype (testing for comparison)
-    int xPos = 0;
-    for(int i=0; i<testText.length(); i++) {
-        ci::ChannelRef glyphChannel = font->getCharacterBitmapChannel(testText[i]);
-        ci::gl::TextureRef tex = ci::gl::Texture::create(*glyphChannel);
-        
-        float xOffset = font->getFace()->glyph->metrics.horiBearingX/64.0;
-        float xAdvance = font->getFace()->glyph->metrics.horiAdvance/64.0;
-        xPos += xOffset;
-        
-        float yPos = typeSize - font->getFace()->glyph->metrics.horiBearingY/64.0f;
-        freetypeCharacters.push_back(TextureGlyph(tex, ci::vec2(xPos, yPos)));
-        xPos += xAdvance - xOffset;
-    }
+//    // Freetype (testing for comparison)
+//    int xPos = 0;
+//    for(int i=0; i<testText.length(); i++) {
+//        ci::ChannelRef glyphChannel = font->getCharacterBitmapChannel(testText[i]);
+//        ci::gl::TextureRef tex = ci::gl::Texture::create(*glyphChannel);
+//        
+//        float xOffset = font->getFace()->glyph->metrics.horiBearingX/64.0;
+//        float xAdvance = font->getFace()->glyph->metrics.horiAdvance/64.0;
+//        xPos += xOffset;
+//        
+//        float yPos = typeSize - font->getFace()->glyph->metrics.horiBearingY/64.0f;
+//        freetypeCharacters.push_back(TextureGlyph(tex, ci::vec2(xPos, yPos)));
+//        xPos += xAdvance - xOffset;
+//    }
 }
 
 void FreetypeBasicLoadingApp::update()
@@ -90,8 +86,13 @@ void FreetypeBasicLoadingApp::draw()
     {
         ci::gl::ScopedModelMatrix matrix;
         ci::gl::translate(ci::vec2(50,150));
-        mRenderer->draw();
+        testTextBox->draw();
     }
+}
+
+void FreetypeBasicLoadingApp::mouseDown(cinder::app::MouseEvent event) {
+    testTextBox->setSize(event.getPos().x, 300);
+    testTextBox->generateLayout();
 }
 
 CINDER_APP( FreetypeBasicLoadingApp, RendererGl )
