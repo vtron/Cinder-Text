@@ -191,19 +191,19 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\CTFont.cpp" />
-    <ClCompile Include="..\..\..\src\CTLayout.cpp" />
-    <ClCompile Include="..\..\..\src\CTRenderer.cpp" />
-    <ClCompile Include="..\..\..\src\CTRendererTexture.cpp" />
-    <ClCompile Include="..\..\..\src\CTTextBox.cpp" />
+    <ClCompile Include="..\..\..\src\_old\CTFont.cpp" />
+    <ClCompile Include="..\..\..\src\_old\CTLayout.cpp" />
+    <ClCompile Include="..\..\..\src\_old\CTRenderer.cpp" />
+    <ClCompile Include="..\..\..\src\_old\CTRendererTexture.cpp" />
+    <ClCompile Include="..\..\..\src\_old\CTTextBox.cpp" />
     <ClCompile Include="..\src\FreetypeBasicLoadingApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\CTFont.hpp" />
-    <ClInclude Include="..\..\..\src\CTLayout.hpp" />
-    <ClInclude Include="..\..\..\src\CTRenderer.hpp" />
-    <ClInclude Include="..\..\..\src\CTRendererTexture.hpp" />
-    <ClInclude Include="..\..\..\src\CTTextBox.hpp" />
+    <ClInclude Include="..\..\..\src\_old\CTFont.hpp" />
+    <ClInclude Include="..\..\..\src\_old\CTLayout.hpp" />
+    <ClInclude Include="..\..\..\src\_old\CTRenderer.hpp" />
+    <ClInclude Include="..\..\..\src\_old\CTRendererTexture.hpp" />
+    <ClInclude Include="..\..\..\src\_old\CTTextBox.hpp" />
     <ClInclude Include="..\include\Resources.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

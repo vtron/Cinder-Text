@@ -14,7 +14,6 @@
 
 namespace typography
 {
-
 	static FT_Library freetypeLibrary;
 
 	void loadFreetype()

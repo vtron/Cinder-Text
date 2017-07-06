@@ -25,9 +25,9 @@ class FreetypeBasicLoadingApp : public App
 
 		void mouseDrag( MouseEvent event ) override;
 
-		//"NotoSans-unhinted/NotoSans-Regular.ttf"
 		std::string testFont = "SourceSerifPro/SourceSerifPro-Regular.otf";
-		std::string testText = "The quick brown fox infinitely jumps over the lazy dog. Lorem ipsum dolor sit amet, te mel alia elit disputationi, sit ne possit invenire, meliore definiebas reprimique usu te. In eam sale delicatissimi, an diceret vivendo est. Ad solet nonumy scriptorem qui. No alia munere efficiendi vim, te qui labitur principes, in has harum erroribus.";
+		std::string testText = "The quick brown fox infinitely jumps over the lazy dog.";
+		//Lorem ipsum dolor sit amet, te mel alia elit disputationi, sit ne possit invenire, meliore definiebas reprimique usu te. In eam sale delicatissimi, an diceret vivendo est. Ad solet nonumy scriptorem qui. No alia munere efficiendi vim, te qui labitur principes, in has harum erroribus.";
 		typography::TextBoxRef testTextBox;
 		int typeSize = 30;
 
