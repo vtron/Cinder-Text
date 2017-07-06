@@ -6,20 +6,10 @@
 namespace txt
 {
 	// Font
-	FontRef Font::create( std::string name, int size )
-	{
-		return FontManager::get()->createFont( name, size );
-	}
-
-	Font::Font( FTC_FaceID id, int size )
-		: mSize( size )
-		, mFaceId( id )
+	Font::Font( ci::fs::path path, int size )
+		: size( size )
+		, faceId( FontManager::get()->getFaceId( path ) )
 	{}
-
-	Font::~Font()
-	{
-		FontManager::get()->dereferenceFaceID( mFaceId );
-	}
 
 
 	// Font Manager
@@ -37,43 +27,17 @@ namespace txt
 	FontManager::FontManager()
 		: mNextFaceId( -1 )
 	{
-		loadFreetype();
-		initFTCacheManager();
+		initFreetype();
 	}
 
-	FontRef FontManager::createFont( std::string name, int size )
-	{
-		FTC_FaceID id = getFaceId( name );
-
-		if( mFaceReferenceCountsForID.count( id ) == 0 ) {
-			mFaceReferenceCountsForID[id] = 1;
-		}
-		else {
-			mFaceReferenceCountsForID[id]++;
-		}
-
-		return FontRef( new Font( id, size ) );
-	}
-
-	void FontManager::dereferenceFaceID( FTC_FaceID id )
-	{
-		CI_ASSERT_MSG( mFaceReferenceCountsForID.count( id ) != 0, "Can not remove font by FaceID, it is not being tracked." );
-
-		mFaceReferenceCountsForID[id]--;
-
-		if( mFaceReferenceCountsForID[id] <= 0 ) {
-			removeFaceId( id );
-		}
-	}
-
-	FT_Face FontManager::getFace( FontRef font )
+	FT_Face FontManager::getFace( Font& font )
 	{
 		// Generate face ID and create scaler
 		FTC_Scaler scaler = new FTC_ScalerRec_();
-		scaler->face_id = font->getFaceId();
+		scaler->face_id = font.faceId;
 		scaler->pixel = 0;
-		scaler->width = float( font->getSize() ) / 64.f;
-		scaler->height = float( font->getSize() ) / 64.f;
+		scaler->width = float( font.size ) * 64.f;
+		scaler->height = float( font.size ) * 64.f;
 		scaler->x_res = 72;
 		scaler->y_res = 72;
 
@@ -83,10 +47,29 @@ namespace txt
 		error = FTC_Manager_LookupSize( mFTCacheManager, scaler, &ftSize );
 
 		std::stringstream errorMessage;
-		errorMessage << "Could not lookup size for face " << font->getFaceId() << " at size " << std::to_string( font->getSize() ) << ".";
+		errorMessage << "Could not lookup size for face " << font.faceId << " at size " << std::to_string( font.size ) << ".";
 		checkForFTError( error, errorMessage.str() );
 
 		return ftSize->face;
+	}
+
+	FT_UInt FontManager::getGlyphIndex( FTC_FaceID faceId, FT_UInt32 charCode, FT_Int mapIndex )
+	{
+		return FTC_CMapCache_Lookup( mFTCMapCache, faceId, mapIndex, charCode );
+	}
+
+	FT_Glyph FontManager::getGlyph( FTC_FaceID faceId, FT_UInt glyphIndex )
+	{
+		FTC_ImageType imageType = new FTC_ImageTypeRec_();
+		imageType->face_id = faceId;
+
+		FT_Glyph glyph;
+		FT_Error error;
+		error = FTC_ImageCache_Lookup( mFTCImageCache, imageType, glyphIndex, &glyph, NULL );
+
+		std::stringstream errorMessage;
+		errorMessage << "Could not get glyph " << glyphIndex << " for face " << faceId << ".";
+		checkForFTError( error, errorMessage.str() );
 	}
 
 	FT_Error FontManager::faceRequestor( FTC_FaceID face_id, FT_Library library, FT_Pointer req_data, FT_Face* aface )
@@ -102,28 +85,33 @@ namespace txt
 	}
 
 	// Freetype Initialization
-	void FontManager::loadFreetype()
+	void FontManager::initFreetype()
 	{
+		// Init Freetype
 		FT_Error error;
 		error = FT_Init_FreeType( &mFTLibrary );
 		checkForFTError( error, "Could not initialize Freetype." );
-	}
 
-	void FontManager::initFTCacheManager()
-	{
-		FT_Error error;
-
+		// Create Cache Manager
 		error = FTC_Manager_New( mFTLibrary, 0, 0, 0, &FontManager::faceRequestor, NULL, &mFTCacheManager );
 		checkForFTError( error, "Could not initialize FTCacheManager" );
+
+		// Create Char Map Cache
+		error = FTC_CMapCache_New( mFTCacheManager, &mFTCMapCache );
+		checkForFTError( error, "Could not initialize FTCMapCache" );
+
+		// Create Image Cache (Glyph Images)
+		error = FTC_ImageCache_New( mFTCacheManager, &mFTCImageCache );
+		checkForFTError( error, "Could not initialize FTCImageCache" );
 	}
 
-	FTC_FaceID FontManager::getFaceId( std::string faceName )
+	FTC_FaceID FontManager::getFaceId( ci::fs::path path )
 	{
-		if( mFaceIDsForName.count( faceName ) == 0 ) {
-			createFaceId( faceName );
+		if( mFaceIDsForName.count( path.string() ) == 0 ) {
+			createFaceId( path.string() );
 		}
 
-		return ( FTC_FaceID )mFaceIDsForName[faceName];
+		return ( FTC_FaceID )mFaceIDsForName[path.string()];
 	}
 
 	void FontManager::createFaceId( std::string faceName )

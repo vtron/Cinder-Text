@@ -103,10 +103,12 @@
   <ItemGroup />
   <ItemGroup>
     <ClCompile Include="..\..\..\src\FontManager.cpp" />
+    <ClCompile Include="..\..\..\src\TextRendererGl.cpp" />
     <ClCompile Include="..\src\CinderProjectApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\FontManager.h" />
+    <ClInclude Include="..\..\..\src\TextRendererGl.h" />
     <ClInclude Include="..\include\Resources.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
