@@ -5,7 +5,6 @@
 #include "cinder/GeomIo.h"
 
 #include "text/FontManager.h"
-#include "text/Layout.h"
 
 namespace txt
 {
@@ -15,17 +14,21 @@ namespace txt
 
 	void RendererGl::drawString( Font& font, std::string string )
 	{
-		Layout layout( font, string );
+		Layout layout( font, string, ci::vec2( 0.f ) );
+		drawLayout( layout );
+	}
 
+	void RendererGl::drawLayout( Layout& layout )
+	{
 		for( auto& line : layout.getLines() ) {
 			for( auto& run : line.runs ) {
 				for( auto& glyph : run.glyphs ) {
 					ci::gl::ScopedMatrices matrices;
 
-					FT_BitmapGlyph ftGlyph = txt::FontManager::get()->getGlyphBitmap( font, glyph.index );
+					FT_BitmapGlyph ftGlyph = txt::FontManager::get()->getGlyphBitmap( run.font, glyph.index );
 
 					ci::gl::translate( glyph.pos + ci::vec2( ftGlyph->left, -ftGlyph->top ) );
-					drawGlyph( font, glyph.index );
+					drawGlyph( run.font, glyph.index );
 				}
 			}
 		}

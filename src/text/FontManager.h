@@ -3,7 +3,6 @@
 #include <memory>
 #include <unordered_map>
 
-#include <harfbuzz/hb.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <freetype/ftcache.h>
@@ -18,6 +17,8 @@ namespace txt
 	class FontManager;
 	typedef std::shared_ptr<FontManager> FontManagerRef;
 
+
+
 	class FontManager
 	{
 			friend struct Font;
@@ -26,7 +27,7 @@ namespace txt
 
 			// Freetype
 			uint32_t getGlyphIndex( uint32_t faceId, FT_UInt32 charCode, FT_Int mapIndex = -1 );
-			std::vector<FT_UInt> getGlyphIndices( uint32_t faceId, std::string string );
+			std::vector<uint32_t> getGlyphIndices( uint32_t faceId, std::string string );
 
 			FT_Glyph getGlyph( Font& font, unsigned int glyphIndex );
 			FT_BitmapGlyph getGlyphBitmap( Font& font, unsigned int glyphIndex );
@@ -37,8 +38,6 @@ namespace txt
 			FT_Size getSize( Font& font );
 			FTC_Scaler getScaler( Font& font );
 
-			// Harfbuzz
-			hb_font_t* getHarfbuzzFont( Font& font );
 
 		protected:
 			FontManager();

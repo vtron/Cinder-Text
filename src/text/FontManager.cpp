@@ -40,8 +40,14 @@ namespace txt
 
 	FT_Face FontManager::getFace( Font& font )
 	{
-		FT_Size size = getSize( font );
-		return size->face;
+		FT_Face face;
+		FT_Error error;
+		error = FTC_Manager_LookupFace( mFTCacheManager, ( FTC_FaceID )font.faceId, &face );
+
+		std::stringstream errorMessage;
+		errorMessage << "Could not lookup face " << font.faceId << ".";
+		checkForFTError( error, errorMessage.str() );
+		return face;
 	}
 
 	FT_Size FontManager::getSize( Font& font )
@@ -228,15 +234,5 @@ namespace txt
 #define FT_ERROR_END_LIST       }
 #include FT_ERRORS_H
 		return "(Unknown error)";
-	}
-
-
-
-	// --------------------------------------------------------
-	// Harfbuzz Functions
-	hb_font_t* FontManager::getHarfbuzzFont( Font& font )
-	{
-		FT_Face face = getSize( font )->face;
-		return hb_ft_font_create_referenced( face );
 	}
 }

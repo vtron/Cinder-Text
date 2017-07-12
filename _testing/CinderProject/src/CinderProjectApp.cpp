@@ -4,6 +4,9 @@
 
 #include "text/FontManager.h"
 #include "text/TextRendererGl.h"
+#include "text/Layout.h"
+
+#include "harfbuzz/hb-ft.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -18,6 +21,7 @@ class CinderProjectApp : public App
 		void draw() override;
 
 		std::shared_ptr<txt::Font> mFont;
+		txt::Layout mLayout;
 		txt::RendererGl mRendererGl;
 
 		std::string fontName = "SourceSerifPro/SourceSerifPro-Regular.otf";
@@ -26,36 +30,42 @@ class CinderProjectApp : public App
 void CinderProjectApp::setup()
 {
 	mFont = std::make_shared<txt::Font>( getAssetPath( fontName ), 100 );
+	mLayout = txt::Layout( *mFont, "Fi fi J.L. Hello!" );
 
-	txt::Font font1( getAssetPath( fontName ), 20 );
-	txt::Font font2( getAssetPath( fontName ), 20 );
+	//txt::Font font1( getAssetPath( fontName ), 20 );
+	//txt::Font font2( getAssetPath( fontName ), 20 );
 
-	FT_Face face1 = txt::FontManager::get()->getFace( font1 );
-	FT_Face face2 = txt::FontManager::get()->getFace( font2 );
+	//FT_Face face1 = txt::FontManager::get()->getFace( font1 );
+	//FT_Face face2 = txt::FontManager::get()->getFace( font2 );
 
-	//FT_UInt glyphIndex = txt::FontManager::get()->getGlyphIndex( ( FTC_FaceID )font1.faceId, 'M' );
+	////FT_UInt glyphIndex = txt::FontManager::get()->getGlyphIndex( ( FTC_FaceID )font1.faceId, 'M' );
 
-	FT_Size size = txt::FontManager::get()->getSize( font1 );
+	//FT_Size size = txt::FontManager::get()->getSize( font1 );
 
-	ci::vec2 maxGlyphSize = txt::FontManager::get()->getMaxGlyphSize( font1 );
+	//ci::vec2 maxGlyphSize = txt::FontManager::get()->getMaxGlyphSize( font1 );
 
-	console() << "Max Glyph Width: " << maxGlyphSize / ci::vec2( 64.f ) << std::endl;
+	//console() << "Max Glyph Width: " << maxGlyphSize / ci::vec2( 64.f ) << std::endl;
 
-	// Harfbuzz testing
+	//// Harfbuzz testing
 
-	std::string text = "Hello!";
+	std::string text = "Fi fi J.L. Hello!";
 
 	hb_buffer_t* buf;
 	buf = hb_buffer_create();
 
-	hb_buffer_add_utf8( buf, text.c_str(), strlen( text.c_str() ), 0, strlen( text.c_str() ) );
-
-	const std::vector<uint32_t> codepoints = txt::FontManager::get()->getGlyphIndices( font1.faceId, text );
-	//hb_buffer_add_codepoints( buf, ( hb_codepoint_t* )&codepoints, codepoints.size(), 0, codepoints.size() );
+	hb_buffer_add_codepoints( buf, &txt::FontManager::get()->getGlyphIndices( mFont->faceId, text )[0], text.length(), 0, text.length() );
+	//hb_buffer_add_utf8( buf, text.c_str(), strlen( text.c_str() ), 0, strlen( text.c_str() ) );
 
 	hb_buffer_guess_segment_properties( buf );
 
-	hb_font_t* font = txt::FontManager::get()->getHarfbuzzFont( font1 );
+	FT_Library library;
+	FT_Init_FreeType( &library );
+
+	FT_Face face;
+	FT_New_Face( library, getAssetPath( fontName ).string().c_str(), 0, &face );
+	FT_Set_Char_Size( face, 36 * 64.f, 36.f * 64.f, 72, 72 );
+
+	hb_font_t* font = hb_ft_font_create( face, NULL );
 
 	hb_shape( font, buf, NULL, 0 );
 
@@ -63,13 +73,12 @@ void CinderProjectApp::setup()
 	hb_glyph_info_t* glyph_info = hb_buffer_get_glyph_infos( buf, &glyph_count );
 	hb_glyph_position_t* glyph_pos = hb_buffer_get_glyph_positions( buf, &glyph_count );
 
+	for( int i = 0; i < glyph_count; i++ ) {
+		console() << glyph_info[i].codepoint << std::endl;
+		console() << glyph_pos[i].x_offset << std::endl;
+	}
+
 	console() << "Total characters: " << glyph_count << std::endl;
-
-
-
-
-	// GL Renderer
-	txt::RendererGl glRenderer;
 
 }
 
@@ -88,7 +97,8 @@ void CinderProjectApp::draw()
 	ci::gl::enableAlphaBlending();
 	ci::gl::ScopedMatrices matrices;
 	ci::gl::translate( 10.f, 125.f );
-	mRendererGl.drawString( *mFont, "The quick brown fox jumps over the lazy dog. 1234567890" );
+	//mRendererGl.drawString( *mFont, "The quick brown fox jumps over the lazy dog. 1234567890" );
+	mRendererGl.drawLayout( mLayout );
 }
 
 CINDER_APP( CinderProjectApp, RendererGl )

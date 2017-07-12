@@ -4,7 +4,7 @@
 
 namespace txt
 {
-	struct Font {
+	typedef struct Font {
 		public:
 			Font( ci::fs::path path, int size );
 
@@ -18,7 +18,7 @@ namespace txt
 			}
 
 			friend class FontManager;
-	};
+	} Font;
 }
 
 // Hash Function

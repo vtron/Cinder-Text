@@ -4,7 +4,8 @@
 
 #include "cinder/gl/Texture.h"
 #include "cinder/gl/Batch.h"
-#include "FontManager.h"
+
+#include "text/Layout.h"
 
 namespace txt
 {
@@ -14,6 +15,7 @@ namespace txt
 			RendererGl();
 
 			void drawString( Font& font, std::string string );
+			void drawLayout( Layout& layout );
 
 		private:
 			void drawGlyph( Font& font, unsigned int glyphIndex );

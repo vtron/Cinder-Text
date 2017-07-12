@@ -6,31 +6,32 @@
 #include <cinder/Vector.h>
 
 #include "text/Font.h"
+#include "text/FontManager.h"
 
 namespace txt
 {
-	struct Glyph {
-		unsigned int index;
-		ci::vec2 pos;
-	};
 
-	struct Run {
-		Run( Font& font )
-			: font( font )
-		{};
-
-		Font font;
-		std::vector<Glyph> glyphs;
-	};
-
-	struct Line {
-		std::vector<Run> runs;
-	};
 
 	class Layout
 	{
 		public:
-			Layout( Font& font, std::string text );
+			typedef struct {
+				uint32_t index;
+
+				ci::vec2 pos;
+			} Glyph;
+
+			typedef struct {
+				Font font;
+				std::vector<Glyph> glyphs;
+			} Run;
+
+			struct Line {
+				std::vector<Run> runs;
+			};
+
+			Layout() {};
+			Layout( Font& font, std::string text, ci::vec2 size = ci::vec2( 0 ) );
 
 			std::vector<Line>& getLines()
 			{
