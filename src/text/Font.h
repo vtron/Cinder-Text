@@ -4,10 +4,12 @@
 
 namespace txt
 {
-	typedef struct Font {
+	struct Font {
 		public:
 			Font( ci::fs::path path, int size );
+			Font( const Font& font ) : Font( font.path, font.size ) { }
 
+			const ci::fs::path path;
 			const uint32_t faceId;
 			const unsigned int size;
 
@@ -17,8 +19,15 @@ namespace txt
 				         && size == other.size );
 			}
 
+			Font& Font::operator=( const Font& other )
+			{
+				return *this;
+			}
+
+
+
 			friend class FontManager;
-	} Font;
+	};
 }
 
 // Hash Function

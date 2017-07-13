@@ -12,9 +12,10 @@ namespace txt
 	{
 	}
 
-	void RendererGl::drawString( Font& font, std::string string )
+	void RendererGl::drawString( const  Font& font, std::string string, ci::vec2 frame )
 	{
-		Layout layout( font, string, ci::vec2( 0.f ) );
+		Layout layout;
+		layout.calculateLayout( font, string, frame );
 		drawLayout( layout );
 	}
 
@@ -34,7 +35,7 @@ namespace txt
 		}
 	}
 
-	void RendererGl::drawGlyph( Font& font, uint32_t glyphIndex )
+	void RendererGl::drawGlyph( const Font& font, uint32_t glyphIndex )
 	{
 		ci::gl::draw( getGlyphTexture( font, glyphIndex ) );
 	}
@@ -50,7 +51,7 @@ namespace txt
 	//	return mFontTextures[faceId][font.size];
 	//}
 
-	ci::gl::TextureRef RendererGl::getGlyphTexture( Font& font, unsigned int glyphIndex )
+	ci::gl::TextureRef RendererGl::getGlyphTexture( const  Font& font, unsigned int glyphIndex )
 	{
 		// Check to see if we have the font
 		if( mGlyphTextures.count( font ) == 0 || mGlyphTextures[font].count( glyphIndex ) ) {
@@ -60,7 +61,7 @@ namespace txt
 		return mGlyphTextures[font][glyphIndex];
 	}
 
-	void RendererGl::cacheGlyphAsTexture( Font& font, uint32_t glyphIndex )
+	void RendererGl::cacheGlyphAsTexture( const  Font& font, uint32_t glyphIndex )
 	{
 		FT_BitmapGlyph glyph = txt::FontManager::get()->getGlyphBitmap( font, glyphIndex );
 		ci::ChannelRef channel = ci::Channel::create( glyph->bitmap.width, glyph->bitmap.rows, glyph->bitmap.width * sizeof( unsigned char ), 1, glyph->bitmap.buffer );

@@ -21,7 +21,7 @@ namespace txt
 		static hb_feature_t CligOn = { CligTag, 1, 0, std::numeric_limits<unsigned int>::max() };
 	}
 
-	Shaper::Shaper( Font& font )
+	Shaper::Shaper( const Font& font )
 	{
 		FT_Face face = FontManager::get()->getSize( font )->face;
 		mFont = hb_ft_font_create( face, NULL );
@@ -92,6 +92,8 @@ namespace txt
 		for( int i = 0; i < glyph_count; i++ ) {
 			Glyph glyph;
 			glyph.index = glyph_info[i].codepoint;
+			glyph.cluster = glyph_info[i].cluster;
+
 			glyph.offset = ci::vec2( glyph_pos[i].x_offset / 64.f, glyph_pos[i].y_advance / 64.f );
 			glyph.advance = ci::vec2( glyph_pos[i].x_advance / 64.f, glyph_pos[i].y_advance / 64.f );
 

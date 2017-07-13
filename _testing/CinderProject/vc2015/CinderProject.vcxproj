@@ -106,6 +106,7 @@
     <ClCompile Include="..\..\..\src\text\Font.cpp" />
     <ClCompile Include="..\..\..\src\text\FontManager.cpp" />
     <ClCompile Include="..\..\..\src\text\Layout.cpp" />
+    <ClCompile Include="..\..\..\src\text\Parser.cpp" />
     <ClCompile Include="..\..\..\src\text\Shaper.cpp" />
     <ClCompile Include="..\..\..\src\text\TextRendererGl.cpp" />
     <ClCompile Include="..\src\CinderProjectApp.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="..\..\..\src\text\Font.h" />
     <ClInclude Include="..\..\..\src\text\FontManager.h" />
     <ClInclude Include="..\..\..\src\text\Layout.h" />
+    <ClInclude Include="..\..\..\src\text\Parser.h" />
     <ClInclude Include="..\..\..\src\text\Shaper.h" />
     <ClInclude Include="..\..\..\src\text\TextRendererGl.h" />
     <ClInclude Include="..\include\Resources.h" />

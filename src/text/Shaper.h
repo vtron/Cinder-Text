@@ -29,15 +29,15 @@ namespace txt
 			typedef struct {
 				uint32_t index;
 
-				ci::vec2 pos;
 				ci::vec2 offset;
 				ci::vec2 advance;
+				uint32_t cluster;
 			} Glyph;
 
-			Shaper( Font& font );
+			Shaper( const Font& font );
 			~Shaper();
 
-			std::vector<Glyph> getShapedText( Text& text );
+			std::vector<Shaper::Glyph> getShapedText( Text& text );
 			void addFeature( Feature feature );
 			void removeFeature( Feature feature );
 

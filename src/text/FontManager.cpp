@@ -10,11 +10,7 @@
 
 namespace txt
 {
-	// Font
-	Font::Font( ci::fs::path path, int size )
-		: size( size )
-		, faceId( FontManager::get()->getFaceId( path ) )
-	{}
+
 
 
 	// Font Manager
@@ -35,10 +31,22 @@ namespace txt
 		initFreetype();
 	}
 
+	std::string FontManager::getFontFamily( const Font& font )
+	{
+		FT_Face face = getFace( font );
+		return face->family_name;
+	}
+
+	std::string FontManager::getFontStyle( const  Font& font )
+	{
+		FT_Face face = getFace( font );
+		return face->style_name;
+	}
+
 	// --------------------------------------------------------
 	// Freetype Functions
 
-	FT_Face FontManager::getFace( Font& font )
+	FT_Face FontManager::getFace( const  Font& font )
 	{
 		FT_Face face;
 		FT_Error error;
@@ -50,7 +58,7 @@ namespace txt
 		return face;
 	}
 
-	FT_Size FontManager::getSize( Font& font )
+	FT_Size FontManager::getSize( const  Font& font )
 	{
 		FT_Size ftSize;
 		FT_Error error;
@@ -63,23 +71,23 @@ namespace txt
 		return ftSize;
 	}
 
-	FT_UInt FontManager::getGlyphIndex( uint32_t faceId, FT_UInt32 charCode, FT_Int mapIndex )
+	FT_UInt FontManager::getGlyphIndex( const  Font& font, FT_UInt32 charCode, FT_Int mapIndex )
 	{
-		return FTC_CMapCache_Lookup( mFTCMapCache, ( FTC_FaceID )faceId, mapIndex, charCode );
+		return FTC_CMapCache_Lookup( mFTCMapCache, ( FTC_FaceID )font.faceId, mapIndex, charCode );
 	}
 
-	std::vector<FT_UInt> FontManager::getGlyphIndices( uint32_t faceId, std::string string )
+	std::vector<FT_UInt> FontManager::getGlyphIndices( const  Font& font, std::string string )
 	{
 		std::vector<FT_UInt> indices;
 
 		for( auto& character : string ) {
-			indices.push_back( getGlyphIndex( faceId, character, 0 ) );
+			indices.push_back( getGlyphIndex( font, character, 0 ) );
 		}
 
 		return indices;
 	}
 
-	FT_Glyph FontManager::getGlyph( Font& font, unsigned int glyphIndex )
+	FT_Glyph FontManager::getGlyph( const  Font& font, unsigned int glyphIndex )
 	{
 		//FT_Glyph glyph;
 		FT_Glyph glyph;
@@ -93,7 +101,7 @@ namespace txt
 		return glyph;
 	}
 
-	FT_BitmapGlyph FontManager::getGlyphBitmap( Font& font, unsigned int glyphIndex )
+	FT_BitmapGlyph FontManager::getGlyphBitmap( const  Font& font, unsigned int glyphIndex )
 	{
 		//FT_Glyph glyph;
 		FT_BitmapGlyph glyph;
@@ -107,7 +115,7 @@ namespace txt
 		return glyph;
 	}
 
-	ci::vec2 FontManager::getMaxGlyphSize( Font& font )
+	ci::vec2 FontManager::getMaxGlyphSize( const  Font& font )
 	{
 		FT_Size size = getSize( font );
 		FT_BBox bbox = size->face->bbox;
@@ -120,7 +128,7 @@ namespace txt
 		return ci::vec2( bbox.xMax - bbox.xMin, bbox.yMax - bbox.yMin );
 	}
 
-	FTC_Scaler FontManager::getScaler( Font& font )
+	FTC_Scaler FontManager::getScaler( const  Font& font )
 	{
 		FTC_Scaler scaler = new FTC_ScalerRec_();
 		scaler->face_id = ( FTC_FaceID )font.faceId;
@@ -128,17 +136,17 @@ namespace txt
 		scaler->width = float( font.size ) * 64.f;
 		scaler->height = float( font.size ) * 64.f;
 
-		SetProcessDPIAware(); //true
-		HDC screen = GetDC( NULL );
-		double hPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSX );
-		double vPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSY );
-		ReleaseDC( NULL, screen );
+		//SetProcessDPIAware(); //true
+		//HDC screen = GetDC( NULL );
+		//double hPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSX );
+		//double vPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSY );
+		//ReleaseDC( NULL, screen );
 
 		//scaler->x_res = hPixelsPerInch;
 		//scaler->y_res = vPixelsPerInch;
 
-		scaler->x_res = 72;
-		scaler->y_res = 72;
+		scaler->x_res = 96;
+		scaler->y_res = 96;
 
 		return scaler;
 	}

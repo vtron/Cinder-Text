@@ -14,15 +14,15 @@ namespace txt
 		public:
 			RendererGl();
 
-			void drawString( Font& font, std::string string );
+			void drawString( const  Font& font, std::string string, ci::vec2 frame = ci::vec2( 0.f ) );
 			void drawLayout( Layout& layout );
 
 		private:
-			void drawGlyph( Font& font, unsigned int glyphIndex );
+			void drawGlyph( const Font& font, unsigned int glyphIndex );
 
-			ci::gl::TextureRef getGlyphTexture( Font& font, unsigned int glyphIndex );
+			ci::gl::TextureRef getGlyphTexture( const Font& font, unsigned int glyphIndex );
 
-			void cacheGlyphAsTexture( Font& font, uint32_t glyphIndex );
+			void cacheGlyphAsTexture( const Font& font, uint32_t glyphIndex );
 			std::unordered_map < Font, std::unordered_map<uint32_t, ci::gl::TextureRef > > mGlyphTextures;
 	};
 }

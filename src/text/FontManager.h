@@ -25,18 +25,21 @@ namespace txt
 		public:
 			static FontManagerRef get();
 
+			std::string getFontFamily( const Font& font );
+			std::string getFontStyle( const Font& font );
+
 			// Freetype
-			uint32_t getGlyphIndex( uint32_t faceId, FT_UInt32 charCode, FT_Int mapIndex = -1 );
-			std::vector<uint32_t> getGlyphIndices( uint32_t faceId, std::string string );
+			uint32_t getGlyphIndex( const Font& font, FT_UInt32 charCode, FT_Int mapIndex = 0 );
+			std::vector<uint32_t> getGlyphIndices( const Font& font, std::string string );
 
-			FT_Glyph getGlyph( Font& font, unsigned int glyphIndex );
-			FT_BitmapGlyph getGlyphBitmap( Font& font, unsigned int glyphIndex );
+			FT_Glyph getGlyph( const Font& font, unsigned int glyphIndex );
+			FT_BitmapGlyph getGlyphBitmap( const Font& font, unsigned int glyphIndex );
 
-			ci::vec2 getMaxGlyphSize( Font& font );
+			ci::vec2 getMaxGlyphSize( const Font& font );
 
-			FT_Face getFace( Font& font );
-			FT_Size getSize( Font& font );
-			FTC_Scaler getScaler( Font& font );
+			FT_Face getFace( const Font& font );
+			FT_Size getSize( const Font& font );
+			FTC_Scaler getScaler( const Font& font );
 
 
 		protected:
