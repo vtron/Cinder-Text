@@ -26,16 +26,26 @@ namespace txt
 	Layout::Layout()
 		: mTracking( 0 )
 		, mLeading( 0 )
+		, mAlignment( Alignment::LEFT )
+		, mSize( GROW )
 	{
 	}
 
-	void Layout::calculateLayout( const  Font& font, std::string text, ci::vec2 size )
+	void Layout::reset()
 	{
+		mLines.clear();
+		mPen = ci::vec2( 0.f );
+		mCurLine = Line();
+		mLineHeight = 0.f;
+		mLineWidth = 0.f;
+	}
+
+	void Layout::calculateLayout( const  Font& font, std::string text )
+	{
+		reset();
+
 		Parser parser( font, text );
 		std::deque<Parser::Substring> substrings = parser.getSubstrings();
-
-		ci::vec2 pen( 0 );
-		Line curLine;
 
 		for( int i = 0; i < substrings.size(); ++i ) {
 			Shaper shaper( font );
@@ -51,46 +61,90 @@ namespace txt
 
 			Run curRun( font );
 			std::vector<Glyph> curWord;
+			mLineHeight = FontManager::get()->getSize( font )->metrics.height / 64.f;
 
 			for( int j = 0; j < shapedGlyphs.size(); j++ ) {
-				ci::vec2 pos = pen + shapedGlyphs[j].offset;
+				ci::vec2 pos = mPen + shapedGlyphs[j].offset;
+				ci::vec2 advance = shapedGlyphs[j].advance;
+				ci::Rectf glyphBBox( pos, pos + ci::vec2( advance.x, mLineHeight ) );
 
-				Layout::Glyph glyph = { shapedGlyphs[j].index, pos };
+				Layout::Glyph glyph = { shapedGlyphs[j].index, glyphBBox };
 				curWord.push_back( glyph );
 
-				pen.x += shapedGlyphs[j].advance.x + mTracking;
+				mPen.x += advance.x + mTracking;
 
 				// Check for new line
-				if( size.x != 0 && pen.x > size.x ) {
-					pen.x = 0.f;
-					pen.y += FontManager::get()->getSize( font )->metrics.height / 64.f + mLeading;
+				if( mSize.x != GROW && mPen.x > mSize.x ) {
+
+					if( mSize.y != GROW ) {
+						//Clip in Y Direction
+					}
 
 					if( !curRun.glyphs.empty() ) {
-						curLine.runs.push_back( curRun );
+						addRunToCurLine( curRun );
 						curRun.glyphs.clear();
 					}
 
-					mLines.push_back( curLine );
-					curLine = Line();
+					addCurLine();
 
 					j -= curWord.size();
 					curWord.clear();
 				}
 				else if( isWhitespace( font, shapedGlyphs[j].index ) ) {
-					curRun.glyphs.insert( curRun.glyphs.begin(), curWord.begin(), curWord.end() );
+					curRun.glyphs.insert( curRun.glyphs.end(), curWord.begin(), curWord.end() );
 					curWord.clear();
 				}
 			}
 
-			curRun.glyphs.insert( curRun.glyphs.begin(), curWord.begin(), curWord.end() );
-			curLine.runs.push_back( curRun );
+			curRun.glyphs.insert( curRun.glyphs.end(), curWord.begin(), curWord.end() );
+			addRunToCurLine( curRun );
+			curRun.glyphs.clear();
 
 			if( substrings[i].forceBreak ) {
-				pen.x = 0.f;
-				pen.y += FontManager::get()->getSize( font )->metrics.height / 64.f + mLeading;
+				addCurLine();
 			}
 		}
 
-		mLines.push_back( curLine );
+		addCurLine();
+	}
+
+	void Layout::addRunToCurLine( Run& run )
+	{
+		mCurLine.runs.push_back( run );
+		mLineWidth = run.glyphs.back().bbox.x2;
+	}
+	void Layout::addCurLine( )
+	{
+		// Align in frame (if necessary)
+		if( mSize.x != GROW ) {
+			switch( mAlignment ) {
+				case LEFT:
+					break;
+
+				case CENTER:
+				case RIGHT:
+					float remainingWidth = mSize.x - mLineWidth;
+
+					float xOffset = ( mAlignment == CENTER ) ? remainingWidth / 2.f : remainingWidth;
+
+					for( auto& run : mCurLine.runs ) {
+						for( auto& glyph : run.glyphs ) {
+							glyph.bbox.offset( ci::vec2( xOffset, 0.f ) );
+						}
+					}
+
+					break;
+			}
+		}
+
+		// Add it to our lines
+		mLines.push_back( mCurLine );
+
+		// Reset
+		mCurLine = Line();
+		mLineWidth = 0;
+
+		mPen.x = 0.f;
+		mPen.y += mLineHeight + mLeading;
 	}
 }

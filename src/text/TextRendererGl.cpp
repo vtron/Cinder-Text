@@ -15,7 +15,8 @@ namespace txt
 	void RendererGl::drawString( const  Font& font, std::string string, ci::vec2 frame )
 	{
 		Layout layout;
-		layout.calculateLayout( font, string, frame );
+		layout.setSize( frame );
+		layout.calculateLayout( font, string );
 		drawLayout( layout );
 	}
 
@@ -28,7 +29,7 @@ namespace txt
 
 					FT_BitmapGlyph ftGlyph = txt::FontManager::get()->getGlyphBitmap( run.font, glyph.index );
 
-					ci::gl::translate( glyph.pos + ci::vec2( ftGlyph->left, -ftGlyph->top ) );
+					ci::gl::translate( glyph.bbox.getUpperLeft() + ci::vec2( ftGlyph->left, -ftGlyph->top ) );
 					drawGlyph( run.font, glyph.index );
 				}
 			}

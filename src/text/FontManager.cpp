@@ -10,9 +10,6 @@
 
 namespace txt
 {
-
-
-
 	// Font Manager
 	FontManagerRef FontManager::get()
 	{
