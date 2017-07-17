@@ -37,7 +37,7 @@ class CinderProjectApp : public App
 
 
 		std::string fontName = "SourceSerifPro/SourceSerifPro-Regular.otf";
-		int fontSize = 16;
+		int mFontSize = 16;
 		//std::string testText = "hhhhhhhhhhhh \n\t";
 		std::string testText = "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit. Duis consequat ullamcorper lectus eget dapibus. Aenean vel hendrerit nibh. Sed at lectus commodo, ornare velit sed, elementum nisi. Vestibulum imperdiet justo eget enim posuere facilisis. Sed ac lacus ac nibh vestibulum dignissim sit amet eget tellus. Etiam ultrices massa maximus lectus sodales, eget ornare enim malesuada. Morbi et tellus sodales, tempus est sit amet, accumsan erat. Quisque semper nec enim sed consequat. Ut nec velit id nibh elementum viverra.";
 };
@@ -45,10 +45,7 @@ class CinderProjectApp : public App
 void CinderProjectApp::setup()
 {
 	setWindowSize( 1024.f, 768.f );
-	mFont = std::make_shared<txt::Font>( getAssetPath( fontName ), fontSize );
-
-	//mLayout.setLeading( 10 );
-	//mLayout.setTracking( 5 );
+	mFont = std::make_shared<txt::Font>( getAssetPath( fontName ), mFontSize );
 	mLayout.setSize( textBoxSize );
 	mLayout.calculateLayout( *mFont, testText );
 
@@ -104,7 +101,7 @@ void CinderProjectApp::setup()
 
 void CinderProjectApp::keyDown( KeyEvent event )
 {
-	if( event.getCode() == KeyEvent::KEY_1 ) {
+	if( event.getChar() == KeyEvent::KEY_1 ) {
 		mLayout.setAlignment( txt::Layout::Alignment::LEFT );
 	}
 
@@ -132,6 +129,17 @@ void CinderProjectApp::keyDown( KeyEvent event )
 		mTracking++;
 	}
 
+	else if( event.getChar() == '+' ) {
+		mFontSize++;
+	}
+
+	else if( event.getChar() == '-' ) {
+		if( mFontSize > 1 ) {
+			mFontSize--;
+		}
+	}
+
+	mFont = std::make_shared<txt::Font>( getAssetPath( fontName ), mFontSize );
 	mLayout.setTracking( mTracking );
 	mLayout.setLeading( mLeading );
 	mLayout.calculateLayout( *mFont, testText );

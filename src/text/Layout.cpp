@@ -3,6 +3,7 @@
 #include "harfbuzz/hb.h"
 
 #include "cinder/app/App.h"
+#include <cinder/Unicode.h>
 
 #include "text/FontManager.h"
 #include "text/Parser.h"
@@ -21,7 +22,6 @@ namespace txt
 		FT_UInt newLineIndex = FontManager::get()->getGlyphIndex( font, '\u000A' );
 		return newLineIndex == codepoint;
 	}
-
 
 	Layout::Layout()
 		: mTracking( 0 )
@@ -61,12 +61,16 @@ namespace txt
 
 			Run curRun( font );
 			std::vector<Glyph> curWord;
-			mLineHeight = FontManager::get()->getSize( font )->metrics.height / 64.f;
+			float lineHeight = FontManager::get()->getSize( font )->metrics.height / 64.f;
+
+			if( lineHeight > mLineHeight ) {
+				mLineHeight = lineHeight;
+			}
 
 			for( int j = 0; j < shapedGlyphs.size(); j++ ) {
 				ci::vec2 pos = mPen + shapedGlyphs[j].offset;
 				ci::vec2 advance = shapedGlyphs[j].advance;
-				ci::Rectf glyphBBox( pos, pos + ci::vec2( advance.x, mLineHeight ) );
+				ci::Rectf glyphBBox( pos, pos + ci::vec2( advance.x, mPen.y ) );
 
 				Layout::Glyph glyph = { shapedGlyphs[j].index, glyphBBox };
 				curWord.push_back( glyph );
@@ -76,16 +80,18 @@ namespace txt
 				// Check for new line
 				if( mSize.x != GROW && mPen.x > mSize.x ) {
 
-					if( mSize.y != GROW ) {
-						//Clip in Y Direction
-					}
-
 					if( !curRun.glyphs.empty() ) {
 						addRunToCurLine( curRun );
 						curRun.glyphs.clear();
 					}
 
 					addCurLine();
+
+
+					if( mSize.y != GROW && mPen.y + mLineHeight > mSize.y ) {
+						//Clip in Y Direction
+						return;
+					}
 
 					j -= curWord.size();
 					curWord.clear();
@@ -115,6 +121,13 @@ namespace txt
 	}
 	void Layout::addCurLine( )
 	{
+		// Set the Y glyph position based on culmulative line-height
+		for( auto& run : mCurLine.runs ) {
+			for( auto& glyph : run.glyphs ) {
+				glyph.bbox.offset( ci::vec2( 0.f, mLineHeight ) );
+			}
+		}
+
 		// Align in frame (if necessary)
 		if( mSize.x != GROW ) {
 			switch( mAlignment ) {
