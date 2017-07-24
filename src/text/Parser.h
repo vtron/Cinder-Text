@@ -2,8 +2,12 @@
 
 #include <string>
 #include <stack>
+#include <iostream>
+
+#include "rapidxml\rapidxml.hpp"
 
 #include "cinder/Color.h"
+
 #include "text/Types.h"
 
 namespace txt
@@ -11,48 +15,64 @@ namespace txt
 	class Parser
 	{
 		public:
-			struct AttributeStack {
-				AttributeStack( std::string baseFamily, std::string baseStyle, int baseSize )
+			struct AttributeList {
+				AttributeList( std::string fontFamily, std::string fontStyle, int fontSize, ci::Color color = ci::Color::white() )
+					: fontFamily( fontFamily )
+					, fontStyle( fontStyle )
+					, fontSize( fontSize )
+					, color()
 				{
-					fontFamilyStack.push( baseFamily );
-					fontStyleStack.push( baseStyle );
-					fontSizeStack.push( baseSize );
 				}
 
-				std::stack<std::string> fontFamilyStack;
-				std::stack<std::string> fontStyleStack;
-				std::stack<int> fontSizeStack;
+				const std::string fontFamily;
+				const std::string fontStyle;
+				const int fontSize;
+
+				ci::Color color;
+
 			};
 
 			struct Substring {
-				Substring( std::string text, AttributeStack stack, bool forceBreak = false )
+				Substring( std::string text, AttributeList attributes, bool forceBreak = false )
 					:  text( text )
-					, fontFamily( stack.fontFamilyStack.top() )
-					, fontStyle( stack.fontStyleStack.top() )
-					, fontSize( stack.fontSizeStack.top() )
-					, color( ci::Color::white() )
+					, attributes( attributes )
 					, forceBreak( forceBreak )
 				{
 				}
 
 				const std::string text;
-
-				const std::string fontFamily;
-				const std::string fontStyle;
-				const int fontSize;
-				const ci::Color color;
+				const AttributeList attributes;
 				const bool forceBreak;
+
+				friend std::ostream& operator<< ( std::ostream& os, Substring const& t )
+				{
+					os << t.text;
+					return os;
+				}
+
 			};
 
 			Parser( const Font& baseFont, std::string text );
 
 			std::deque<Substring>& getSubstrings() { return mSubstrings; };
 
-		private:
-			void parseString( std::string text );
+		protected:
+			virtual void parse( std::string text );
 
 			AttributeStack mAttributeStack;
 
 			std::deque<Substring> mSubstrings;
+	};
+
+	class ParserAttr : public Parser
+	{
+		public:
+			ParserAttr( const Font& baseFont, std::string attrString );
+
+		private:
+			void parse( std::string text ) override;
+
+			void pushNodeAttributes( rapidxml::xml_node<>* node );
+
 	};
 }
