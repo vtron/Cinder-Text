@@ -9,6 +9,7 @@
 #include "text/Types.h"
 #include "text/Font.h"
 #include "text/FontManager.h"
+#include "text/Parser.h"
 
 namespace txt
 {
@@ -21,11 +22,13 @@ namespace txt
 			} Glyph;
 
 			struct Run {
-				Run( const Font& font )
+				Run( const Font& font, const ci::Color& color )
 					: font( font )
+					, color( color )
 				{};
 
 				const Font font;
+				const ci::Color color;
 
 				std::vector<Glyph> glyphs;
 			};
@@ -58,6 +61,7 @@ namespace txt
 			Line mCurLine;
 			float mLineWidth = 0;
 			float mLineHeight = 0;
+			float mAscender = 0;
 
 			ci::vec2 mSize;
 

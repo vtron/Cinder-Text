@@ -7,9 +7,9 @@ namespace txt
 	struct Font {
 		public:
 			Font( ci::fs::path path, int size );
-			Font( const Font& font ) : Font( font.path, font.size ) { }
+			Font( uint32_t faceId, int size );
+			Font( const Font& font ) : Font( font.faceId, font.size ) { }
 
-			const ci::fs::path path;
 			const uint32_t faceId;
 			const unsigned int size;
 

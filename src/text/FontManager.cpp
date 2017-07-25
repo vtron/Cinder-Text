@@ -28,13 +28,28 @@ namespace txt
 		initFreetype();
 	}
 
+	Font FontManager::getFont( std::string family, std::string style, int size )
+	{
+		FaceNameAndStyle fns( family, style );
+
+		if( mFaceIdsForFamilyAndStyle.count( fns.family ) == 0 ) {
+			CI_LOG_F( "Font family not registered: " + family );
+		}
+
+		else if( mFaceIdsForFamilyAndStyle[fns.family].count( fns.style ) == 0 ) {
+			CI_LOG_F( "Style not registered: " + style + " for Font Family: " + family );
+		}
+
+		return Font( ( uint32_t ) mFaceIdsForFamilyAndStyle[fns.family][fns.style], size );
+	}
+
 	std::string FontManager::getFontFamily( const Font& font )
 	{
 		FT_Face face = getFace( font );
 		return face->family_name;
 	}
 
-	std::string FontManager::getFontStyle( const  Font& font )
+	std::string FontManager::getFontStyle( const Font& font )
 	{
 		FT_Face face = getFace( font );
 		return face->style_name;
@@ -43,19 +58,24 @@ namespace txt
 	// --------------------------------------------------------
 	// Freetype Functions
 
-	FT_Face FontManager::getFace( const  Font& font )
+	FT_Face FontManager::getFace( const Font& font )
+	{
+		return getFace( font.faceId );
+	}
+
+	FT_Face FontManager::getFace( uint32_t faceId )
 	{
 		FT_Face face;
 		FT_Error error;
-		error = FTC_Manager_LookupFace( mFTCacheManager, ( FTC_FaceID )font.faceId, &face );
+		error = FTC_Manager_LookupFace( mFTCacheManager, ( FTC_FaceID )faceId, &face );
 
 		std::stringstream errorMessage;
-		errorMessage << "Could not lookup face " << font.faceId << ".";
+		errorMessage << "Could not lookup face " << faceId << ".";
 		checkForFTError( error, errorMessage.str() );
 		return face;
 	}
 
-	FT_Size FontManager::getSize( const  Font& font )
+	FT_Size FontManager::getSize( const Font& font )
 	{
 		FT_Size ftSize;
 		FT_Error error;
@@ -68,12 +88,12 @@ namespace txt
 		return ftSize;
 	}
 
-	FT_UInt FontManager::getGlyphIndex( const  Font& font, FT_UInt32 charCode, FT_Int mapIndex )
+	FT_UInt FontManager::getGlyphIndex( const Font& font, FT_UInt32 charCode, FT_Int mapIndex )
 	{
 		return FTC_CMapCache_Lookup( mFTCMapCache, ( FTC_FaceID )font.faceId, mapIndex, charCode );
 	}
 
-	std::vector<FT_UInt> FontManager::getGlyphIndices( const  Font& font, std::string string )
+	std::vector<FT_UInt> FontManager::getGlyphIndices( const Font& font, std::string string )
 	{
 		std::vector<FT_UInt> indices;
 
@@ -84,7 +104,7 @@ namespace txt
 		return indices;
 	}
 
-	FT_Glyph FontManager::getGlyph( const  Font& font, unsigned int glyphIndex )
+	FT_Glyph FontManager::getGlyph( const Font& font, unsigned int glyphIndex )
 	{
 		//FT_Glyph glyph;
 		FT_Glyph glyph;
@@ -98,7 +118,7 @@ namespace txt
 		return glyph;
 	}
 
-	FT_BitmapGlyph FontManager::getGlyphBitmap( const  Font& font, unsigned int glyphIndex )
+	FT_BitmapGlyph FontManager::getGlyphBitmap( const Font& font, unsigned int glyphIndex )
 	{
 		//FT_Glyph glyph;
 		FT_BitmapGlyph glyph;
@@ -112,7 +132,7 @@ namespace txt
 		return glyph;
 	}
 
-	ci::vec2 FontManager::getMaxGlyphSize( const  Font& font )
+	ci::vec2 FontManager::getMaxGlyphSize( const Font& font )
 	{
 		FT_Size size = getSize( font );
 		FT_BBox bbox = size->face->bbox;
@@ -189,29 +209,43 @@ namespace txt
 	uint32_t FontManager::getFaceId( ci::fs::path path )
 	{
 		if( mFaceIDsForName.count( path.string() ) == 0 ) {
-			createFaceId( path.string() );
+			loadFace( path.string() );
 		}
 
 		return ( uint32_t )mFaceIDsForName[path.string()];
 	}
 
-	void FontManager::createFaceId( std::string faceName )
+	void FontManager::loadFace( std::string faceName )
 	{
 		mNextFaceId++;
 
-		int faceId = mNextFaceId;
+		uint32_t faceId = mNextFaceId;
 		FTC_FaceID id = ( FTC_FaceID )faceId;
 
 		mFaceIDsForName[faceName] = id;
 		mFaceNamesForID[id] = faceName;
 
+		FaceNameAndStyle fns( getFace( ( uint32_t )id ) );
+		mFaceIdsForFamilyAndStyle[fns.family][fns.style] = id;
+
+		FT_Face face = getFace( faceId );
+		ci::app::console() << face->family_name << std::endl;
+		ci::app::console() << face->style_name << std::endl;
 	}
 
-	void FontManager::removeFaceId( FTC_FaceID id )
+	void FontManager::removeFace( FTC_FaceID id )
 	{
 		std::string name = mFaceNamesForID[id];
 		mFaceIDsForName.erase( name );
 		mFaceNamesForID.erase( id );
+
+		FaceNameAndStyle fns( getFace( ( uint32_t ) id ) );
+
+		mFaceIdsForFamilyAndStyle[fns.family].erase( fns.style );
+
+		if( mFaceIdsForFamilyAndStyle[fns.family].size() == 0 ) {
+			mFaceIdsForFamilyAndStyle.erase( fns.family );
+		}
 
 		FTC_Manager_RemoveFaceID( mFTCacheManager, id );
 	}

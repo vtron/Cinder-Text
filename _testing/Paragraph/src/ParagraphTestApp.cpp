@@ -35,17 +35,21 @@ class CinderProjectApp : public App
 		ci::vec2 textBoxPos = ci::vec2( 10.f, 125.f );
 		ci::vec2 textBoxSize = ci::vec2( 400.f, 400.f );
 
-
 		std::string fontName = "SourceSerifPro/SourceSerifPro-Regular.otf";
 		int mFontSize = 16;
 		//std::string testText = "hhhhhhhhhhhh \n\t";
-		std::string testText = "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit. Duis consequat ullamcorper lectus eget dapibus. Aenean vel hendrerit nibh. Sed at lectus commodo, ornare velit sed, elementum nisi. Vestibulum imperdiet justo eget enim posuere facilisis. Sed ac lacus ac nibh vestibulum dignissim sit amet eget tellus. Etiam ultrices massa maximus lectus sodales, eget ornare enim malesuada. Morbi et tellus sodales, tempus est sit amet, accumsan erat. Quisque semper nec enim sed consequat. Ut nec velit id nibh elementum viverra.";
+		//std::string testText = "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit. Duis consequat ullamcorper lectus eget dapibus. Aenean vel hendrerit nibh. Sed at lectus commodo, ornare velit sed, elementum nisi. Vestibulum imperdiet justo eget enim posuere facilisis. Sed ac lacus ac nibh vestibulum dignissim sit amet eget tellus. Etiam ultrices massa maximus lectus sodales, eget ornare enim malesuada. Morbi et tellus sodales, tempus est sit amet, accumsan erat. Quisque semper nec enim sed consequat. Ut nec velit id nibh elementum viverra.";
+		std::string testText = "<span font-family=\"Source Sans Pro\" font-style=\"Regular\" font-size=\"20\" color=\"#ff0000\">test1 <i>Hey!</i> <span color=\"#333\"> Dude!</span> test2</span>";
 };
 
 void CinderProjectApp::setup()
 {
 	setWindowSize( 1024.f, 768.f );
 	mFont = std::make_shared<txt::Font>( getAssetPath( fontName ), mFontSize );
+
+	txt::Font regular( getAssetPath( "SourceSansPro/SourceSansPro-Regular.otf" ), mFontSize );
+	txt::Font italic( getAssetPath( "SourceSansPro/SourceSansPro-It.otf" ), mFontSize );
+
 	mLayout.setSize( textBoxSize );
 	mLayout.calculateLayout( *mFont, testText );
 

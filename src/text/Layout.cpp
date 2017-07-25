@@ -6,7 +6,6 @@
 #include <cinder/Unicode.h>
 
 #include "text/FontManager.h"
-#include "text/Parser.h"
 #include "text/Shaper.h"
 
 namespace txt
@@ -37,6 +36,7 @@ namespace txt
 		mPen = ci::vec2( 0.f );
 		mCurLine = Line();
 		mLineHeight = 0.f;
+		mAscender = 0.f;
 		mLineWidth = 0.f;
 	}
 
@@ -44,11 +44,16 @@ namespace txt
 	{
 		reset();
 
-		Parser parser( font, text );
+		Parser parser;
+		parser.parseAttr( font, text );
 		std::deque<Parser::Substring> substrings = parser.getSubstrings();
 
 		for( int i = 0; i < substrings.size(); ++i ) {
-			Shaper shaper( font );
+			//const Font runFont = font;
+			const Font runFont = FontManager::get()->getFont( substrings[i].attributes.fontFamily, substrings[i].attributes.fontStyle, substrings[i].attributes.fontSize );
+			const ci::Color runColor = substrings[i].attributes.color;
+
+			Shaper shaper( runFont );
 
 			Shaper::Text shaperText = {
 				substrings[i].text,
@@ -59,13 +64,16 @@ namespace txt
 
 			std::vector<Shaper::Glyph> shapedGlyphs = shaper.getShapedText( shaperText );
 
-			Run curRun( font );
-			std::vector<Glyph> curWord;
-			float lineHeight = FontManager::get()->getSize( font )->metrics.height / 64.f;
+			Run curRun( runFont, runColor );
 
-			if( lineHeight > mLineHeight ) {
-				mLineHeight = lineHeight;
-			}
+			// Get the line height + ascender, increase to biggest per line
+			float lineHeight = FontManager::get()->getSize( runFont )->metrics.height / 64.f;
+			float ascender = FontManager::get()->getSize( runFont )->metrics.ascender / 64.f;
+
+			mLineHeight = std::max( lineHeight, mLineHeight );
+			mAscender = std::max( ascender, mAscender );
+
+			std::vector<Glyph> curWord;
 
 			for( int j = 0; j < shapedGlyphs.size(); j++ ) {
 				ci::vec2 pos = mPen + shapedGlyphs[j].offset;
@@ -79,21 +87,21 @@ namespace txt
 
 				// Check for new line
 				if( mSize.x != GROW && mPen.x > mSize.x ) {
-
 					if( !curRun.glyphs.empty() ) {
 						addRunToCurLine( curRun );
 						curRun.glyphs.clear();
 					}
 
 					addCurLine();
-
+					mLineHeight = lineHeight;
+					mAscender = ascender;
 
 					if( mSize.y != GROW && mPen.y + mLineHeight > mSize.y ) {
 						//Clip in Y Direction
 						return;
 					}
 
-					j -= curWord.size();
+					j -= ( int )curWord.size();
 					curWord.clear();
 				}
 				else if( isWhitespace( font, shapedGlyphs[j].index ) ) {
@@ -119,12 +127,13 @@ namespace txt
 		mCurLine.runs.push_back( run );
 		mLineWidth = run.glyphs.back().bbox.x2;
 	}
+
 	void Layout::addCurLine( )
 	{
 		// Set the Y glyph position based on culmulative line-height
 		for( auto& run : mCurLine.runs ) {
 			for( auto& glyph : run.glyphs ) {
-				glyph.bbox.offset( ci::vec2( 0.f, mLineHeight ) );
+				glyph.bbox.offset( ci::vec2( 0.f, mAscender ) );
 			}
 		}
 

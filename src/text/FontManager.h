@@ -17,13 +17,14 @@ namespace txt
 	class FontManager;
 	typedef std::shared_ptr<FontManager> FontManagerRef;
 
-
-
 	class FontManager
 	{
 			friend struct Font;
+
 		public:
 			static FontManagerRef get();
+
+			Font getFont( std::string family, std::string style, int size );
 
 			std::string getFontFamily( const Font& font );
 			std::string getFontStyle( const Font& font );
@@ -38,6 +39,7 @@ namespace txt
 			ci::vec2 getMaxGlyphSize( const Font& font );
 
 			FT_Face getFace( const Font& font );
+			FT_Face getFace( uint32_t faceId );
 			FT_Size getSize( const Font& font );
 			FTC_Scaler getScaler( const Font& font );
 
@@ -52,15 +54,32 @@ namespace txt
 			static void checkForFTError( FT_Error error, std::string description );
 			static const char* getFTErrorMessage( FT_Error error );
 
+			struct FaceNameAndStyle {
+				FaceNameAndStyle( FT_Face face )
+					: FaceNameAndStyle( face->family_name, face->style_name ) {}
+
+				FaceNameAndStyle( std::string family, std::string style )
+					: family( family )
+					, style( style )
+				{
+					std::transform( family.begin(), family.end(), family.begin(), ::tolower );
+					std::transform( style.begin(), style.end(), style.begin(), ::tolower );
+				}
+
+				std::string family;
+				std::string style;
+			};
+
 			uint32_t getFaceId( ci::fs::path path );
-			void createFaceId( std::string faceName );
-			void removeFaceId( FTC_FaceID id );
+			void loadFace( std::string faceName );
+			void removeFace( FTC_FaceID id );
 
 		private:
 			uint32_t mNextFaceId;
 
 			std::unordered_map<std::string, FTC_FaceID> mFaceIDsForName;
 			std::unordered_map<FTC_FaceID, std::string> mFaceNamesForID;
+			std::unordered_map<std::string, std::unordered_map<std::string, FTC_FaceID> > mFaceIdsForFamilyAndStyle;
 
 			// Freetype libs + caches
 			FT_Library mFTLibrary;

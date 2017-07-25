@@ -15,8 +15,6 @@ class AttributedStringApp : public App
 		void mouseDown( MouseEvent event ) override;
 		void update() override;
 		void draw() override;
-
-
 };
 
 void AttributedStringApp::setup()
@@ -29,7 +27,6 @@ void AttributedStringApp::setup()
 	for( auto& substring : parser.getSubstrings() ) {
 		ci::app::console() << substring << std::endl;
 	}
-
 }
 
 void AttributedStringApp::mouseDown( MouseEvent event )

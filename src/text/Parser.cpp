@@ -105,11 +105,11 @@ namespace txt
 
 		// Check for <b> or <i> tags
 		if( strcmp( node->name(), ATTR_BOLD ) == 0 ) {
-			mAttributesStack.top().fontStyle = "bold";
+			mAttributesStack.top().fontStyle = "Bold";
 		}
 
 		else if( strcmp( node->name(), ATTR_ITALIC ) == 0 ) {
-			mAttributesStack.top().fontStyle = "italic";
+			mAttributesStack.top().fontStyle = "Italic";
 		}
 
 		// Parse out attributes
