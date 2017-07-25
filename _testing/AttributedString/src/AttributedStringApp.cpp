@@ -23,7 +23,8 @@ void AttributedStringApp::setup()
 {
 	txt::Font regular = txt::Font( ci::app::getAssetPath( "SourceSerifPro/SourceSerifPro-Regular.otf" ), 10 );
 	txt::Font italic = txt::Font( ci::app::getAssetPath( "SourceSerifPro/SourceSerifPro-Italic.otf" ), 10 );
-	txt::ParserAttr parser( regular, "<span font-family=\"Source Serif Pro\" font-weight=\"Regular\" font-size=\"20\">test1 <i>Hey!</i> <span color=\"#333\"> Dude!</span> test2</span>" );
+	txt::Parser parser;
+	parser.parseAttr( regular, "<span font-family=\"Source Serif Pro\" font-weight=\"Regular\" font-size=\"20\" color=\"#ff0000\">test1 <i>Hey!</i> <span color=\"#333\"> Dude!</span> test2</span>" );
 
 	for( auto& substring : parser.getSubstrings() ) {
 		ci::app::console() << substring << std::endl;

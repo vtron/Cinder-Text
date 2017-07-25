@@ -11,6 +11,8 @@
 #include "text/Font.h"
 #include "text/FontManager.h"
 
+using namespace rapidxml;
+
 namespace txt
 {
 	// TODO: Make a list of these, saved here for now
@@ -30,70 +32,128 @@ namespace txt
 		return elems;
 	}
 
-	Parser::Parser( const Font& baseFont, std::string text )
-		: mAttributeStack(	FontManager::get()->getFontFamily( baseFont ),
-		                    FontManager::get()->getFontStyle( baseFont ),
-		                    baseFont.size )
-
+	void Parser::reset( const Font& baseFont )
 	{
-		parse( text );
+		// Clear previous parsing
+		mSubstrings.clear();
+		mAttributesStack = std::stack<AttributeList>();
+
+		// Push default attributes
+		mAttributesStack.push( AttributeList( FontManager::get()->getFontFamily( baseFont ), FontManager::get()->getFontStyle( baseFont ), baseFont.size ) );
 	}
 
-	void Parser::parse( std::string text )
+	void Parser::parse( const Font& baseFont, std::string text )
 	{
+		reset( baseFont );
+
 		// Find runs based on line breaks
 		std::string textToParse = text;
 
 		std::vector<std::string> lineBreakStrings = split( text, '\n' );
 
 		for( auto& str : lineBreakStrings ) {
-			Substring substring( str, mAttributeStack, str == lineBreakStrings.back() ? false : true );
+			Substring substring( str, mAttributesStack.top(), str == lineBreakStrings.back() ? false : true );
 			mSubstrings.push_back( std::move( substring ) );
 		}
 	}
 
-	// -----------------------------------------------------
-	// Attributed string parser
-	ParserAttr::ParserAttr( const Font& baseFont, std::string text )
-		: Parser( baseFont, text )
+	// Attributed string parsing
+	void Parser::parseAttr( const Font& baseFont, std::string text )
 	{
-		parse( text );
-	}
-
-	void ParserAttr::parse( std::string text )
-	{
-		using namespace rapidxml;
+		// Clear substrings
+		reset( baseFont );
 
 		std::string wrappedText = "<txt>" + text + "</txt>";
 		xml_document<> doc;
 		char* cstr = &wrappedText[0u];
 		doc.parse<0>( cstr );
-		ci::app::console() << "XML:" << std::endl;
-		ci::app::console() << doc << std::endl;
-		xml_node<>* node = doc.first_node( "txt" )->first_node( "span" );
+		xml_node<>* node = doc.first_node( "txt" );
 
-		for( xml_node<>* child = node->first_node(); child; child = child->next_sibling() ) {
-			// Check for italics
-			if( child->name() == "i" ) {
-				mAttributeStack.fontStyleStack.push( "Italic" );
-			}
-
-			// Check for bold
-			else if( child->name() == "b" ) {
-				mAttributeStack.fontStyleStack.push( "Regular" );
-			}
-
-			// Parse children
-			ci::app::console() << "Run: " << std::endl;
-			ci::app::console() << *child << std::endl;
-			ci::app::console() << std::endl;
-
-
-		}
+		parseNode( node );
 	}
 
-	void ParserAttr::pushNodeAttributes( rapidxml::xml_node<>* node )
+	void Parser::parseNode( rapidxml::xml_node<>* node )
 	{
+		pushNodeAttributes( node );
 
+		if( node->first_node() != 0 ) {
+			for( xml_node<>* child = node->first_node(); child; child = child->next_sibling() ) {
+				parseNode( child );
+			}
+		}
+
+		else {
+			if( node->value_size() != 0 ) {
+				mSubstrings.push_back( Substring( node->value(), mAttributesStack.top() ) );
+			}
+		}
+
+		mAttributesStack.pop();
+	}
+
+	static const char* ATTR_BOLD( "b" );
+	static const char* ATTR_ITALIC( "i" );
+	static const char* ATTR_FONT_FAMILY( "font-family" );
+	static const char* ATTR_FONT_STYLE( "font-style" );
+	static const char* ATTR_FONT_SIZE( "font-size" );
+	static const char* ATTR_COLOR( "color" );
+
+	void Parser::pushNodeAttributes( rapidxml::xml_node<>* node )
+	{
+		// Copy current attributes and push to stack
+		mAttributesStack.push( mAttributesStack.top() );
+
+		// Check for <b> or <i> tags
+		if( strcmp( node->name(), ATTR_BOLD ) == 0 ) {
+			mAttributesStack.top().fontStyle = "bold";
+		}
+
+		else if( strcmp( node->name(), ATTR_ITALIC ) == 0 ) {
+			mAttributesStack.top().fontStyle = "italic";
+		}
+
+		// Parse out attributes
+		for( xml_attribute<>* attr = node->first_attribute(); attr; attr = attr->next_attribute() ) {
+			// Font-family
+			if( strcmp( attr->name(), ATTR_FONT_FAMILY ) == 0 ) {
+				mAttributesStack.top().fontFamily = attr->value();
+			}
+
+			// Font-style
+			else if( strcmp( attr->name(), ATTR_FONT_STYLE ) == 0 ) {
+				mAttributesStack.top().fontStyle = attr->value();
+			}
+
+			// Font-size
+			else if( strcmp( attr->name(), ATTR_FONT_SIZE ) == 0 ) {
+				try {
+					int size = std::stoi( attr->value() );
+					mAttributesStack.top().fontSize = size;
+				}
+				catch( std::exception const& e ) {
+					//Log exception?
+				}
+			}
+
+			// Color
+			else if( strcmp( attr->name(), ATTR_COLOR ) == 0 ) {
+				std::string color = attr->value();
+				// Remove '#'
+				color.erase( 0, 1 );
+
+				// Check for three digit hex, double up (CSS feature, makes sense to support)
+				if( color.length() == 3 ) {
+					color += color;
+				}
+
+				// Create uint32_t hex value from string
+				std::stringstream ss;
+				ss << color << std::hex;
+
+				uint32_t hexValue;
+				ss >> hexValue;
+				mAttributesStack.top().color = ci::Color::hex( hexValue );
+			}
+		}
 	}
 }
