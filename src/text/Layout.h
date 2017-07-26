@@ -65,6 +65,7 @@ namespace txt
 
 			ci::vec2 mSize;
 
+			void addSubstringToCurLine( Parser::Substring& substring );
 			void addRunToCurLine( Run& run );
 			void addCurLine( );
 			std::vector<Line> mLines;

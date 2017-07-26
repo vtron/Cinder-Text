@@ -31,7 +31,6 @@ namespace txt
 				ci::Color color;
 
 
-
 				friend std::ostream& operator<< ( std::ostream& os, AttributeList const& attr )
 				{
 					os << "Font-Family: " << attr.fontFamily << std::endl;
@@ -51,9 +50,9 @@ namespace txt
 				{
 				}
 
-				const std::string text;
-				const AttributeList attributes;
-				const bool forceBreak;
+				std::string text;
+				AttributeList attributes;
+				bool forceBreak;
 
 				friend std::ostream& operator<< ( std::ostream& os, Substring const& s )
 				{
