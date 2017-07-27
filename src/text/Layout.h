@@ -6,7 +6,6 @@
 #include <cinder/Vector.h>
 #include <cinder/Rect.h>
 
-#include "text/Types.h"
 #include "text/Font.h"
 #include "text/FontManager.h"
 #include "text/Parser.h"
@@ -43,6 +42,7 @@ namespace txt
 			Layout();
 
 			void calculateLayout( const Font& font, std::string text );
+			void calculateLayout( std::string text );
 
 			std::vector<Line>& getLines() { return mLines; };
 
@@ -69,5 +69,7 @@ namespace txt
 			void addRunToCurLine( Run& run );
 			void addCurLine( );
 			std::vector<Line> mLines;
+
+			bool mMaxLinesReached = false;
 	};
 }

@@ -4,7 +4,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cinder", "..\..\..\..\..\proj\vc2015\cinder.vcxproj", "{92B5BE70-DCAA-40E4-92D8-CC2B95AA28BE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParagraphTest", "ParagraphTest.vcxproj", "{33325298-20AD-48DF-95BF-71B1FAE88216}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Paragraph", "Paragraph.vcxproj", "{33325298-20AD-48DF-95BF-71B1FAE88216}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

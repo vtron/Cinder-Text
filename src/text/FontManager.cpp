@@ -201,6 +201,7 @@ namespace txt
 		std::string fontName = FontManager::get()->mFaceNamesForID[face_id];
 
 		FT_Error error;
+
 		error = FT_New_Face( library,
 		                     fontName.c_str(),
 		                     0,

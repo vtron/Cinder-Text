@@ -15,6 +15,7 @@ namespace txt
 			RendererGl();
 
 			void drawString( const  Font& font, std::string string, ci::vec2 frame = ci::vec2( 0.f ) );
+			void drawAttrString( const Font& font, std::string string, ci::vec2 frame = ci::vec2( 0.f ) );
 			void drawLayout( Layout& layout );
 
 		private:

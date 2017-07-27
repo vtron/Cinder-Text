@@ -27,6 +27,7 @@ namespace txt
 		, mLeading( 0 )
 		, mAlignment( Alignment::LEFT )
 		, mSize( GROW )
+		, mMaxLinesReached( false )
 	{
 	}
 
@@ -38,6 +39,7 @@ namespace txt
 		mLineHeight = 0.f;
 		mAscender = 0.f;
 		mLineWidth = 0.f;
+		mMaxLinesReached = false;
 	}
 
 	void Layout::calculateLayout( const Font& font, std::string text )
@@ -52,10 +54,7 @@ namespace txt
 			Parser::Substring remainingSubstring = substrings[i];
 
 			while( remainingSubstring.text.size() ) {
-				// Check for height clipping
-				// TODO: This needs to handle vertical layouts (clip width)
-				if( mSize.y != GROW && mPen.y + mLineHeight > mSize.y ) {
-					//Clip in Y Direction
+				if( mMaxLinesReached ) {
 					return;
 				}
 
@@ -90,6 +89,13 @@ namespace txt
 		int prevAscender = mAscender;
 		mLineHeight = std::max( lineHeight, mLineHeight );
 		mAscender = std::max( ascender, mAscender );
+
+		// Check for height clipping
+		// TODO: This needs to handle vertical layouts (clip width)
+		if( mSize.y != GROW && mPen.y + mLineHeight > mSize.y ) {
+			mMaxLinesReached = true;
+			return;
+		}
 
 		// Create a run to store our glyphs
 		Run run( runFont, runColor );

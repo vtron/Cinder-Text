@@ -12,9 +12,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{33325298-20AD-48DF-95BF-71B1FAE88216}</ProjectGuid>
-    <RootNamespace>ParagraphTest</RootNamespace>
+    <RootNamespace>Paragraph</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <ProjectName>ParagraphTest</ProjectName>
+    <ProjectName>Paragraph</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -103,96 +103,24 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\text\AttributedString.cpp" />
     <ClCompile Include="..\..\..\src\text\Font.cpp" />
     <ClCompile Include="..\..\..\src\text\FontManager.cpp" />
     <ClCompile Include="..\..\..\src\text\Layout.cpp" />
     <ClCompile Include="..\..\..\src\text\Parser.cpp" />
     <ClCompile Include="..\..\..\src\text\Shaper.cpp" />
+    <ClCompile Include="..\..\..\src\text\SystemFonts.cpp" />
     <ClCompile Include="..\..\..\src\text\TextRendererGl.cpp" />
-    <ClCompile Include="..\src\ParagraphTestApp.cpp" />
+    <ClCompile Include="..\src\ParagraphApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\include\freetype2\freetype\config\ftconfig.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\config\ftheader.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\config\ftmodule.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\config\ftoption.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\config\ftstdlib.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\freetype.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftadvanc.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftautoh.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftbbox.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftbdf.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftbitmap.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftbzip2.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftcache.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftcffdrv.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftchapters.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftcid.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\fterrdef.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\fterrors.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftfntfmt.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftgasp.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftglyph.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftgxval.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftgzip.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftimage.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftincrem.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftlcdfil.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftlist.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftlzw.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftmac.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftmm.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftmodapi.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftmoderr.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftotval.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftoutln.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftpcfdrv.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftpfr.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftrender.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftsizes.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftsnames.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftstroke.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftsynth.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftsystem.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\fttrigon.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftttdrv.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\fttypes.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ftwinfnt.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\t1tables.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ttnameid.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\tttables.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\tttags.h" />
-    <ClInclude Include="..\..\..\include\freetype2\freetype\ttunpat.h" />
-    <ClInclude Include="..\..\..\include\freetype2\ft2build.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-blob.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-buffer.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-common.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-deprecated.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-face.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-font.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-ft.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-ot-font.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-ot-layout.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-ot-math.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-ot-shape.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-ot-tag.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-ot-var.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-ot.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-set.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-shape-plan.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-shape.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-unicode.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb-version.h" />
-    <ClInclude Include="..\..\..\include\harfbuzz\hb.h" />
     <ClInclude Include="..\..\..\src\text\Font.h" />
     <ClInclude Include="..\..\..\src\text\FontManager.h" />
     <ClInclude Include="..\..\..\src\text\Layout.h" />
     <ClInclude Include="..\..\..\src\text\Parser.h" />
     <ClInclude Include="..\..\..\src\text\Shaper.h" />
+    <ClInclude Include="..\..\..\src\text\SystemFonts.h" />
     <ClInclude Include="..\..\..\src\text\TextRendererGl.h" />
     <ClInclude Include="..\include\Resources.h" />
-    <ClInclude Include="AttributedString.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
