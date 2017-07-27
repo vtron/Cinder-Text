@@ -24,12 +24,17 @@ namespace txt
 		public:
 			static FontManagerRef get();
 
+			// Preload a face so that it can be referenced in rich text
+			void loadFace( ci::fs::path path );
+
+			// Get a font for a pre-loaded face or system font
 			Font getFont( std::string family, std::string style, int size );
 
+			// Get the font family or style for a previously loaded or system font
 			std::string getFontFamily( const Font& font );
 			std::string getFontStyle( const Font& font );
 
-			// Freetype
+			// Freetype functions, used by renderers and shapers
 			uint32_t getGlyphIndex( const Font& font, FT_UInt32 charCode, FT_Int mapIndex = 0 );
 			std::vector<uint32_t> getGlyphIndices( const Font& font, std::string string );
 
@@ -43,40 +48,27 @@ namespace txt
 			FT_Size getSize( const Font& font );
 			FTC_Scaler getScaler( const Font& font );
 
-
 		protected:
 			FontManager();
 
+			// Load freetype libs
 			void initFreetype();
 
+			// Callback function used by FTCache, loads fonts when not present and requested
 			static FT_Error faceRequestor( FTC_FaceID face_id, FT_Library library, FT_Pointer req_data, FT_Face* aface );
 
+			// FT Error message wrapper
 			static void checkForFTError( FT_Error error, std::string description );
 			static const char* getFTErrorMessage( FT_Error error );
 
-			struct FaceNameAndStyle {
-				FaceNameAndStyle( FT_Face face )
-					: FaceNameAndStyle( face->family_name, face->style_name ) {}
-
-				FaceNameAndStyle( std::string family, std::string style )
-					: family( family )
-					, style( style )
-				{
-					std::transform( family.begin(), family.end(), family.begin(), ::tolower );
-					std::transform( style.begin(), style.end(), style.begin(), ::tolower );
-				}
-
-				std::string family;
-				std::string style;
-			};
-
 			uint32_t getFaceId( ci::fs::path path );
-			void loadFace( std::string faceName );
+			void registerFace( std::string faceName );
 			void removeFace( FTC_FaceID id );
 
 		private:
 			uint32_t mNextFaceId;
 
+			// Lookup tables for FTC_FaceID caching
 			std::unordered_map<std::string, FTC_FaceID> mFaceIDsForName;
 			std::unordered_map<FTC_FaceID, std::string> mFaceNamesForID;
 			std::unordered_map<std::string, std::unordered_map<std::string, FTC_FaceID> > mFaceIdsForFamilyAndStyle;

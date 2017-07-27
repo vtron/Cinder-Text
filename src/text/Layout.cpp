@@ -86,6 +86,8 @@ namespace txt
 		float ascender = FontManager::get()->getSize( runFont )->metrics.ascender / 64.f;
 
 		// Increase our current line height + ascender if this run is taller
+		int prevLineHeight = mLineHeight;
+		int prevAscender = mAscender;
 		mLineHeight = std::max( lineHeight, mLineHeight );
 		mAscender = std::max( ascender, mAscender );
 
@@ -116,6 +118,10 @@ namespace txt
 				if( !run.glyphs.empty() ) {
 					addRunToCurLine( run );
 					run.glyphs.clear();
+				}
+				else {
+					mLineHeight = prevLineHeight;
+					mAscender = prevAscender;
 				}
 
 				addCurLine();
@@ -189,7 +195,7 @@ namespace txt
 		// Add it to our lines
 		mLines.push_back( mCurLine );
 
-		// Reset
+		// Setup next line
 		mCurLine = Line();
 
 		mPen.x = 0.f;

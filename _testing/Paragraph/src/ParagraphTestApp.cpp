@@ -32,14 +32,14 @@ class CinderProjectApp : public App
 		float mTracking = 0.f;
 		float mLeading = 0.f;
 
-		ci::vec2 textBoxPos = ci::vec2( 10.f, 125.f );
+		ci::vec2 textBoxPos = ci::vec2( 100.f, 100.f );
 		ci::vec2 textBoxSize = ci::vec2( 400.f, 400.f );
 
 		std::string fontName = "SourceSerifPro/SourceSerifPro-Regular.otf";
 		int mFontSize = 16;
 		//std::string testText = "hhhhhhhhhhhh \n\t";
 		//std::string testText = "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit. Duis consequat ullamcorper lectus eget dapibus. Aenean vel hendrerit nibh. Sed at lectus commodo, ornare velit sed, elementum nisi. Vestibulum imperdiet justo eget enim posuere facilisis. Sed ac lacus ac nibh vestibulum dignissim sit amet eget tellus. Etiam ultrices massa maximus lectus sodales, eget ornare enim malesuada. Morbi et tellus sodales, tempus est sit amet, accumsan erat. Quisque semper nec enim sed consequat. Ut nec velit id nibh elementum viverra.";
-		std::string testText = "<span font-family=\"Source Sans Pro\" font-style=\"Regular\" font-size=\"20\" color=\"#ff0000\">This is a test of mixing font attributes like <i>italics</i>, <span color=\"#0000FF\">color</span> and <b> Bold!</b> </span><span font-family=\"Source Serif Pro\">Here is some white serif text</span>";
+		std::string testText = "<span font-family=\"Source Sans Pro\" font-style=\"Regular\" font-size=\"20\" color=\"#ff0000\">This is a test of mixing font attributes like <i>italics</i>, <span color=\"#0000FF\">color</span> and <b> Bold!</b> </span><span font-family=\"Source Serif Pro\"> Here is some white serif text at <span font-size=\"30\">different</span><span font-size=\"10\"> sizes</span></span>";
 };
 
 void CinderProjectApp::setup()
@@ -47,9 +47,9 @@ void CinderProjectApp::setup()
 	setWindowSize( 1024.f, 768.f );
 	mFont = std::make_shared<txt::Font>( getAssetPath( fontName ), mFontSize );
 
-	txt::Font regular( getAssetPath( "SourceSansPro/SourceSansPro-Regular.otf" ), mFontSize );
-	txt::Font italic( getAssetPath( "SourceSansPro/SourceSansPro-It.otf" ), mFontSize );
-	txt::Font bold( getAssetPath( "SourceSansPro/SourceSansPro-Bold.otf" ), mFontSize );
+	txt::FontManager::get()->loadFace( getAssetPath( "SourceSansPro/SourceSansPro-Regular.otf" ) );
+	txt::FontManager::get()->loadFace( getAssetPath( "SourceSansPro/SourceSansPro-It.otf" ) );
+	txt::FontManager::get()->loadFace( getAssetPath( "SourceSansPro/SourceSansPro-Bold.otf" ) );
 
 	mLayout.setSize( textBoxSize );
 	mLayout.calculateLayout( *mFont, testText );
@@ -169,13 +169,14 @@ void CinderProjectApp::draw()
 	ci::gl::ScopedMatrices matrices;
 	ci::gl::translate( textBoxPos );
 
-	ci::gl::color( 1, 0, 0 );
+	ci::gl::color( 0.25, 0.25, 0.25 );
 	ci::gl::drawStrokedRect( ci::Rectf( ci::vec2( 0.f ), textBoxSize ) );
-	//mRendererGl.drawString( *mFont, "The quick brown fox jumps over the lazy dog. 1234567890" );
-
 
 	ci::gl::color( 1, 1, 1 );
 	mRendererGl.drawLayout( mLayout );
+
+	ci::gl::translate( 0.f, textBoxPos.y + textBoxSize.y + 20 );
+	mRendererGl.drawString( *mFont, "This is a test of drawing a string" );
 }
 
 CINDER_APP( CinderProjectApp, RendererGl )

@@ -7,6 +7,7 @@
 
 namespace txt
 {
+	// Create harfbuzz functions
 	namespace
 	{
 		const hb_tag_t KernTag = HB_TAG( 'k', 'e', 'r', 'n' ); // kerning operations

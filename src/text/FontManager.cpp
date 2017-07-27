@@ -10,6 +10,25 @@
 
 namespace txt
 {
+	// Convenience struct to transform font family + style to lowercase
+	// gives a better chance of matching
+	struct FaceNameAndStyle {
+		FaceNameAndStyle( FT_Face face )
+			: FaceNameAndStyle( face->family_name, face->style_name ) {}
+
+		FaceNameAndStyle( std::string family, std::string style )
+			: family( family )
+			, style( style )
+		{
+			std::transform( family.begin(), family.end(), family.begin(), ::tolower );
+			std::transform( style.begin(), style.end(), style.begin(), ::tolower );
+		}
+
+		std::string family;
+		std::string style;
+	};
+
+
 	// Font Manager
 	FontManagerRef FontManager::get()
 	{
@@ -53,6 +72,14 @@ namespace txt
 	{
 		FT_Face face = getFace( font );
 		return face->style_name;
+	}
+
+	void FontManager::loadFace( ci::fs::path path )
+	{
+		uint32_t id = getFaceId( path );
+
+		FaceNameAndStyle fns( getFace( id ) );
+		mFaceIdsForFamilyAndStyle[fns.family][fns.style] = ( FTC_FaceID )id;
 	}
 
 	// --------------------------------------------------------
@@ -209,13 +236,13 @@ namespace txt
 	uint32_t FontManager::getFaceId( ci::fs::path path )
 	{
 		if( mFaceIDsForName.count( path.string() ) == 0 ) {
-			loadFace( path.string() );
+			registerFace( path.string() );
 		}
 
 		return ( uint32_t )mFaceIDsForName[path.string()];
 	}
 
-	void FontManager::loadFace( std::string faceName )
+	void FontManager::registerFace( std::string faceName )
 	{
 		mNextFaceId++;
 
@@ -224,13 +251,6 @@ namespace txt
 
 		mFaceIDsForName[faceName] = id;
 		mFaceNamesForID[id] = faceName;
-
-		FaceNameAndStyle fns( getFace( ( uint32_t )id ) );
-		mFaceIdsForFamilyAndStyle[fns.family][fns.style] = id;
-
-		FT_Face face = getFace( faceId );
-		ci::app::console() << face->family_name << std::endl;
-		ci::app::console() << face->style_name << std::endl;
 	}
 
 	void FontManager::removeFace( FTC_FaceID id )
