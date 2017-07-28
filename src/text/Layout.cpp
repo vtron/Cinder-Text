@@ -67,7 +67,7 @@ namespace txt
 
 	void Layout::addSubstringToCurLine( Parser::Substring& substring )
 	{
-		const Font runFont = FontManager::get()->getFont( substring.attributes.fontFamily, substring.attributes.fontStyle, substring.attributes.fontSize );
+		const Font runFont( substring.attributes.fontFamily, substring.attributes.fontStyle, substring.attributes.fontSize );
 		const ci::Color runColor = substring.attributes.color;
 
 		Shaper shaper( runFont );

@@ -8,6 +8,7 @@ namespace txt
 		public:
 			Font( ci::fs::path path, int size );
 			Font( uint32_t faceId, int size );
+			Font( std::string family, std::string style, int size );
 			Font( const Font& font ) : Font( font.faceId, font.size ) { }
 
 			const uint32_t faceId;
@@ -23,8 +24,6 @@ namespace txt
 			{
 				return *this;
 			}
-
-
 
 			friend class FontManager;
 	};

@@ -8,27 +8,10 @@
 
 #include "harfbuzz/hb-ft.h"
 
+#include "text/SystemFonts.h"
+
 namespace txt
 {
-	// Convenience struct to transform font family + style to lowercase
-	// gives a better chance of matching
-	struct FaceNameAndStyle {
-		FaceNameAndStyle( FT_Face face )
-			: FaceNameAndStyle( face->family_name, face->style_name ) {}
-
-		FaceNameAndStyle( std::string family, std::string style )
-			: family( family )
-			, style( style )
-		{
-			std::transform( family.begin(), family.end(), family.begin(), ::tolower );
-			std::transform( style.begin(), style.end(), style.begin(), ::tolower );
-		}
-
-		std::string family;
-		std::string style;
-	};
-
-
 	// Font Manager
 	FontManagerRef FontManager::get()
 	{
@@ -47,39 +30,16 @@ namespace txt
 		initFreetype();
 	}
 
-	Font FontManager::getFont( std::string family, std::string style, int size )
-	{
-		FaceNameAndStyle fns( family, style );
-
-		if( mFaceIdsForFamilyAndStyle.count( fns.family ) == 0 ) {
-			CI_LOG_F( "Font family not registered: " + family );
-		}
-
-		else if( mFaceIdsForFamilyAndStyle[fns.family].count( fns.style ) == 0 ) {
-			CI_LOG_F( "Style not registered: " + style + " for Font Family: " + family );
-		}
-
-		return Font( ( uint32_t ) mFaceIdsForFamilyAndStyle[fns.family][fns.style], size );
-	}
-
 	std::string FontManager::getFontFamily( const Font& font )
 	{
-		FT_Face face = getFace( font );
-		return face->family_name;
+		FaceFamilyAndStyle familyStyle( getFace( font ) );
+		return familyStyle.family;
 	}
 
 	std::string FontManager::getFontStyle( const Font& font )
 	{
-		FT_Face face = getFace( font );
-		return face->style_name;
-	}
-
-	void FontManager::loadFace( ci::fs::path path )
-	{
-		uint32_t id = getFaceId( path );
-
-		FaceNameAndStyle fns( getFace( id ) );
-		mFaceIdsForFamilyAndStyle[fns.family][fns.style] = ( FTC_FaceID )id;
+		FaceFamilyAndStyle familyStyle( getFace( font ) );
+		return familyStyle.style;
 	}
 
 	// --------------------------------------------------------
@@ -91,6 +51,11 @@ namespace txt
 	}
 
 	FT_Face FontManager::getFace( uint32_t faceId )
+	{
+		return getFace( ( FTC_FaceID )faceId );
+	}
+
+	FT_Face FontManager::getFace( FTC_FaceID faceId )
 	{
 		FT_Face face;
 		FT_Error error;
@@ -195,22 +160,43 @@ namespace txt
 		return scaler;
 	}
 
+	// This function gets called by the cache when a new face_id is requested
 	FT_Error FontManager::faceRequestor( FTC_FaceID face_id, FT_Library library, FT_Pointer req_data, FT_Face* aface )
 	{
 		FontManagerRef fontManager = FontManager::get();
-		std::string fontName = FontManager::get()->mFaceNamesForID[face_id];
 
 		FT_Error error;
 
-		error = FT_New_Face( library,
-		                     fontName.c_str(),
-		                     0,
-		                     aface );
+		// Try to load the font from a file
+		if( fontManager->mFacePathsForFaceID.count( face_id ) != 0 ) {
+			ci::fs::path fontPath = fontManager->mFacePathsForFaceID[face_id];
 
-		std::stringstream errorMessage;
-		errorMessage << "Could not load face for font name: " << fontName;
-		FontManager::checkForFTError( error, errorMessage.str() );
-		return error;
+			error = FT_New_Face( library,
+			                     fontPath.string().c_str(),
+			                     0,
+			                     aface );
+
+			std::stringstream errorMessage;
+			errorMessage << "Could not load face for font file: " << fontPath;
+			FontManager::checkForFTError( error, errorMessage.str() );
+			return error;
+		}
+
+		// Otherwise try to load it as a system font
+		else {
+			FaceFamilyAndStyle familyStyle = fontManager->mFamilyAndStyleForFaceIDs[face_id];
+
+			ci::BufferRef buffer = SystemFonts::get()->getFontBuffer( familyStyle.family, familyStyle.style );
+
+			if( buffer != nullptr ) {
+				error = FT_New_Memory_Face( library, reinterpret_cast<FT_Byte*>( buffer->getData() ), static_cast<FT_Long>( buffer->getSize() ), 0, aface );
+
+				std::stringstream errorMessage;
+				errorMessage << "Could not load system font with family-name: " << familyStyle.family << " and style: " << familyStyle.style;
+				FontManager::checkForFTError( error, errorMessage.str() );
+				return error;
+			}
+		}
 	}
 
 	// Freetype Initialization
@@ -234,39 +220,71 @@ namespace txt
 		checkForFTError( error, "Could not initialize FTCImageCache" );
 	}
 
-	uint32_t FontManager::getFaceId( ci::fs::path path )
+	void FontManager::registerFamilyStyleForFaceID( const FaceFamilyAndStyle& familyStyle, FTC_FaceID id )
 	{
-		if( mFaceIDsForName.count( path.string() ) == 0 ) {
-			registerFace( path.string() );
-		}
-
-		return ( uint32_t )mFaceIDsForName[path.string()];
+		mFamilyAndStyleForFaceIDs[id] = familyStyle;
+		mFaceIDsForFamilyAndStyle[familyStyle] = id;
 	}
 
-	void FontManager::registerFace( std::string faceName )
+	uint32_t FontManager::getFaceId( const ci::fs::path& path )
+	{
+		if( mFaceIDsForPaths.count( path.string() ) == 0 ) {
+			loadFace( path );
+		}
+
+		return ( uint32_t )mFaceIDsForPaths[path.string()];
+	}
+
+	uint32_t FontManager::getFaceId( std::string family, std::string style )
+	{
+		FaceFamilyAndStyle familyStyle( family, style );
+
+		if( mFaceIDsForFamilyAndStyle.count( familyStyle ) == 0 ) {
+			loadFace( familyStyle );
+		}
+
+		return ( uint32_t )mFaceIDsForFamilyAndStyle[familyStyle];
+	}
+
+	void FontManager::loadFace( ci::fs::path path )
 	{
 		mNextFaceId++;
 
 		uint32_t faceId = mNextFaceId;
 		FTC_FaceID id = ( FTC_FaceID )faceId;
 
-		mFaceIDsForName[faceName] = id;
-		mFaceNamesForID[id] = faceName;
+		// Store the path <---> id relationship
+		mFaceIDsForPaths[path.string()] = id;
+		mFacePathsForFaceID[id] = path.string();
+
+		// Load the face and store they family + style info <---> faceId relationship
+		FaceFamilyAndStyle familyStyle( getFace( ( uint32_t )id ) );
+		registerFamilyStyleForFaceID( familyStyle, id );
+	}
+
+	void FontManager::loadFace( const FaceFamilyAndStyle& familyStyle )
+	{
+		mNextFaceId++;
+
+		FTC_FaceID faceId = ( FTC_FaceID )mNextFaceId;
+
+		registerFamilyStyleForFaceID( familyStyle, faceId );
+
+		getFace( ( uint32_t )faceId );
 	}
 
 	void FontManager::removeFace( FTC_FaceID id )
 	{
-		std::string name = mFaceNamesForID[id];
-		mFaceIDsForName.erase( name );
-		mFaceNamesForID.erase( id );
-
-		FaceNameAndStyle fns( getFace( ( uint32_t ) id ) );
-
-		mFaceIdsForFamilyAndStyle[fns.family].erase( fns.style );
-
-		if( mFaceIdsForFamilyAndStyle[fns.family].size() == 0 ) {
-			mFaceIdsForFamilyAndStyle.erase( fns.family );
+		if( mFacePathsForFaceID.count( id ) != 0 ) {
+			ci::fs::path path = mFacePathsForFaceID[id];
+			mFaceIDsForPaths.erase( path.string() );
+			mFacePathsForFaceID.erase( id );
 		}
+
+		FaceFamilyAndStyle familyStyle( getFace( ( uint32_t ) id ) );
+
+		mFamilyAndStyleForFaceIDs.erase( id );
+		mFaceIDsForFamilyAndStyle.erase( familyStyle );
 
 		FTC_Manager_RemoveFaceID( mFTCacheManager, id );
 	}

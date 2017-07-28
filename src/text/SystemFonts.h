@@ -3,6 +3,8 @@
 #include <memory>
 #include <map>
 
+#include "cinder/Buffer.h"
+
 #include "text/Font.h"
 
 namespace txt
@@ -18,15 +20,12 @@ namespace txt
 				return ref;
 			};
 
-			void getFont( std::string family, std::string style );
-
+			ci::BufferRef getFontBuffer( std::string family, std::string style );
 
 		private:
 			SystemFonts();
 
 			void loadFaces();
 			std::map < std::string, std::vector < std::string>> mFaces;
-
-
 	};
 }

@@ -16,4 +16,11 @@ namespace txt
 	{
 
 	}
+
+	Font::Font( std::string family, std::string style, int size )
+		: size( size )
+		, faceId( FontManager::get()->getFaceId( family, style ) )
+	{
+
+	}
 }

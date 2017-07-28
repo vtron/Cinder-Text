@@ -40,8 +40,7 @@ namespace txt
 			ci::app::console() << std::endl;
 		}
 
-		getFont( "Arialz", "Bold" );
-
+		getFontBuffer( "Arial", "Bold" );
 	}
 
 #if defined( CINDER_MSW_DESKTOP )
@@ -71,7 +70,10 @@ namespace txt
 		HFontRequest* request = reinterpret_cast<HFontRequest*>( lParam );
 
 		std::string familyName = ci::toUtf8( ( char16_t* )lpelfe->elfLogFont.lfFaceName );
+		std::transform( familyName.begin(), familyName.end(), familyName.begin(), ::tolower );
+
 		std::string style = ci::toUtf8( ( char16_t* )lpelfe->elfStyle );
+		std::transform( style .begin(), style.end(), style.begin(), ::tolower );
 
 		if( familyName == request->family && style == request->style ) {
 			request->logfont = lpelfe->elfLogFont;
@@ -96,7 +98,7 @@ namespace txt
 		::EnumFontFamiliesEx( mFontDC, &lf, ( FONTENUMPROC )EnumFacesExProc, reinterpret_cast<LPARAM>( &mFaces ), 0 );
 	}
 
-	void SystemFonts::getFont( std::string family, std::string style )
+	ci::BufferRef SystemFonts::getFontBuffer( std::string family, std::string style )
 	{
 		::LOGFONT lf;
 		lf.lfCharSet = ANSI_CHARSET;
@@ -113,12 +115,31 @@ namespace txt
 		HFONT hFont;
 
 		if( mHFontRequest.fontFound ) {
-			hFont = ::CreateFontIndirect( &mHFontRequest.logfont );
-			::SelectObject( mFontDC, hFont );
+			hFont = ::CreateFontIndirectW( &mHFontRequest.logfont );
+			//hfont = ::CreateFont( 1, 0, 0, 0, FW_DONTCARE, false, false, false,
+			//                      DEFAULT_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS,
+			//                      ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+			//                      ( wchar_t* )faceName.c_str() );
 
-			void* buffer;
-			::GetFontData( mFontDC, 0, 0, buffer, 0 );
+			if( hFont ) {
+				::SelectObject( mFontDC, hFont );
 
+
+
+				DWORD fontSize = ::GetFontData( mFontDC, 0, 0, NULL, 0 );
+
+				void* fontBuffer = new BYTE[fontSize];
+				DWORD length = ::GetFontData( mFontDC, 0, 0, fontBuffer, fontSize );
+
+
+				return ci::Buffer::create( fontBuffer, ( unsigned int )length );
+			}
+			else {
+				return nullptr;
+			}
+		}
+		else {
+			return nullptr;
 		}
 	}
 
