@@ -248,29 +248,33 @@ namespace txt
 
 	void FontManager::loadFace( ci::fs::path path )
 	{
-		mNextFaceId++;
+		if( !mFaceIDsForPaths.count( path.string() ) ) {
+			mNextFaceId++;
 
-		uint32_t faceId = mNextFaceId;
-		FTC_FaceID id = ( FTC_FaceID )faceId;
+			uint32_t faceId = mNextFaceId;
+			FTC_FaceID id = ( FTC_FaceID )faceId;
 
-		// Store the path <---> id relationship
-		mFaceIDsForPaths[path.string()] = id;
-		mFacePathsForFaceID[id] = path.string();
+			// Store the path <---> id relationship
+			mFaceIDsForPaths[path.string()] = id;
+			mFacePathsForFaceID[id] = path.string();
 
-		// Load the face and store they family + style info <---> faceId relationship
-		FaceFamilyAndStyle familyStyle( getFace( ( uint32_t )id ) );
-		registerFamilyStyleForFaceID( familyStyle, id );
+			// Load the face and store they family + style info <---> faceId relationship
+			FaceFamilyAndStyle familyStyle( getFace( ( uint32_t )id ) );
+			registerFamilyStyleForFaceID( familyStyle, id );
+		}
 	}
 
 	void FontManager::loadFace( const FaceFamilyAndStyle& familyStyle )
 	{
-		mNextFaceId++;
+		if( !mFaceIDsForFamilyAndStyle.count( familyStyle ) ) {
+			mNextFaceId++;
 
-		FTC_FaceID faceId = ( FTC_FaceID )mNextFaceId;
+			FTC_FaceID faceId = ( FTC_FaceID )mNextFaceId;
 
-		registerFamilyStyleForFaceID( familyStyle, faceId );
+			registerFamilyStyleForFaceID( familyStyle, faceId );
 
-		getFace( ( uint32_t )faceId );
+			getFace( ( uint32_t )faceId );
+		}
 	}
 
 	void FontManager::removeFace( FTC_FaceID id )

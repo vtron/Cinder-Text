@@ -43,7 +43,7 @@ void CinderProjectApp::setup()
 
 	// Create base font
 	mFont = std::make_shared<txt::Font>( getAssetPath( "SourceSansPro/SourceSansPro-Regular.otf" ), 12 );
-	mFont = std::make_shared<txt::Font>( "Arial", "Bold", 15 );
+	mFont = std::make_shared<txt::Font>( "Arial", "Italic", 15 );
 
 	// Layout text
 	mLayout.setSize( mTextBox.getSize() );

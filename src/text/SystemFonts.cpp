@@ -39,8 +39,6 @@ namespace txt
 
 			ci::app::console() << std::endl;
 		}
-
-		getFontBuffer( "Arial", "Bold" );
 	}
 
 #if defined( CINDER_MSW_DESKTOP )
@@ -92,8 +90,8 @@ namespace txt
 		lf.lfCharSet = ANSI_CHARSET;
 		lf.lfFaceName[0] = '\0';
 
-		std::u16string faceName = ci::toUtf16( "Arial" );
-		::StringCchCopy( lf.lfFaceName, LF_FACESIZE, ( LPCTSTR )faceName.c_str() );
+		//std::u16string faceName = ci::toUtf16( "Arial" );
+		//::StringCchCopy( lf.lfFaceName, LF_FACESIZE, ( LPCTSTR )faceName.c_str() );
 
 		::EnumFontFamiliesEx( mFontDC, &lf, ( FONTENUMPROC )EnumFacesExProc, reinterpret_cast<LPARAM>( &mFaces ), 0 );
 	}
@@ -116,15 +114,9 @@ namespace txt
 
 		if( mHFontRequest.fontFound ) {
 			hFont = ::CreateFontIndirectW( &mHFontRequest.logfont );
-			//hfont = ::CreateFont( 1, 0, 0, 0, FW_DONTCARE, false, false, false,
-			//                      DEFAULT_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS,
-			//                      ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-			//                      ( wchar_t* )faceName.c_str() );
 
 			if( hFont ) {
 				::SelectObject( mFontDC, hFont );
-
-
 
 				DWORD fontSize = ::GetFontData( mFontDC, 0, 0, NULL, 0 );
 

@@ -10,6 +10,8 @@
 #include "cinder/Filesystem.h"
 #include "cinder/Vector.h"
 
+#include "cinder/app/App.h"
+
 #include "text/Font.h"
 
 namespace txt
@@ -35,7 +37,6 @@ namespace txt
 			std::transform( this->style.begin(), this->style.end(), this->style.begin(), ::tolower );
 		}
 
-
 		FaceFamilyAndStyle( const FaceFamilyAndStyle& familyStyle ) : FaceFamilyAndStyle( familyStyle.family, familyStyle.style ) { }
 
 		std::string family;
@@ -43,8 +44,10 @@ namespace txt
 
 		bool operator==( const FaceFamilyAndStyle& other ) const
 		{
-			return ( family == other.family
-			         && style == other.style );
+			ci::app::console() << "Family: " << this->family << " Other Family: " << other.family << std::endl;
+			ci::app::console() << "Style: " << this->style << " Other Style: " << other.style << std::endl;
+			bool match = ( this->family == other.family && this->style == other.style );
+			return match;
 		}
 
 		FaceFamilyAndStyle& FaceFamilyAndStyle::operator=( const Font& other )

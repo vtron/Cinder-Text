@@ -18,7 +18,7 @@ class RichTextApp : public App
 		void update() override;
 		void draw() override;
 
-		std::string mAttrString = "<span font-family=\"Source Serif Pro\" font-style=\"Regular\" font-size=\"20\" color=\"#ff0000\"><span font-size=\"50\">Ligatures like \"fi tf\"</span> This is a test of mixing font attributes like <i>italics</i>, <span color=\"#0000FF\">color</span> and <b> Bold!</b> </span><span font-family=\"Source Serif Pro\"> Here is some white serif text at <span font-size=\"30\">different</span><span font-size=\"10\"> sizes</span></span>";
+		std::string mAttrString = "<span font-family=\"HelveticaRounded LT Std Blk\" font-style=\"Black\">This is system text</span><span font-family=\"Source Serif Pro\" font-style=\"Regular\" font-size=\"20\" color=\"#ff0000\"><span font-size=\"50\">Ligatures like \"fi tf\"</span> This is a test of mixing font attributes like <i>italics</i>, <span color=\"#0000FF\">color</span> and <b>Bold!</b> </span><span font-family=\"Source Serif Pro\"> Here is some white serif text at <span font-size=\"30\">different</span><span font-size=\"10\"> sizes</span></span>";
 		txt::Layout mLayout;
 
 		ci::Rectf mTextBox;
@@ -40,6 +40,7 @@ void RichTextApp::setup()
 
 	// Load font faces to use with rich text
 	txt::FontManager::get()->loadFace( getAssetPath( "SourceSerifPro/SourceSerifPro-Regular.otf" ) );
+
 	txt::FontManager::get()->loadFace( getAssetPath( "SourceSansPro/SourceSansPro-Regular.otf" ) );
 	txt::FontManager::get()->loadFace( getAssetPath( "SourceSansPro/SourceSansPro-It.otf" ) );
 	txt::FontManager::get()->loadFace( getAssetPath( "SourceSansPro/SourceSansPro-Bold.otf" ) );

@@ -107,6 +107,7 @@
     <ClCompile Include="..\..\..\src\text\Layout.cpp" />
     <ClCompile Include="..\..\..\src\text\Parser.cpp" />
     <ClCompile Include="..\..\..\src\text\Shaper.cpp" />
+    <ClCompile Include="..\..\..\src\text\SystemFonts.cpp" />
     <ClCompile Include="..\..\..\src\text\TextRendererGl.cpp" />
     <ClCompile Include="..\src\RichTextApp.cpp" />
   </ItemGroup>
@@ -116,6 +117,7 @@
     <ClInclude Include="..\..\..\src\text\Layout.h" />
     <ClInclude Include="..\..\..\src\text\Parser.h" />
     <ClInclude Include="..\..\..\src\text\Shaper.h" />
+    <ClInclude Include="..\..\..\src\text\SystemFonts.h" />
     <ClInclude Include="..\..\..\src\text\TextRendererGl.h" />
     <ClInclude Include="..\include\Resources.h" />
   </ItemGroup>

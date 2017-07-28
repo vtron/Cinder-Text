@@ -48,6 +48,9 @@
     <ClCompile Include="..\..\..\src\text\TextRendererGl.cpp">
       <Filter>Blocks\Cinder-Typography</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\text\SystemFonts.cpp">
+      <Filter>Blocks\Cinder-Typography</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -69,6 +72,9 @@
       <Filter>Blocks\Cinder-Typography</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\text\TextRendererGl.h">
+      <Filter>Blocks\Cinder-Typography</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\text\SystemFonts.h">
       <Filter>Blocks\Cinder-Typography</Filter>
     </ClInclude>
   </ItemGroup>
