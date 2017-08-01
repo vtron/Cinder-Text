@@ -6,9 +6,9 @@
 #include <cinder/Vector.h>
 #include <cinder/Rect.h>
 
-#include "text/Font.h"
-#include "text/FontManager.h"
-#include "text/Parser.h"
+#include "txt/Font.h"
+#include "txt/FontManager.h"
+#include "txt/Parser.h"
 
 namespace txt
 {

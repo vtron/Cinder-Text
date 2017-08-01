@@ -5,7 +5,8 @@
 
 #include "harfbuzz/hb.h"
 #include "cinder/Vector.h"
-#include "text/Font.h"
+
+#include "txt/Font.h"
 
 namespace txt
 {

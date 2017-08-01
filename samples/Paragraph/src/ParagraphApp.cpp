@@ -2,11 +2,9 @@
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 
-#include "text/FontManager.h"
-#include "text/TextRendererGl.h"
-#include "text/Layout.h"
-
-#include "text/SystemFonts.h"
+#include "txt/FontManager.h"
+#include "txt/TextRendererGl.h"
+#include "txt/Layout.h"
 
 
 using namespace ci;
@@ -38,8 +36,6 @@ class CinderProjectApp : public App
 void CinderProjectApp::setup()
 {
 	setWindowSize( 1024.f, 768.f );
-
-	txt::SystemFonts::get();
 
 	// Create base font
 	mFont = std::make_shared<txt::Font>( getAssetPath( "SourceSansPro/SourceSansPro-Regular.otf" ), 12 );

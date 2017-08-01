@@ -5,7 +5,7 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/gl/Batch.h"
 
-#include "text/Layout.h"
+#include "txt/Layout.h"
 
 namespace txt
 {

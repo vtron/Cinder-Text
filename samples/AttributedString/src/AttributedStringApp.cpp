@@ -2,6 +2,10 @@
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 
+#include "txt/Layout.h"
+#include "txt/TextRendererGl.h"
+#include "txt/AttributedString.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -17,7 +21,8 @@ class AttributedStringApp : public App
 
 void AttributedStringApp::setup()
 {
-
+	txt::AttributedString attr;
+	attr << txt::AttributeColor( ci::Color( 1.0, 0.0, 0.f ) );
 }
 
 void AttributedStringApp::mouseDown( MouseEvent event )

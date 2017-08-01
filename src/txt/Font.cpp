@@ -1,5 +1,5 @@
-#include "text/Font.h"
-#include "text/FontManager.h"
+#include "txt/Font.h"
+#include "txt/FontManager.h"
 
 namespace txt
 {

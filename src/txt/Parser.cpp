@@ -1,4 +1,4 @@
-#include "text/Parser.h"
+#include "txt/Parser.h"
 
 #include <string>
 #include <sstream>
@@ -8,8 +8,8 @@
 
 #include "cinder/app/App.h"
 
-#include "text/Font.h"
-#include "text/FontManager.h"
+#include "txt/Font.h"
+#include "txt/FontManager.h"
 
 using namespace rapidxml;
 

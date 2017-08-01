@@ -1,10 +1,10 @@
-#include "text/TextRendererGl.h"
+#include "txt/TextRendererGl.h"
 
 #include "cinder/gl/gl.h"
 #include "cinder/gl/scoped.h"
 #include "cinder/GeomIo.h"
 
-#include "text/FontManager.h"
+#include "txt/FontManager.h"
 
 namespace txt
 {

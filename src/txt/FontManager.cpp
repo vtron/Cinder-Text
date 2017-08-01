@@ -1,4 +1,4 @@
-#include "text/FontManager.h"
+#include "txt/FontManager.h"
 
 #include <ShellScalingAPI.h>
 
@@ -8,7 +8,7 @@
 
 #include "harfbuzz/hb-ft.h"
 
-#include "text/SystemFonts.h"
+#include "txt/SystemFonts.h"
 
 namespace txt
 {

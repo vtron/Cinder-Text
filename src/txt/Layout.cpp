@@ -1,12 +1,12 @@
-#include "text/Layout.h"
+#include "txt/Layout.h"
 
 #include "harfbuzz/hb.h"
 
 #include "cinder/app/App.h"
 #include <cinder/Unicode.h>
 
-#include "text/FontManager.h"
-#include "text/Shaper.h"
+#include "txt/FontManager.h"
+#include "txt/Shaper.h"
 
 namespace txt
 {
