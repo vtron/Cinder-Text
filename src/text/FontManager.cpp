@@ -279,17 +279,21 @@ namespace txt
 
 	void FontManager::removeFace( FTC_FaceID id )
 	{
+		// Remove family/style cached id
+		if( mFamilyAndStyleForFaceIDs.count( id ) != 0 ) {
+			FaceFamilyAndStyle familyStyle = mFamilyAndStyleForFaceIDs[id];
+			mFaceIDsForFamilyAndStyle.erase( familyStyle );
+			mFamilyAndStyleForFaceIDs.erase( id );
+		}
+
+		// Remove path cached id
 		if( mFacePathsForFaceID.count( id ) != 0 ) {
 			ci::fs::path path = mFacePathsForFaceID[id];
 			mFaceIDsForPaths.erase( path.string() );
 			mFacePathsForFaceID.erase( id );
 		}
 
-		FaceFamilyAndStyle familyStyle( getFace( ( uint32_t ) id ) );
-
-		mFamilyAndStyleForFaceIDs.erase( id );
-		mFaceIDsForFamilyAndStyle.erase( familyStyle );
-
+		// Empty face from cache
 		FTC_Manager_RemoveFaceID( mFTCacheManager, id );
 	}
 

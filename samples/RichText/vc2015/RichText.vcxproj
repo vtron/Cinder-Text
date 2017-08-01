@@ -110,6 +110,7 @@
     <ClCompile Include="..\..\..\src\text\SystemFonts.cpp" />
     <ClCompile Include="..\..\..\src\text\TextRendererGl.cpp" />
     <ClCompile Include="..\src\RichTextApp.cpp" />
+    <ClCompile Include="AttributedString.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\text\Font.h" />
@@ -120,6 +121,7 @@
     <ClInclude Include="..\..\..\src\text\SystemFonts.h" />
     <ClInclude Include="..\..\..\src\text\TextRendererGl.h" />
     <ClInclude Include="..\include\Resources.h" />
+    <ClInclude Include="AttributedString.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

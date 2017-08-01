@@ -32,7 +32,7 @@ class CinderProjectApp : public App
 
 		std::string fontName = "SourceSerifPro/SourceSerifPro-Regular.otf";
 		int mFontSize = 16;
-		std::string testText = "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit. Duis consequat ullamcorper lectus eget dapibus. Aenean vel hendrerit nibh. Sed at lectus commodo, ornare velit sed, elementum nisi. Vestibulum imperdiet justo eget enim posuere facilisis. Sed ac lacus ac nibh vestibulum dignissim sit amet eget tellus. Etiam ultrices massa maximus lectus sodales, eget ornare enim malesuada. Morbi et tellus sodales, tempus est sit amet, accumsan erat. Quisque semper nec enim sed consequat. Ut nec velit id nibh elementum viverra.";
+		std::string testText = "Lorem ipsum dolor sit amet,\n\n\nconsectetur adipiscing elit. Duis consequat ullamcorper lectus eget dapibus. Aenean vel hendrerit nibh. Sed at lectus commodo, ornare velit sed, elementum nisi. Vestibulum imperdiet justo eget enim posuere facilisis. Sed ac lacus ac nibh vestibulum dignissim sit amet eget tellus. Etiam ultrices massa maximus lectus sodales, eget ornare enim malesuada. Morbi et tellus sodales, tempus est sit amet, accumsan erat. Quisque semper nec enim sed consequat. Ut nec velit id nibh elementum viverra.";
 };
 
 void CinderProjectApp::setup()

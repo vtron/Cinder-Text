@@ -51,6 +51,9 @@
     <ClCompile Include="..\..\..\src\text\SystemFonts.cpp">
       <Filter>Blocks\Cinder-Typography</Filter>
     </ClCompile>
+    <ClCompile Include="AttributedString.cpp">
+      <Filter>Blocks\Cinder-Typography</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -75,6 +78,9 @@
       <Filter>Blocks\Cinder-Typography</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\text\SystemFonts.h">
+      <Filter>Blocks\Cinder-Typography</Filter>
+    </ClInclude>
+    <ClInclude Include="AttributedString.h">
       <Filter>Blocks\Cinder-Typography</Filter>
     </ClInclude>
   </ItemGroup>

@@ -72,8 +72,18 @@ namespace txt
 		parseNode( node );
 	}
 
+	static const char* ATTR_BOLD( "b" );
+	static const char* ATTR_ITALIC( "i" );
+	static const char* ATTR_LINE_BREAK( "br" );
+	static const char* ATTR_FONT_FAMILY( "font-family" );
+	static const char* ATTR_FONT_STYLE( "font-style" );
+	static const char* ATTR_FONT_SIZE( "font-size" );
+	static const char* ATTR_COLOR( "color" );
+
+
 	void Parser::parseNode( rapidxml::xml_node<>* node )
 	{
+		bool lineBreak = strcmp( node->name(), ATTR_LINE_BREAK ) == 0;
 		pushNodeAttributes( node );
 
 		if( node->first_node() != 0 ) {
@@ -90,13 +100,6 @@ namespace txt
 
 		mAttributesStack.pop();
 	}
-
-	static const char* ATTR_BOLD( "b" );
-	static const char* ATTR_ITALIC( "i" );
-	static const char* ATTR_FONT_FAMILY( "font-family" );
-	static const char* ATTR_FONT_STYLE( "font-style" );
-	static const char* ATTR_FONT_SIZE( "font-size" );
-	static const char* ATTR_COLOR( "color" );
 
 	void Parser::pushNodeAttributes( rapidxml::xml_node<>* node )
 	{

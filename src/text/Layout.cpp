@@ -47,13 +47,13 @@ namespace txt
 		reset();
 
 		Parser parser;
-		parser.parseAttr( font, text );
+		parser.parse( font, text );
 		std::deque<Parser::Substring> substrings = parser.getSubstrings();
 
 		for( int i = 0; i < substrings.size(); i++ ) {
 			Parser::Substring remainingSubstring = substrings[i];
 
-			while( remainingSubstring.text.size() ) {
+			while( remainingSubstring.text.size() || remainingSubstring.forceBreak ) {
 				if( mMaxLinesReached ) {
 					return;
 				}
@@ -69,16 +69,6 @@ namespace txt
 	{
 		const Font runFont( substring.attributes.fontFamily, substring.attributes.fontStyle, substring.attributes.fontSize );
 		const ci::Color runColor = substring.attributes.color;
-
-		Shaper shaper( runFont );
-		Shaper::Text shaperText = {
-			substring.text,
-			"en",
-			HB_SCRIPT_LATIN,
-			HB_DIRECTION_LTR
-		};
-
-		std::vector<Shaper::Glyph> shapedGlyphs = shaper.getShapedText( shaperText );
 
 		// Get the line height + ascender for this run
 		float lineHeight = FontManager::get()->getSize( runFont )->metrics.height / 64.f;
@@ -97,8 +87,26 @@ namespace txt
 			return;
 		}
 
+		// Check for pure line break
+		if( substring.forceBreak && substring.text == "" ) {
+			addCurLine();
+			substring.forceBreak = false;
+			return;
+		}
+
 		// Create a run to store our glyphs
 		Run run( runFont, runColor );
+
+		// Shape the substring
+		Shaper shaper( runFont );
+		Shaper::Text shaperText = {
+			substring.text,
+			"en",
+			HB_SCRIPT_LATIN,
+			HB_DIRECTION_LTR
+		};
+
+		std::vector<Shaper::Glyph> shapedGlyphs = shaper.getShapedText( shaperText );
 
 		// Track current word for line breaks (need to remove and switch to unicode breaking)
 		std::vector<Glyph> curWord;
@@ -153,12 +161,13 @@ namespace txt
 		run.glyphs.insert( run.glyphs.end(), curWord.begin(), curWord.end() );
 		addRunToCurLine( run );
 
-		substring.text.clear();
-
 		// If the substring requests a line break push to next line
 		if( substring.forceBreak ) {
 			addCurLine();
+			substring.forceBreak = false;
 		}
+
+		substring.text.clear();
 	}
 
 	void Layout::addRunToCurLine( Run& run )
