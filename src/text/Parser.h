@@ -62,7 +62,6 @@ namespace txt
 					os << s.attributes << std::endl;
 					return os;
 				}
-
 			};
 
 			Parser() {};

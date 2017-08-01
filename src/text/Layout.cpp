@@ -47,7 +47,7 @@ namespace txt
 		reset();
 
 		Parser parser;
-		parser.parse( font, text );
+		parser.parseAttr( font, text );
 		std::deque<Parser::Substring> substrings = parser.getSubstrings();
 
 		for( int i = 0; i < substrings.size(); i++ ) {

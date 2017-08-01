@@ -96,6 +96,9 @@ namespace txt
 			if( node->value_size() != 0 ) {
 				mSubstrings.push_back( Substring( node->value(), mAttributesStack.top() ) );
 			}
+			else if( strcmp( node->name(), ATTR_LINE_BREAK ) == 0 ) {
+				mSubstrings.push_back( Substring( "", mAttributesStack.top(), true ) );
+			}
 		}
 
 		mAttributesStack.pop();
