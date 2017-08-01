@@ -12,11 +12,16 @@ namespace txt
 	{
 	}
 
-	void RendererGl::drawString( const  Font& font, std::string string, ci::vec2 frame )
+	void RendererGl::drawString( std::string string, ci::vec2 frame )
+	{
+		drawString( string, DefaultFont(), frame );
+	}
+
+	void RendererGl::drawString( std::string string, const  Font& font, ci::vec2 frame )
 	{
 		Layout layout;
 		layout.setSize( frame );
-		layout.calculateLayout( font, string );
+		layout.calculateLayout( string, font );
 		drawLayout( layout );
 	}
 

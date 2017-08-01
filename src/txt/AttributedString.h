@@ -1,12 +1,18 @@
 #pragma once
 
-#include <iostream>
 #include <string>
+#include <stack>
+#include <iostream>
+
+#include "rapidxml\rapidxml.hpp"
 
 #include "cinder/Color.h"
 
+#include "txt/Font.h"
+
 namespace txt
 {
+	// Attributed String
 	enum AttributeType {
 		LINE_BREAK,
 		FONT_FAMILY,
@@ -22,12 +28,12 @@ namespace txt
 	};
 
 	struct AttributeLineBreak : public Attribute {
-		AttributeLineBreak() : Attribute( LINE_BREAK ) {};
+		AttributeLineBreak() : Attribute( AttributeType::LINE_BREAK ) {};
 	};
 
 	struct AttributeFontFamily : public Attribute {
 		AttributeFontFamily( std::string family )
-			: Attribute( FONT_FAMILY )
+			: Attribute( AttributeType::FONT_FAMILY )
 			, family( family ) {};
 
 		const std::string family;
@@ -35,7 +41,7 @@ namespace txt
 
 	struct AttributeFontStyle : public Attribute {
 		AttributeFontStyle( std::string fontStyle )
-			: Attribute( FONT_STYLE )
+			: Attribute( AttributeType::FONT_STYLE )
 			, style( fontStyle ) {};
 
 		const std::string style;
@@ -43,43 +49,119 @@ namespace txt
 
 	struct AttributeFontSize : public Attribute {
 		AttributeFontSize( int size )
-			: Attribute( FONT_SIZE ),
+			: Attribute( AttributeType::FONT_SIZE ),
 			  size( size ) { };
 
 		const int size;
 	};
 
 	struct AttributeColor : public Attribute {
-		AttributeColor( ci::Color color ) : Attribute( COLOR ),
+		AttributeColor( ci::Color color ) : Attribute( AttributeType::COLOR ),
 			color( color ) {};
 
-		AttributeColor( ci::ColorA color ) : Attribute( COLOR ),
+		AttributeColor( ci::ColorA color ) : Attribute( AttributeType::COLOR ),
 			color( color ) {};
 
 		const ci::ColorA color;
 	};
 
-	struct AttributeRichText : public Attribute {
-		AttributeRichText( std::string richText )
-			: Attribute( RICH_TEXT )
+	struct RichText : public Attribute {
+		RichText( std::string richText )
+			: Attribute( AttributeType::RICH_TEXT )
 			, richText( richText ) {};
 
 		std::string richText;
 	};
 
+	struct AttributeList {
+		AttributeList( std::string fontFamily, std::string fontStyle, int fontSize, ci::Color color = ci::Color::white() )
+			: fontFamily( fontFamily )
+			, fontStyle( fontStyle )
+			, fontSize( fontSize )
+			, color( color )
+		{
+		}
 
+		std::string fontFamily;
+		std::string fontStyle;
+		int fontSize;
 
-	class AttributedString
-	{
-		public:
-			AttributedString() {};
+		ci::Color color;
 
-		private:
+		friend std::ostream& operator<< ( std::ostream& os, AttributeList const& attr )
+		{
+			os << "Font-Family: " << attr.fontFamily << std::endl;
+			os << "Font-Style: " << attr.fontStyle << std::endl;
+			os << "Font-Size: " << attr.fontSize << std::endl;
+			os << "Color: " << attr.color << std::endl;
+			return os;
+		}
 
 	};
 
-	AttributedString& operator<<( AttributedString& attrStr, const Attribute& attr )
+	// Attributed String
+	class AttributedString
 	{
-		return attrStr;
-	}
+		public:
+			struct Substring {
+				Substring( std::string text, const AttributeList& attributes, bool forceBreak = false )
+					: text( text )
+					, attributes( attributes )
+					, forceBreak( forceBreak )
+				{
+				}
+
+				std::string text;
+				AttributeList attributes;
+				bool forceBreak;
+
+				friend std::ostream& operator<< ( std::ostream& os, Substring const& s )
+				{
+					os << "Substring: " << std::endl;
+					os << "Text: " << s.text << std::endl;
+					os << "Attributes: " << std::endl;
+					os << s.attributes << std::endl;
+					return os;
+				}
+			};
+
+			AttributedString( std::string string, const Font& baseFont = DefaultFont() );
+			AttributedString( const RichText& richText );
+
+			void addAttribute( const Attribute& attribute );
+
+			const std::vector<Substring>& getSubstrings() const { return mSubstrings; };
+			void clear();
+
+		private:
+			std::stack<AttributeList> mAttributesStack;
+			std::vector<Substring> mSubstrings;
+
+			friend AttributedString& operator<<( AttributedString& attrStr, const Attribute& attr )
+			{
+				attrStr.addAttribute( attr );
+				return attrStr;
+			}
+
+			friend AttributedString& operator<<( AttributedString& attrStr, const std::string& text )
+			{
+				return attrStr;
+			}
+	};
+
+
+	// Rich Text Parsing
+	class RichTextParser
+	{
+		public:
+			RichTextParser( std::string richText, const Font& baseFont = DefaultFont() );
+
+		protected:
+			// Attributed Parsing
+			void parseNode( rapidxml::xml_node<>* node );
+			void pushNodeAttributes( rapidxml::xml_node<>* node );
+
+			std::stack<AttributeList> mAttributesStack;
+			std::vector<AttributedString::Substring> mSubstrings;
+	};
 }

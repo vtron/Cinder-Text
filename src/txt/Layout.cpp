@@ -42,16 +42,19 @@ namespace txt
 		mMaxLinesReached = false;
 	}
 
-	void Layout::calculateLayout( const Font& font, std::string text )
+	void Layout::calculateLayout( std::string text, const Font& font )
+	{
+		calculateLayout( AttributedString( text, font ) );
+	}
+
+	void Layout::calculateLayout( const AttributedString& attrString )
 	{
 		reset();
 
-		Parser parser;
-		parser.parseAttr( font, text );
-		std::deque<Parser::Substring> substrings = parser.getSubstrings();
+		const std::vector<AttributedString::Substring> substrings = attrString.getSubstrings();
 
 		for( int i = 0; i < substrings.size(); i++ ) {
-			Parser::Substring remainingSubstring = substrings[i];
+			AttributedString::Substring remainingSubstring = substrings[i];
 
 			while( remainingSubstring.text.size() || remainingSubstring.forceBreak ) {
 				if( mMaxLinesReached ) {
@@ -65,7 +68,7 @@ namespace txt
 		addCurLine();
 	}
 
-	void Layout::addSubstringToCurLine( Parser::Substring& substring )
+	void Layout::addSubstringToCurLine( AttributedString::Substring& substring )
 	{
 		const Font runFont( substring.attributes.fontFamily, substring.attributes.fontStyle, substring.attributes.fontSize );
 		const ci::Color runColor = substring.attributes.color;

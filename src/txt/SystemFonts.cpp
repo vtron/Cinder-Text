@@ -27,6 +27,10 @@ namespace txt
 	{
 		mFontDC = ::CreateCompatibleDC( NULL );
 
+		mDefaultFamily = "Arial";
+		mDefaultStyle = "Regular";
+		mDefaultSize = 12;
+
 		loadFaces();
 
 		for( auto& family : mFaces ) {

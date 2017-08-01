@@ -102,22 +102,20 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\txt\AttributedString.cpp" />
     <ClCompile Include="..\..\..\src\txt\Font.cpp" />
     <ClCompile Include="..\..\..\src\txt\FontManager.cpp" />
     <ClCompile Include="..\..\..\src\txt\Layout.cpp" />
-    <ClCompile Include="..\..\..\src\txt\Parser.cpp" />
+    <ClCompile Include="..\..\..\src\txt\AttributedString.cpp" />
     <ClCompile Include="..\..\..\src\txt\Shaper.cpp" />
     <ClCompile Include="..\..\..\src\txt\SystemFonts.cpp" />
     <ClCompile Include="..\..\..\src\txt\TextRendererGl.cpp" />
     <ClCompile Include="..\src\AttributedStringApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\txt\AttributedString.h" />
     <ClInclude Include="..\..\..\src\txt\Font.h" />
     <ClInclude Include="..\..\..\src\txt\FontManager.h" />
     <ClInclude Include="..\..\..\src\txt\Layout.h" />
-    <ClInclude Include="..\..\..\src\txt\Parser.h" />
+    <ClInclude Include="..\..\..\src\txt\AttributedString.h" />
     <ClInclude Include="..\..\..\src\txt\Shaper.h" />
     <ClInclude Include="..\..\..\src\txt\SystemFonts.h" />
     <ClInclude Include="..\..\..\src\txt\TextRendererGl.h" />

@@ -22,10 +22,18 @@ namespace txt
 
 			ci::BufferRef getFontBuffer( std::string family, std::string style );
 
+			std::string getDefaultFamily() { return mDefaultFamily; };
+			std::string getDefaultStyle() { return mDefaultStyle; };
+			int getDefaultSize() { return mDefaultSize; };
+
 		private:
 			SystemFonts();
 
 			void loadFaces();
 			std::map < std::string, std::vector < std::string>> mFaces;
+
+			std::string mDefaultFamily;
+			std::string mDefaultStyle;
+			int mDefaultSize;
 	};
 }

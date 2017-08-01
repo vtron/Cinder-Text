@@ -8,7 +8,7 @@
 
 #include "txt/Font.h"
 #include "txt/FontManager.h"
-#include "txt/Parser.h"
+#include "txt/AttributedString.h"
 
 namespace txt
 {
@@ -41,8 +41,8 @@ namespace txt
 
 			Layout();
 
-			void calculateLayout( const Font& font, std::string text );
-			void calculateLayout( std::string text );
+			void calculateLayout( std::string text, const Font& font = DefaultFont() );
+			void calculateLayout( const AttributedString& attrString );
 
 			std::vector<Line>& getLines() { return mLines; };
 
@@ -65,7 +65,7 @@ namespace txt
 
 			ci::vec2 mSize;
 
-			void addSubstringToCurLine( Parser::Substring& substring );
+			void addSubstringToCurLine( AttributedString::Substring& substring );
 			void addRunToCurLine( Run& run );
 			void addCurLine( );
 			std::vector<Line> mLines;

@@ -30,9 +30,6 @@
     <ClInclude Include="..\include\Resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClCompile Include="..\..\..\src\txt\AttributedString.cpp">
-      <Filter>Blocks\Cinder-Txt</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\txt\Font.cpp">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClCompile>
@@ -40,9 +37,6 @@
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\txt\Layout.cpp">
-      <Filter>Blocks\Cinder-Txt</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\txt\Parser.cpp">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\txt\Shaper.cpp">
@@ -54,13 +48,13 @@
     <ClCompile Include="..\..\..\src\txt\TextRendererGl.cpp">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\txt\AttributedString.cpp">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\txt\AttributedString.h">
-      <Filter>Blocks\Cinder-Txt</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\txt\Font.h">
       <Filter>Blocks\Cinder-Txt</Filter>
@@ -71,9 +65,6 @@
     <ClInclude Include="..\..\..\src\txt\Layout.h">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\txt\Parser.h">
-      <Filter>Blocks\Cinder-Txt</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\txt\Shaper.h">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClInclude>
@@ -81,6 +72,9 @@
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\txt\TextRendererGl.h">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\AttributedString.h">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClInclude>
   </ItemGroup>

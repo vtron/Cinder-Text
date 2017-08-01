@@ -27,6 +27,11 @@ namespace txt
 
 			friend class FontManager;
 	};
+
+	struct DefaultFont : public Font {
+		public:
+			DefaultFont();
+	};
 }
 
 // Hash Function
