@@ -80,7 +80,6 @@ namespace txt
 	static const char* ATTR_FONT_SIZE( "font-size" );
 	static const char* ATTR_COLOR( "color" );
 
-
 	void Parser::parseNode( rapidxml::xml_node<>* node )
 	{
 		bool lineBreak = strcmp( node->name(), ATTR_LINE_BREAK ) == 0;
