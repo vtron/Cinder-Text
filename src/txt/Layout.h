@@ -44,7 +44,7 @@ namespace txt
 			void calculateLayout( std::string text, const Font& font = DefaultFont() );
 			void calculateLayout( const AttributedString& attrString );
 
-			std::vector<Line>& getLines() { return mLines; };
+			const std::vector<Line>& getLines() const { return mLines; };
 
 			void setSize( ci::vec2 size ) { mSize = size; }
 			void setLeading( float leading ) { mLeading = leading; };

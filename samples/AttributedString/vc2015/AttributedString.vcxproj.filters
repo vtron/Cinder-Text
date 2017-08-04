@@ -51,6 +51,9 @@
     <ClCompile Include="..\..\..\src\txt\AttributedString.cpp">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\txt\TextBox.cpp">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -75,6 +78,12 @@
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\txt\AttributedString.h">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\TextBox.h">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\Renderer.h">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClInclude>
   </ItemGroup>

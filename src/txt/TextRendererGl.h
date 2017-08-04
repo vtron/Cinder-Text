@@ -6,17 +6,19 @@
 #include "cinder/gl/Batch.h"
 
 #include "txt/Layout.h"
+#include "txt/Renderer.h"
 
 namespace txt
 {
 	class RendererGl
+		: public txt::Renderer
 	{
 		public:
 			RendererGl();
 
-			void drawString( std::string string, ci::vec2 frame = ci::vec2( 0.f ) );
-			void drawString( std::string string, const  Font& font, ci::vec2 frame = ci::vec2( 0.f ) );
-			void drawLayout( Layout& layout );
+			virtual void draw( const std::string& text, const ci::vec2& size = ci::vec2( 0 ) );
+			virtual void draw( const std::string& text, const Font& font, const ci::vec2 size = ci::vec2( 0 ) );
+			virtual void draw( const Layout& layout );
 
 		private:
 			void drawGlyph( const Font& font, unsigned int glyphIndex );

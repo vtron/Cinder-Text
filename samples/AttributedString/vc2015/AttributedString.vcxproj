@@ -108,6 +108,7 @@
     <ClCompile Include="..\..\..\src\txt\AttributedString.cpp" />
     <ClCompile Include="..\..\..\src\txt\Shaper.cpp" />
     <ClCompile Include="..\..\..\src\txt\SystemFonts.cpp" />
+    <ClCompile Include="..\..\..\src\txt\TextBox.cpp" />
     <ClCompile Include="..\..\..\src\txt\TextRendererGl.cpp" />
     <ClCompile Include="..\src\AttributedStringApp.cpp" />
   </ItemGroup>
@@ -116,8 +117,10 @@
     <ClInclude Include="..\..\..\src\txt\FontManager.h" />
     <ClInclude Include="..\..\..\src\txt\Layout.h" />
     <ClInclude Include="..\..\..\src\txt\AttributedString.h" />
+    <ClInclude Include="..\..\..\src\txt\Renderer.h" />
     <ClInclude Include="..\..\..\src\txt\Shaper.h" />
     <ClInclude Include="..\..\..\src\txt\SystemFonts.h" />
+    <ClInclude Include="..\..\..\src\txt\TextBox.h" />
     <ClInclude Include="..\..\..\src\txt\TextRendererGl.h" />
     <ClInclude Include="..\include\Resources.h" />
   </ItemGroup>
