@@ -146,6 +146,13 @@ namespace txt
 		return attrStr;
 	}
 
+
+	inline AttributedString& operator << ( AttributedString& attrStr, const Font& font )
+	{
+		attrStr << AttributeFontFamily( font.family ) << AttributeFontSize( font.size ) << AttributeFontStyle( font.style );
+		return attrStr;
+	}
+
 	inline AttributedString& operator << ( AttributedString& attrStr, const std::string& text )
 	{
 		attrStr.addText( text );

@@ -1,20 +1,22 @@
 #pragma once
 
 #include "cinder/Filesystem.h"
+#include "cinder/DataSource.h"
 
 namespace txt
 {
 	struct Font {
 		public:
-			Font( ci::fs::path path, int size );
+			Font( ci::DataSourceRef dataSource, int size );
 			Font( uint32_t faceId, int size );
+			Font( std::string family, int size );
 			Font( std::string family, std::string style, int size );
 			Font( const Font& font ) : Font( font.faceId, font.size ) { }
 
 			const uint32_t faceId;
 			const unsigned int size;
-			const std::string family;
-			const std::string style;
+			std::string family;
+			std::string style;
 
 			bool operator==( const Font& other ) const
 			{

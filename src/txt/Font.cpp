@@ -5,10 +5,11 @@
 namespace txt
 {
 	// Font
-	Font::Font( ci::fs::path path, int size )
+	Font::Font( ci::DataSourceRef source, int size )
 		: size( size )
-		, faceId( FontManager::get()->getFaceId( path ) )
+		, faceId( FontManager::get()->getFaceId( source->getFilePath().string() ) )
 	{
+		family = FontManager::get()->getFontFamily()
 	}
 
 	Font::Font( uint32_t faceId, int size )
@@ -17,6 +18,11 @@ namespace txt
 	{
 	}
 
+	Font::Font( std::string family, int size )
+		: Font( family, "Regular", size )
+	{
+
+	}
 	Font::Font( std::string family, std::string style, int size )
 		: size( size )
 		, faceId( FontManager::get()->getFaceId( family, style ) )

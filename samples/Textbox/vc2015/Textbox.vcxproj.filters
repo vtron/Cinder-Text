@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Blocks">
+      <UniqueIdentifier>{120f80e1-1977-48f6-9dc4-9508501f8a22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Cinder-Txt">
+      <UniqueIdentifier>{2337a3f4-4bfc-42f6-8074-2308c5212b97}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\TextboxApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TextboxApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClInclude Include="..\include\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\..\src\txt\AttributedString.cpp">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\txt\Font.cpp">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\txt\FontManager.cpp">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\txt\Layout.cpp">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\txt\Shaper.cpp">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\txt\SystemFonts.cpp">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\txt\TextBox.cpp">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\txt\TextRendererGl.cpp">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\AttributedString.h">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\Font.h">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\FontManager.h">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\Layout.h">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\Renderer.h">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\Shaper.h">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\SystemFonts.h">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\TextBox.h">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\TextRendererGl.h">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
