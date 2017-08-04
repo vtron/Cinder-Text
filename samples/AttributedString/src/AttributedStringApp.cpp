@@ -23,13 +23,17 @@ class AttributedStringApp : public App
 
 		ci::Rectf mTextBox = ci::Rectf( 100.f, 100.f, 500.f, 500.f );
 
-		std::string testText = "This is a test of a basic string to be drawn in a textbox.";
+		std::string testText = "This is a test of a basic string to be drawn in a textbox, testing 12345. This is a test of a basic string to be drawn in a textbox. This is a test of a basic string to be drawn in a textbox. This is a test of a basic string to be drawn in a textbox.";
 };
 
 void AttributedStringApp::setup()
 {
+	txt::AttributedString attrStr;
+	attrStr << "Hello" << txt::AttributeColor( ci::ColorA( 1.0f, 0.f, 1.f ) ) << txt::AttributeFontFamily( "Helvetica" );
+	attrStr << " Dude" << txt::AttributeColor( ci::ColorA( 1.f, 1.f, 1.f ) ) << txt::AttributeFontSize( 50.f ) << txt::AttributeFontStyle( "Bold" );
+
 	mLayout.setSize( mTextBox.getSize() );
-	mLayout.calculateLayout( testText );
+	mLayout.calculateLayout( attrStr );
 }
 
 void AttributedStringApp::mouseDown( MouseEvent event )

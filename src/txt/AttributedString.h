@@ -86,7 +86,7 @@ namespace txt
 		std::string fontStyle;
 		int fontSize;
 
-		ci::Color color;
+		ci::ColorA color;
 
 		friend std::ostream& operator<< ( std::ostream& os, AttributeList const& attr )
 		{
@@ -125,36 +125,39 @@ namespace txt
 				}
 			};
 
+			AttributedString();
 			AttributedString( std::string string, const Font& baseFont = DefaultFont() );
 			AttributedString( const RichText& richText );
 
 			void addAttribute( const Attribute& attribute );
+			void addText( std::string text );
+			void addRichText( const RichText& richText );
 
 			const std::vector<Substring>& getSubstrings() const { return mSubstrings; };
 			void clear();
 
 		private:
-			std::stack<AttributeList> mAttributesStack;
 			std::vector<Substring> mSubstrings;
-
-			friend AttributedString& operator<<( AttributedString& attrStr, const Attribute& attr )
-			{
-				attrStr.addAttribute( attr );
-				return attrStr;
-			}
-
-			friend AttributedString& operator<<( AttributedString& attrStr, const std::string& text )
-			{
-				return attrStr;
-			}
 	};
 
+	inline AttributedString& operator << ( AttributedString& attrStr, const Attribute& attr )
+	{
+		attrStr.addAttribute( attr );
+		return attrStr;
+	}
+
+	inline AttributedString& operator << ( AttributedString& attrStr, const std::string& text )
+	{
+		attrStr.addText( text );
+		return attrStr;
+	}
 
 	// Rich Text Parsing
 	class RichTextParser
 	{
 		public:
 			RichTextParser( std::string richText, const Font& baseFont = DefaultFont() );
+			const std::vector<AttributedString::Substring>& getSubstrings() const { return mSubstrings; };
 
 		protected:
 			// Attributed Parsing

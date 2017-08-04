@@ -43,7 +43,7 @@ void CinderProjectApp::setup()
 
 	// Layout text
 	mLayout.setSize( mTextBox.getSize() );
-	mLayout.calculateLayout( *mFont, testText );
+	mLayout.calculateLayout( testText, *mFont );
 
 }
 
@@ -90,7 +90,7 @@ void CinderProjectApp::keyDown( KeyEvent event )
 	mFont = std::make_shared<txt::Font>( getAssetPath( fontName ), mFontSize );
 	mLayout.setTracking( mTracking );
 	mLayout.setLeading( mLeading );
-	mLayout.calculateLayout( *mFont, testText );
+	mLayout.calculateLayout( testText, *mFont );
 }
 
 void CinderProjectApp::update()

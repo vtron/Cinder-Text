@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <memory>
 
 #include "rapidxml\rapidxml_print.hpp"
 
@@ -29,35 +30,104 @@ namespace txt
 		return elems;
 	}
 
+	AttributedString::AttributedString()
+		: AttributedString( "", DefaultFont() )
+	{
+	}
+
 	AttributedString::AttributedString( std::string text, const Font& baseFont )
 	{
-		// Clear previous parsing
-		mSubstrings.clear();
-		mAttributesStack = std::stack<AttributeList>();
-
-		// Push default attributes
-		mAttributesStack.push( AttributeList( FontManager::get()->getFontFamily( baseFont ), FontManager::get()->getFontStyle( baseFont ), baseFont.size ) );
-
 		// Find runs based on line breaks
 		std::string textToParse = text;
 
-		std::vector<std::string> lineBreakStrings = split( text, '\n' );
+		AttributeList attributes( FontManager::get()->getFontFamily( baseFont ), FontManager::get()->getFontStyle( baseFont ), baseFont.size ) ;
 
-		for( auto& str : lineBreakStrings ) {
-			Substring substring( str, mAttributesStack.top(), str == lineBreakStrings.back() ? false : true );
-			mSubstrings.push_back( std::move( substring ) );
+		if( text.length() != 0 ) {
+			std::vector<std::string> lineBreakStrings = split( text, '\n' );
+
+			for( auto& str : lineBreakStrings ) {
+				Substring substring( str, attributes, str == lineBreakStrings.back() ? false : true );
+				mSubstrings.push_back( std::move( substring ) );
+			}
 		}
+		else {
+			mSubstrings.push_back( Substring( "", attributes ) );
+		}
+	}
+
+	AttributedString::AttributedString( const RichText& richText )
+	{
+		RichTextParser parser( richText.richText );
+		mSubstrings = parser.getSubstrings();
 	}
 
 	// TODO: Make a list of these, saved here for now
 	char lineBreak = '\u000A';
 
-
-
 	void AttributedString::clear()
 	{
+		mSubstrings.clear();
 	}
 
+	void AttributedString::addText( std::string text )
+	{
+		// Copy current substring and start a new one
+		mSubstrings.push_back( mSubstrings.back() );
+		mSubstrings.back().text = text;
+	}
+
+	void AttributedString::addRichText( const RichText& richText )
+	{
+		// Store current substring attributes
+		AttributeList curAttributes = mSubstrings.back().attributes;
+
+		// Parse and push back rich text
+		RichTextParser parser( richText.richText );
+		mSubstrings.reserve( mSubstrings.size() + parser.getSubstrings().size() );
+		mSubstrings.insert( mSubstrings.end(), parser.getSubstrings().begin(), parser.getSubstrings().end() );
+
+		// Resume our current substring insertion with the current attributes (before Rich Text)
+		mSubstrings.push_back( Substring( "", curAttributes ) );
+	}
+
+	void AttributedString::addAttribute( const Attribute& attribute )
+	{
+		switch( attribute.type ) {
+			case LINE_BREAK:
+				mSubstrings.back().forceBreak = true;
+				break;
+
+			case FONT_FAMILY: {
+				std::string family = static_cast<const AttributeFontFamily&>( attribute ).family;
+				mSubstrings.back().attributes.fontFamily = family;
+			}
+			break;
+
+			case FONT_STYLE: {
+				std::string style = static_cast<const AttributeFontStyle&>( attribute ).style;
+				mSubstrings.back().attributes.fontStyle = style;
+				break;
+			}
+
+			case FONT_SIZE: {
+				int size = static_cast<const AttributeFontSize&>( attribute ).size;
+				mSubstrings.back().attributes.fontSize = size;
+				break;
+			}
+
+			case COLOR: {
+				ci::ColorA color = static_cast<const AttributeColor&>( attribute ).color;
+				mSubstrings.back().attributes.color = color;
+				break;
+			}
+
+			case RICH_TEXT: {
+				std::string richText = static_cast<const RichText&>( attribute ).richText;
+				addRichText( RichText( richText ) );
+				break;
+			}
+		}
+	}
 
 	// Rich text parsing
 	static const char* ATTR_BOLD( "b" );
@@ -70,6 +140,8 @@ namespace txt
 
 	RichTextParser::RichTextParser( std::string richText, const Font& baseFont )
 	{
+		// Push first attribute
+		mAttributesStack.push( AttributeList( baseFont.family, baseFont.style, baseFont.size ) );
 		std::string wrappedText = "<txt>" + richText + "</txt>";
 		xml_document<> doc;
 		char* cstr = &wrappedText[0u];

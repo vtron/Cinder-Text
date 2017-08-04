@@ -13,6 +13,8 @@ namespace txt
 
 			const uint32_t faceId;
 			const unsigned int size;
+			const std::string family;
+			const std::string style;
 
 			bool operator==( const Font& other ) const
 			{

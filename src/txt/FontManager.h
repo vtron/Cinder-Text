@@ -44,8 +44,6 @@ namespace txt
 
 		bool operator==( const FaceFamilyAndStyle& other ) const
 		{
-			ci::app::console() << "Family: " << this->family << " Other Family: " << other.family << std::endl;
-			ci::app::console() << "Style: " << this->style << " Other Style: " << other.style << std::endl;
 			bool match = ( this->family == other.family && this->style == other.style );
 			return match;
 		}

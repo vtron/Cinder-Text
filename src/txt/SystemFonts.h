@@ -29,7 +29,7 @@ namespace txt
 		private:
 			SystemFonts();
 
-			void loadFaces();
+			void listFaces();
 			std::map < std::string, std::vector < std::string>> mFaces;
 
 			std::string mDefaultFamily;

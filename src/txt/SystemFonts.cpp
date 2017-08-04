@@ -30,19 +30,6 @@ namespace txt
 		mDefaultFamily = "Arial";
 		mDefaultStyle = "Regular";
 		mDefaultSize = 12;
-
-		loadFaces();
-
-		for( auto& family : mFaces ) {
-			ci::app::console() << family.first << std::endl;
-			ci::app::console() << "---------------------" << std::endl;
-
-			for( auto& style : family.second ) {
-				ci::app::console() <<  style << std::endl;
-			}
-
-			ci::app::console() << std::endl;
-		}
 	}
 
 #if defined( CINDER_MSW_DESKTOP )
@@ -55,8 +42,6 @@ namespace txt
 
 		return 1;
 	}
-
-
 
 	struct HFontRequest {
 		LOGFONT logfont;
@@ -86,7 +71,7 @@ namespace txt
 	}
 
 
-	void SystemFonts::loadFaces()
+	void SystemFonts::listFaces()
 	{
 		mFaces.clear();
 
@@ -94,10 +79,18 @@ namespace txt
 		lf.lfCharSet = ANSI_CHARSET;
 		lf.lfFaceName[0] = '\0';
 
-		//std::u16string faceName = ci::toUtf16( "Arial" );
-		//::StringCchCopy( lf.lfFaceName, LF_FACESIZE, ( LPCTSTR )faceName.c_str() );
-
 		::EnumFontFamiliesEx( mFontDC, &lf, ( FONTENUMPROC )EnumFacesExProc, reinterpret_cast<LPARAM>( &mFaces ), 0 );
+
+		for( auto& family : mFaces ) {
+			ci::app::console() << family.first << std::endl;
+			ci::app::console() << "---------------------" << std::endl;
+
+			for( auto& style : family.second ) {
+				ci::app::console() << style << std::endl;
+			}
+
+			ci::app::console() << std::endl;
+		}
 	}
 
 	ci::BufferRef SystemFonts::getFontBuffer( std::string family, std::string style )
