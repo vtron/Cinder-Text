@@ -1,16 +1,20 @@
 #include "txt/SystemFonts.h"
+#include "cinder/Font.h"
 
-#if defined( CINDER_MSW_DESKTOP )
-#include <windows.h>
-#define max(a, b) (((a) > (b)) ? (a) : (b))
-#define min(a, b) (((a) < (b)) ? (a) : (b))
-#include <gdiplus.h>
-#undef min
-#undef max
-#include "cinder/msw/CinderMsw.h"
-#include "cinder/msw/CinderMswGdiPlus.h"
-#pragma comment(lib, "gdiplus")
-#endif
+//#if defined( cinder_msw_desktop )
+//#include <windows.h>
+//#define max(a, b) (((a) > (b)) ? (a) : (b))
+//#define min(a, b) (((a) < (b)) ? (a) : (b))
+//#include <gdiplus.h>
+//#undef min
+//#undef max
+//#include "cinder/msw/cindermsw.h"
+//#include "cinder/msw/cindermswgdiplus.h"
+//#pragma comment(lib, "gdiplus")
+//#endif
+
+#include "cinder/msw/cindermsw.h"
+#include "cinder/msw/cindermswgdiplus.h"
 
 #include "cinder/Unicode.h"
 #include "cinder/app/App.h"

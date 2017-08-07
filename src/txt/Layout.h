@@ -27,7 +27,7 @@ namespace txt
 				{};
 
 				const Font font;
-				const ci::Color color;
+				const ci::ColorA color;
 
 				std::vector<Glyph> glyphs;
 			};

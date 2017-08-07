@@ -154,8 +154,8 @@ namespace txt
 		//scaler->x_res = hPixelsPerInch;
 		//scaler->y_res = vPixelsPerInch;
 
-		scaler->x_res = 96;
-		scaler->y_res = 96;
+		scaler->x_res = 72;
+		scaler->y_res = 72;
 
 		return scaler;
 	}
