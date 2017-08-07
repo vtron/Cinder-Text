@@ -142,11 +142,13 @@ EXIT /B 0
 
 ::Download a file and clean up
 :download_pkg URL, FOLDER_NAME, FOLDER_PATH
-curl -L %~1 -o %~2.tar.bz2
+powershell -command "& { (New-Object Net.WebClient).DownloadFile('%~1 ', '%~2.tar.bz2') }"
+
+::curl -L %~1 -o %~2.tar.bz2
 
 7z x %~2.tar.bz2
 7z x %~2.tar
 
-mv %~2-* %~3
-rm %~2.*
+powershell -command "mv %~2-* %~3"
+powershell -command "rm %~2.*"
 EXIT /B 0
