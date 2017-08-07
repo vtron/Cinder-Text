@@ -11,25 +11,40 @@ namespace txt
 			Font( uint32_t faceId, int size );
 			Font( std::string family, int size );
 			Font( std::string family, std::string style, int size );
-			Font( const Font& font ) : Font( font.faceId, font.size ) { }
+			Font( const Font& font ) : Font( font.mFaceId, font.mSize ) { }
 
-			const uint32_t faceId;
-			const unsigned int size;
-			std::string family;
-			std::string style;
+			const uint32_t getFaceId() const { return mFaceId; }
+			const unsigned int getSize() const { return mSize; }
+			std::string getFamily() const;
+			std::string getStyle() const;
 
 			bool operator==( const Font& other ) const
 			{
-				return ( faceId == other.faceId
-				         && size == other.size );
+				return ( mFaceId == other.mFaceId
+				         && mSize == other.mSize );
 			}
 
 			Font& Font::operator=( const Font& other )
 			{
+				mFaceId = other.mFaceId;
+				mSize = other.mSize;
 				return *this;
 			}
 
+			friend std::ostream& operator<< (std::ostream& os, Font const& font)
+			{
+				os << "Font:" << std::endl;
+				os << "Family: " << font.getFamily() << std::endl;
+				os << "Style: " << font.getSize() << std::endl;
+				os << "Size: " << font.getSize() << std::endl;
+				return os;
+			}
+
 			friend class FontManager;
+
+	private:
+		uint32_t mFaceId;
+		unsigned int mSize;
 	};
 
 	struct DefaultFont : public Font {
@@ -52,9 +67,8 @@ namespace std
 			// Compute individual hash values for first,
 			// second and third and combine them using XOR
 			// and bit shifting:
-
-			return ( ( hash < uint32_t>()( ( uint32_t )k.faceId )
-			           ^ ( hash<unsigned int>()( k.size ) << 1 ) ) >> 1 );
+			return ( ( hash < uint32_t>()( ( uint32_t )k.getFaceId() )
+			           ^ ( hash<unsigned int>()( k.getSize() ) << 1 ) ) >> 1 );
 		}
 	};
 

@@ -47,7 +47,7 @@ namespace txt
 
 	FT_Face FontManager::getFace( const Font& font )
 	{
-		return getFace( font.faceId );
+		return getFace( font.mFaceId );
 	}
 
 	FT_Face FontManager::getFace( uint32_t faceId )
@@ -74,7 +74,7 @@ namespace txt
 		error = FTC_Manager_LookupSize( mFTCacheManager, getScaler( font ), &ftSize );
 
 		std::stringstream errorMessage;
-		errorMessage << "Could not lookup size for face " << font.faceId << " at size " << std::to_string( font.size ) << ".";
+		errorMessage << "Could not lookup size for face " << font.mFaceId << " at size " << std::to_string( font.mSize ) << ".";
 		checkForFTError( error, errorMessage.str() );
 
 		return ftSize;
@@ -82,7 +82,7 @@ namespace txt
 
 	FT_UInt FontManager::getGlyphIndex( const Font& font, FT_UInt32 charCode, FT_Int mapIndex )
 	{
-		return FTC_CMapCache_Lookup( mFTCMapCache, ( FTC_FaceID )font.faceId, mapIndex, charCode );
+		return FTC_CMapCache_Lookup( mFTCMapCache, ( FTC_FaceID )font.mFaceId, mapIndex, charCode );
 	}
 
 	std::vector<FT_UInt> FontManager::getGlyphIndices( const Font& font, std::string string )
@@ -104,7 +104,7 @@ namespace txt
 		error = FTC_ImageCache_LookupScaler( mFTCImageCache, getScaler( font ), NULL, glyphIndex, ( FT_Glyph* )&glyph, NULL );
 
 		std::stringstream errorMessage;
-		errorMessage << "Could not get glyph " << glyphIndex << " for face " << font.faceId << ".";
+		errorMessage << "Could not get glyph " << glyphIndex << " for face " << font.mFaceId << ".";
 		checkForFTError( error, errorMessage.str() );
 
 		return glyph;
@@ -118,7 +118,7 @@ namespace txt
 		error = FTC_ImageCache_LookupScaler( mFTCImageCache, getScaler( font ), FT_LOAD_RENDER | FT_RENDER_MODE_NORMAL, glyphIndex, ( FT_Glyph* )&glyph, NULL );
 
 		std::stringstream errorMessage;
-		errorMessage << "Could not get glyph " << glyphIndex << " for face " << font.faceId << ".";
+		errorMessage << "Could not get glyph " << glyphIndex << " for face " << font.mFaceId << ".";
 		checkForFTError( error, errorMessage.str() );
 
 		return glyph;
@@ -140,10 +140,10 @@ namespace txt
 	FTC_Scaler FontManager::getScaler( const  Font& font )
 	{
 		FTC_Scaler scaler = new FTC_ScalerRec_();
-		scaler->face_id = ( FTC_FaceID )font.faceId;
+		scaler->face_id = ( FTC_FaceID )font.mFaceId;
 		scaler->pixel = 0;
-		scaler->width = float( font.size ) * 64.f;
-		scaler->height = float( font.size ) * 64.f;
+		scaler->width = float( font.mSize ) * 64.f;
+		scaler->height = float( font.mSize ) * 64.f;
 
 		//SetProcessDPIAware(); //true
 		//HDC screen = GetDC( NULL );

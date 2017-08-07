@@ -23,7 +23,7 @@ namespace txt
 	};
 
 	struct Attribute {
-		Attribute( AttributeType type ) : type( type ) { };
+		Attribute( const AttributeType& type ) : type( type ) { };
 		const AttributeType type;
 	};
 
@@ -32,7 +32,7 @@ namespace txt
 	};
 
 	struct AttributeFontFamily : public Attribute {
-		AttributeFontFamily( std::string family )
+		AttributeFontFamily( const std::string& family )
 			: Attribute( AttributeType::FONT_FAMILY )
 			, family( family ) {};
 
@@ -40,7 +40,7 @@ namespace txt
 	};
 
 	struct AttributeFontStyle : public Attribute {
-		AttributeFontStyle( std::string fontStyle )
+		AttributeFontStyle( const std::string& fontStyle )
 			: Attribute( AttributeType::FONT_STYLE )
 			, style( fontStyle ) {};
 
@@ -48,7 +48,7 @@ namespace txt
 	};
 
 	struct AttributeFontSize : public Attribute {
-		AttributeFontSize( int size )
+		AttributeFontSize( const int& size )
 			: Attribute( AttributeType::FONT_SIZE ),
 			  size( size ) { };
 
@@ -56,17 +56,17 @@ namespace txt
 	};
 
 	struct AttributeColor : public Attribute {
-		AttributeColor( ci::Color color ) : Attribute( AttributeType::COLOR ),
+		AttributeColor( const ci::Color& color ) : Attribute( AttributeType::COLOR ),
 			color( color ) {};
 
-		AttributeColor( ci::ColorA color ) : Attribute( AttributeType::COLOR ),
+		AttributeColor( const ci::ColorA& color ) : Attribute( AttributeType::COLOR ),
 			color( color ) {};
 
 		const ci::ColorA color;
 	};
 
 	struct RichText : public Attribute {
-		RichText( std::string richText )
+		RichText( const std::string& richText )
 			: Attribute( AttributeType::RICH_TEXT )
 			, richText( richText ) {};
 
@@ -74,7 +74,7 @@ namespace txt
 	};
 
 	struct AttributeList {
-		AttributeList( std::string fontFamily, std::string fontStyle, int fontSize, ci::Color color = ci::Color::white() )
+		AttributeList( const std::string& fontFamily, const std::string& fontStyle, const int& fontSize, const ci::Color& color = ci::Color::white() )
 			: fontFamily( fontFamily )
 			, fontStyle( fontStyle )
 			, fontSize( fontSize )
@@ -149,7 +149,7 @@ namespace txt
 
 	inline AttributedString& operator << ( AttributedString& attrStr, const Font& font )
 	{
-		attrStr << AttributeFontFamily( font.family ) << AttributeFontSize( font.size ) << AttributeFontStyle( font.style );
+		attrStr << AttributeFontFamily( font.getFamily() ) << AttributeFontSize( font.getSize() ) << AttributeFontStyle( font.getStyle() );
 		return attrStr;
 	}
 

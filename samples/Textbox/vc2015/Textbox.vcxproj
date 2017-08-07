@@ -96,9 +96,6 @@
       <DataExecutionPrevention />
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Resources.rc" />
-  </ItemGroup>
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>

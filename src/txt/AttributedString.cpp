@@ -40,7 +40,7 @@ namespace txt
 		// Find runs based on line breaks
 		std::string textToParse = text;
 
-		AttributeList attributes( FontManager::get()->getFontFamily( baseFont ), FontManager::get()->getFontStyle( baseFont ), baseFont.size ) ;
+		AttributeList attributes( baseFont.getFamily(), baseFont.getStyle(), baseFont.getSize() ) ;
 
 		if( text.length() != 0 ) {
 			std::vector<std::string> lineBreakStrings = split( text, '\n' );
@@ -141,7 +141,7 @@ namespace txt
 	RichTextParser::RichTextParser( std::string richText, const Font& baseFont )
 	{
 		// Push first attribute
-		mAttributesStack.push( AttributeList( baseFont.family, baseFont.style, baseFont.size ) );
+		mAttributesStack.push( AttributeList( baseFont.getFamily(), baseFont.getStyle(), baseFont.getSize() ) );
 		std::string wrappedText = "<txt>" + richText + "</txt>";
 		xml_document<> doc;
 		char* cstr = &wrappedText[0u];

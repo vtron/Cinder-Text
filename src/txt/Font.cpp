@@ -6,15 +6,14 @@ namespace txt
 {
 	// Font
 	Font::Font( ci::DataSourceRef source, int size )
-		: size( size )
-		, faceId( FontManager::get()->getFaceId( source->getFilePath().string() ) )
+		: mSize( size )
+		, mFaceId( FontManager::get()->getFaceId( source->getFilePath().string() ) )
 	{
-		family = FontManager::get()->getFontFamily()
 	}
 
 	Font::Font( uint32_t faceId, int size )
-		: size( size )
-		, faceId( faceId )
+		: mSize( size )
+		, mFaceId( faceId )
 	{
 	}
 
@@ -24,9 +23,17 @@ namespace txt
 
 	}
 	Font::Font( std::string family, std::string style, int size )
-		: size( size )
-		, faceId( FontManager::get()->getFaceId( family, style ) )
+		: mSize( size )
+		, mFaceId( FontManager::get()->getFaceId( family, style ) )
 	{
+	}
+
+	std::string Font::getFamily() const {
+		return FontManager::get()->getFontFamily(*this);
+	}
+
+	std::string Font::getStyle() const {
+		return FontManager::get()->getFontStyle(*this);
 	}
 
 	DefaultFont::DefaultFont()

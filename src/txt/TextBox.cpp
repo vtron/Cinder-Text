@@ -7,7 +7,7 @@ namespace txt
 		: mFont( DefaultFont() )
 		, mSize( size )
 		, mRenderer( std::make_shared<RendererGl>() )
-		, mNeedsLayout( false )
+		, mNeedsLayout( true )
 	{}
 
 	TextBox& TextBox::setSize( ci::vec2 size )
@@ -42,6 +42,7 @@ namespace txt
 	void TextBox::draw()
 	{
 		if( mNeedsLayout ) {
+			ci::app::console() << mFont << std::endl;
 			mAttrString << mFont;
 			mLayout.calculateLayout( mAttrString );
 			mNeedsLayout = false;

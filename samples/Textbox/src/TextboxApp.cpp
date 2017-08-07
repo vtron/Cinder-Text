@@ -22,10 +22,10 @@ class TextboxApp : public App
 void TextboxApp::setup()
 {
 	txt::Font font( loadAsset( "SourceSerifPro/SourceSerifPro-Regular.otf" ), 20 );
-	mTextBox.setSize( ci::vec2( 100 ) )
-	.setText( "Testing the text box" )
-	.setFont( txt::Font( "Arial", 15 ) )
-	.setFont( font );
+	mTextBox.setSize(ci::vec2(100))
+		.setText("Testing the text box")
+		.setFont( txt::Font( "Arial", 15 ) )
+		.setFont( font );
 }
 
 void TextboxApp::mouseDown( MouseEvent event )
