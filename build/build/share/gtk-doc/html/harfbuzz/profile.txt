@@ -1,4 +1,0 @@
-I/O error : Attempt to load network entity http://docbook.sourceforge.net/release/xsl/current/html/chunk.xsl
-warning: failed to load external entity "http://docbook.sourceforge.net/release/xsl/current/html/chunk.xsl"
-compilation error: file /usr/local/Cellar/gtk-doc/1.25/share/gtk-doc/data/gtk-doc.xsl line 10 element import
-xsl:import : unable to load http://docbook.sourceforge.net/release/xsl/current/html/chunk.xsl
