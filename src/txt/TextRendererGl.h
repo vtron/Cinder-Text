@@ -5,8 +5,8 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/gl/Batch.h"
 
-#include "txt/Layout.h"
-#include "txt/Renderer.h"
+#include "txt/TextLayout.h"
+#include "txt/TextRenderer.h"
 
 namespace txt
 {

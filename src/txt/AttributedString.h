@@ -19,7 +19,8 @@ namespace txt
 		FONT_STYLE,
 		FONT_SIZE,
 		COLOR,
-		RICH_TEXT
+		LEADING,
+		KERNING
 	};
 
 	struct Attribute {
@@ -65,10 +66,23 @@ namespace txt
 		const ci::ColorA color;
 	};
 
-	struct RichText : public Attribute {
+	struct AttributeLeading : public Attribute {
+		AttributeLeading( const int& leading ) : Attribute( AttributeType::LEADING ),
+			leading( leading ) {};
+
+		const int leading;
+	};
+
+	struct AttributeKerning : public Attribute {
+		AttributeKerning( const int& kerning ) : Attribute( AttributeType::LEADING ),
+			kerning( kerning ) {};
+
+		const int kerning;
+	};
+
+	struct RichText {
 		RichText( const std::string& richText )
-			: Attribute( AttributeType::RICH_TEXT )
-			, richText( richText ) {};
+			: richText( richText ) {};
 
 		std::string richText;
 	};
@@ -79,12 +93,17 @@ namespace txt
 			, fontStyle( fontStyle )
 			, fontSize( fontSize )
 			, color( color )
+			, leading( 0 )
+			, kerning( 0 )
 		{
 		}
 
 		std::string fontFamily;
 		std::string fontStyle;
 		int fontSize;
+
+		int leading;
+		int kerning;
 
 		ci::ColorA color;
 
@@ -96,7 +115,6 @@ namespace txt
 			os << "Color: " << attr.color << std::endl;
 			return os;
 		}
-
 	};
 
 	// Attributed String
@@ -156,6 +174,12 @@ namespace txt
 	inline AttributedString& operator << ( AttributedString& attrStr, const std::string& text )
 	{
 		attrStr.addText( text );
+		return attrStr;
+	}
+
+	inline AttributedString& operator << ( AttributedString& attrStr, const RichText& richText )
+	{
+		attrStr.addRichText( richText );
 		return attrStr;
 	}
 

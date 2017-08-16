@@ -42,8 +42,7 @@ namespace txt
 	void TextBox::draw()
 	{
 		if( mNeedsLayout ) {
-			ci::app::console() << mFont << std::endl;
-			mAttrString << mFont;
+			//mAttrString << mFont;
 			mLayout.calculateLayout( mAttrString );
 			mNeedsLayout = false;
 		}

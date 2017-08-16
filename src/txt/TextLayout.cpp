@@ -1,4 +1,4 @@
-#include "txt/Layout.h"
+#include "txt/TextLayout.h"
 
 #include "harfbuzz/hb.h"
 
@@ -74,14 +74,20 @@ namespace txt
 		const ci::Color runColor = substring.attributes.color;
 
 		// Get the line height + ascender for this run
+
+		// Increase our current line height + ascender if this run is taller
 		float lineHeight = FontManager::get()->getSize( runFont )->metrics.height / 64.f;
 		float ascender = FontManager::get()->getSize( runFont )->metrics.ascender / 64.f;
 
-		// Increase our current line height + ascender if this run is taller
 		int prevLineHeight = mLineHeight;
 		int prevAscender = mAscender;
+
 		mLineHeight = std::max( lineHeight, mLineHeight );
+		mLineLeading = mLeading + substring.attributes.leading;
 		mAscender = std::max( ascender, mAscender );
+
+		// Space betwen characters
+		float kerning = mTracking + substring.attributes.kerning;
 
 		// Check for height clipping
 		// TODO: This needs to handle vertical layouts (clip width)
@@ -126,7 +132,7 @@ namespace txt
 			Layout::Glyph glyph = { shapedGlyphs[i].index, glyphBBox };
 
 			// Move the pen forward
-			mPen.x += advance.x + mTracking;
+			mPen.x += advance.x + kerning;
 
 			// Check for a new line
 			// TODO: Right to left + vertical
@@ -217,7 +223,7 @@ namespace txt
 		mCurLine = Line();
 
 		mPen.x = 0.f;
-		mPen.y += mLineHeight + mLeading;
+		mPen.y += mLineHeight + mLineLeading;
 
 		mLineWidth = 0;
 		mLineHeight = 0.f;

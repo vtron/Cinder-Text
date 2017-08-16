@@ -27,6 +27,7 @@ namespace txt
 
 	void RendererGl::draw( const Layout& layout )
 	{
+		ci::gl::ScopedBlendAlpha alpha;
 		for( auto& line : layout.getLines() ) {
 			for( auto& run : line.runs ) {
 
@@ -37,7 +38,7 @@ namespace txt
 
 					FT_BitmapGlyph ftGlyph = txt::FontManager::get()->getGlyphBitmap( run.font, glyph.index );
 
-					ci::gl::translate( glyph.bbox.getUpperLeft() + ci::vec2( ftGlyph->left, -ftGlyph->top ) );
+					ci::gl::translate( ci::ivec2(glyph.bbox.getUpperLeft()) + ci::ivec2( ftGlyph->left, -ftGlyph->top ) );
 					drawGlyph( run.font, glyph.index );
 				}
 			}
@@ -73,7 +74,7 @@ namespace txt
 	void RendererGl::cacheGlyphAsTexture( const  Font& font, uint32_t glyphIndex )
 	{
 		FT_BitmapGlyph glyph = txt::FontManager::get()->getGlyphBitmap( font, glyphIndex );
-		ci::ChannelRef channel = ci::Channel::create( glyph->bitmap.width, glyph->bitmap.rows, glyph->bitmap.width * sizeof( unsigned char ), 1, glyph->bitmap.buffer );
+		ci::ChannelRef channel = ci::Channel::create( glyph->bitmap.width, glyph->bitmap.rows, glyph->bitmap.width * sizeof( unsigned char ), sizeof(unsigned char), glyph->bitmap.buffer );
 
 		ci::gl::Texture::Format format;
 		format.setSwizzleMask( std::array<GLint, 4> {GL_ONE, GL_ONE, GL_ONE, GL_RED } );

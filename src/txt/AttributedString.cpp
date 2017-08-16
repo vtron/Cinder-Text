@@ -121,11 +121,18 @@ namespace txt
 				break;
 			}
 
-			case RICH_TEXT: {
-				std::string richText = static_cast<const RichText&>( attribute ).richText;
-				addRichText( RichText( richText ) );
+			case LEADING: {
+				const int leading = static_cast<const AttributeLeading&>( attribute ).leading;
+				mSubstrings.back().attributes.leading = leading;
 				break;
 			}
+
+			case KERNING: {
+				const int kerning = static_cast<const AttributeKerning&>( attribute ).kerning;
+				mSubstrings.back().attributes.kerning = kerning;
+				break;
+			}
+
 		}
 	}
 

@@ -52,8 +52,8 @@ namespace txt
 			void setAlignment( Alignment alignment ) { mAlignment = alignment; };
 
 		private:
-			float mLeading;
-			float mTracking;
+			int mLeading;
+			int mTracking;
 			Alignment mAlignment;
 
 			void reset();
@@ -61,6 +61,7 @@ namespace txt
 			Line mCurLine;
 			float mLineWidth = 0;
 			float mLineHeight = 0;
+			float mLineLeading = 0;
 			float mAscender = 0;
 
 			ci::vec2 mSize;
