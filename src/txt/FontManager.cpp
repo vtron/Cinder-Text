@@ -124,6 +124,12 @@ namespace txt
 		return glyph;
 	}
 
+	ci::vec2 FontManager::getGlyphSize( const Font& font, unsigned int glyphIndex )
+	{
+		FT_BitmapGlyph glyph = getGlyphBitmap( font, glyphIndex );
+		return ci::vec2( glyph->bitmap.width, glyph->bitmap.rows );
+	}
+
 	ci::vec2 FontManager::getMaxGlyphSize( const Font& font )
 	{
 		FT_Size size = getSize( font );

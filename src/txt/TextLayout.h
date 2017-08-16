@@ -18,6 +18,7 @@ namespace txt
 			typedef struct {
 				uint32_t index;
 				ci::Rectf bbox;
+				unsigned int top;
 			} Glyph;
 
 			struct Run {
@@ -46,6 +47,7 @@ namespace txt
 
 			const std::vector<Line>& getLines() const { return mLines; };
 
+			ci::vec2 getSize();
 			void setSize( ci::vec2 size ) { mSize = size; }
 			void setLeading( float leading ) { mLeading = leading; };
 			void setTracking( float tracking ) { mTracking = tracking;};

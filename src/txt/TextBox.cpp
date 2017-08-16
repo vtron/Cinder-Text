@@ -10,6 +10,13 @@ namespace txt
 		, mNeedsLayout( true )
 	{}
 
+	ci::vec2 TextBox::getSize()
+	{
+		layoutIfNeeded();
+		ci::app::console() << mLayout.getSize() << std::endl;
+		return mLayout.getSize();
+	}
+
 	TextBox& TextBox::setSize( ci::vec2 size )
 	{
 		mSize = size;
@@ -31,6 +38,23 @@ namespace txt
 		return *this;
 	}
 
+	TextBox& TextBox::layoutIfNeeded()
+	{
+		if( mNeedsLayout ) {
+			doLayout();
+		}
+
+		return *this;
+	}
+
+	TextBox& TextBox::doLayout()
+	{
+		mLayout.calculateLayout( mAttrString );
+		mNeedsLayout = false;
+
+		return *this;
+	}
+
 
 	TextBox& TextBox::setAttrString( AttributedString attrString )
 	{
@@ -41,11 +65,7 @@ namespace txt
 
 	void TextBox::draw()
 	{
-		if( mNeedsLayout ) {
-			//mAttrString << mFont;
-			mLayout.calculateLayout( mAttrString );
-			mNeedsLayout = false;
-		}
+		layoutIfNeeded();
 
 		mRenderer->draw( mLayout );
 	}

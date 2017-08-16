@@ -11,13 +11,15 @@ namespace txt
 		public:
 			TextBox( ci::vec2 size = ci::vec2( Layout::GROW, Layout::GROW ) );
 
+			ci::vec2 getSize();
 			TextBox& setSize( ci::vec2 size );
 
 			TextBox& setFont( const Font& font );
 			TextBox& setText( std::string text );
 			TextBox& setAttrString( AttributedString attrString );
 
-			void doLayout() { mLayout.calculateLayout( mAttrString ); }
+			TextBox& layoutIfNeeded();
+			TextBox& doLayout();
 
 			void draw();
 

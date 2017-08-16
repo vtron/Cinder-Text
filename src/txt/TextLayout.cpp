@@ -42,6 +42,12 @@ namespace txt
 		mMaxLinesReached = false;
 	}
 
+	ci::vec2 Layout::getSize()
+	{
+		ci::app::console() << "Last glyph bbox: " << mLines.back().runs.back().glyphs.back().bbox.getLowerRight() << std::endl;
+		return mLines.back().runs.back().glyphs.back().bbox.getLowerRight();
+	}
+
 	void Layout::calculateLayout( std::string text, const Font& font )
 	{
 		calculateLayout( AttributedString( text, font ) );
@@ -126,10 +132,12 @@ namespace txt
 
 			// Get the glyph metrics/position
 			ci::vec2 advance = shapedGlyphs[i].advance;
-			ci::Rectf glyphBBox( pos, pos + ci::vec2( advance.x, mPen.y ) );
+			ci::Rectf glyphBBox( pos, pos + FontManager::get()->getGlyphSize( runFont, shapedGlyphs[i].index ) );
+
+			FT_BitmapGlyph bitmapGlyph = FontManager::get()->getGlyphBitmap( runFont, shapedGlyphs[i].index );
 
 			// Create a layout glyph and add to current word
-			Layout::Glyph glyph = { shapedGlyphs[i].index, glyphBBox };
+			Layout::Glyph glyph = { shapedGlyphs[i].index, glyphBBox, bitmapGlyph->top };
 
 			// Move the pen forward
 			mPen.x += advance.x + kerning;
@@ -190,7 +198,7 @@ namespace txt
 		// Set the Y glyph position based on culmulative line-height
 		for( auto& run : mCurLine.runs ) {
 			for( auto& glyph : run.glyphs ) {
-				glyph.bbox.offset( ci::vec2( 0.f, mAscender ) );
+				glyph.bbox.offset( ci::vec2( 0.f, mAscender - glyph.top ) );
 			}
 		}
 

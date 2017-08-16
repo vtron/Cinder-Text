@@ -104,6 +104,7 @@ namespace txt
 			FT_Glyph getGlyph( const Font& font, unsigned int glyphIndex );
 			FT_BitmapGlyph getGlyphBitmap( const Font& font, unsigned int glyphIndex );
 
+			ci::vec2 getGlyphSize( const Font& font, unsigned int glyphIndex );
 			ci::vec2 getMaxGlyphSize( const Font& font );
 
 			FT_Face getFace( const Font& font );
