@@ -31,8 +31,7 @@ namespace txt
 
 		for( auto& line : layout.getLines() ) {
 			for( auto& run : line.runs ) {
-
-				//ci::gl::color( run.color );
+				ci::gl::color( ci::ColorA( run.color, run.opacity ) );
 
 				for( auto& glyph : run.glyphs ) {
 					ci::gl::ScopedMatrices matrices;

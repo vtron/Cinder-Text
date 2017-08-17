@@ -35,12 +35,12 @@ namespace txt
 	{
 	}
 
-	AttributedString::AttributedString( std::string text, const Font& baseFont )
+	AttributedString::AttributedString( const std::string& text, const Font& baseFont, const ci::Color& color )
 	{
 		// Find runs based on line breaks
 		std::string textToParse = text;
 
-		AttributeList attributes( baseFont.getFamily(), baseFont.getStyle(), baseFont.getSize() ) ;
+		AttributeList attributes( baseFont.getFamily(), baseFont.getStyle(), baseFont.getSize(), color ) ;
 
 		if( text.length() != 0 ) {
 			std::vector<std::string> lineBreakStrings = split( text, '\n' );
@@ -55,9 +55,9 @@ namespace txt
 		}
 	}
 
-	AttributedString::AttributedString( const RichText& richText )
+	AttributedString::AttributedString( const RichText& richText, const Font& baseFont, const ci::Color& color )
 	{
-		RichTextParser parser( richText.richText );
+		RichTextParser parser( richText.richText, baseFont, color );
 		mSubstrings = parser.getSubstrings();
 	}
 
@@ -116,9 +116,14 @@ namespace txt
 			}
 
 			case COLOR: {
-				ci::ColorA color = static_cast<const AttributeColor&>( attribute ).color;
+				ci::Color color = static_cast<const AttributeColor&>( attribute ).color;
 				mSubstrings.back().attributes.color = color;
 				break;
+			}
+
+			case OPACITY: {
+				float opacity = static_cast<const AttributeOpacity&>( attribute ).opacity;
+				mSubstrings.back().attributes.opacity = opacity;
 			}
 
 			case LEADING: {
@@ -145,10 +150,10 @@ namespace txt
 	static const char* ATTR_FONT_SIZE( "font-size" );
 	static const char* ATTR_COLOR( "color" );
 
-	RichTextParser::RichTextParser( std::string richText, const Font& baseFont )
+	RichTextParser::RichTextParser( std::string richText, const Font& baseFont, const ci::Color& baseColor )
 	{
 		// Push first attribute
-		mAttributesStack.push( AttributeList( baseFont.getFamily(), baseFont.getStyle(), baseFont.getSize() ) );
+		mAttributesStack.push( AttributeList( baseFont.getFamily(), baseFont.getStyle(), baseFont.getSize(), baseColor ) );
 		std::string wrappedText = "<txt>" + richText + "</txt>";
 		xml_document<> doc;
 		char* cstr = &wrappedText[0u];

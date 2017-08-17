@@ -9,7 +9,10 @@ namespace txt
 	class TextBox
 	{
 		public:
-			TextBox( ci::vec2 size = ci::vec2( Layout::GROW, Layout::GROW ) );
+			TextBox();
+			TextBox( ci::vec2 size );
+
+			ci::vec2 measure();
 
 			ci::vec2 getSize();
 			TextBox& setSize( ci::vec2 size );
@@ -17,17 +20,23 @@ namespace txt
 			TextBox& setFont( const Font& font );
 			TextBox& setText( std::string text );
 			TextBox& setAttrString( AttributedString attrString );
+			TextBox& setColor( ci::ColorA color );
 
 			TextBox& layoutIfNeeded();
 			TextBox& doLayout();
+
+			Layout& getLayout() { return mLayout; };
 
 			void draw();
 
 		private:
 			Font mFont;
 			ci::vec2 mSize;
+			ci::Color mColor;
 
+			std::string mText;
 			AttributedString mAttrString;
+			bool mExternalAttributedString;
 
 			Layout mLayout;
 			bool mNeedsLayout;

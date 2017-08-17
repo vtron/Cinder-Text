@@ -39,6 +39,7 @@ namespace txt
 	std::string FontManager::getFontStyle( const Font& font )
 	{
 		FaceFamilyAndStyle familyStyle( getFace( font ) );
+		ci::app::console() << familyStyle.style << std::endl;
 		return familyStyle.style;
 	}
 

@@ -19,6 +19,7 @@ namespace txt
 		FONT_STYLE,
 		FONT_SIZE,
 		COLOR,
+		OPACITY,
 		LEADING,
 		KERNING
 	};
@@ -60,10 +61,14 @@ namespace txt
 		AttributeColor( const ci::Color& color ) : Attribute( AttributeType::COLOR ),
 			color( color ) {};
 
-		AttributeColor( const ci::ColorA& color ) : Attribute( AttributeType::COLOR ),
-			color( color ) {};
+		const ci::Color color;
+	};
 
-		const ci::ColorA color;
+	struct AttributeOpacity : public Attribute {
+		AttributeOpacity( float opacity ) : Attribute( AttributeType::OPACITY ),
+			opacity( opacity ) {};
+
+		const float opacity;
 	};
 
 	struct AttributeLeading : public Attribute {
@@ -88,11 +93,12 @@ namespace txt
 	};
 
 	struct AttributeList {
-		AttributeList( const std::string& fontFamily, const std::string& fontStyle, const int& fontSize, const ci::Color& color = ci::Color::white() )
+		AttributeList( const std::string& fontFamily, const std::string& fontStyle, const int& fontSize, const ci::Color& color )
 			: fontFamily( fontFamily )
 			, fontStyle( fontStyle )
 			, fontSize( fontSize )
 			, color( color )
+			, opacity( 1.f )
 			, leading( 0 )
 			, kerning( 0 )
 		{
@@ -105,7 +111,8 @@ namespace txt
 		int leading;
 		int kerning;
 
-		ci::ColorA color;
+		ci::Color color;
+		float opacity;
 
 		friend std::ostream& operator<< ( std::ostream& os, AttributeList const& attr )
 		{
@@ -144,8 +151,8 @@ namespace txt
 			};
 
 			AttributedString();
-			AttributedString( std::string string, const Font& baseFont = DefaultFont() );
-			AttributedString( const RichText& richText );
+			AttributedString( const std::string& string, const Font& baseFont = DefaultFont(), const ci::Color& baseColor = ci::Color::white() );
+			AttributedString( const RichText& richText, const Font& baseFont = DefaultFont(), const ci::Color& baseColor = ci::Color::white() );
 
 			void addAttribute( const Attribute& attribute );
 			void addText( std::string text );
@@ -187,7 +194,7 @@ namespace txt
 	class RichTextParser
 	{
 		public:
-			RichTextParser( std::string richText, const Font& baseFont = DefaultFont() );
+			RichTextParser( std::string richText, const Font& baseFont = DefaultFont(), const ci::Color& baseColor = ci::Color::white() );
 			const std::vector<AttributedString::Substring>& getSubstrings() const { return mSubstrings; };
 
 		protected:

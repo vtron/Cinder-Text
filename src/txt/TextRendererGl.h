@@ -4,6 +4,7 @@
 
 #include "cinder/gl/Texture.h"
 #include "cinder/gl/Batch.h"
+#include "cinder/gl/Fbo.h"
 
 #include "txt/TextLayout.h"
 #include "txt/TextRenderer.h"

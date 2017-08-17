@@ -22,13 +22,15 @@ namespace txt
 			} Glyph;
 
 			struct Run {
-				Run( const Font& font, const ci::Color& color )
+				Run( const Font& font, const ci::Color& color, const float& opacity )
 					: font( font )
 					, color( color )
+					, opacity( opacity )
 				{};
 
-				const Font font;
-				const ci::ColorA color;
+				Font font;
+				ci::Color color;
+				float opacity;
 
 				std::vector<Glyph> glyphs;
 			};
@@ -42,16 +44,25 @@ namespace txt
 
 			Layout();
 
-			void calculateLayout( std::string text, const Font& font = DefaultFont() );
+			void calculateLayout( std::string text, const Font& font = DefaultFont(), const ci::Color& color = ci::ColorA( 1.f, 1.f, 1.f, 1.f ) );
 			void calculateLayout( const AttributedString& attrString );
 
-			const std::vector<Line>& getLines() const { return mLines; };
+			ci::vec2 getSize()
+			{
+				return mSize;
+			};
 
-			ci::vec2 getSize();
 			void setSize( ci::vec2 size ) { mSize = size; }
 			void setLeading( float leading ) { mLeading = leading; };
 			void setTracking( float tracking ) { mTracking = tracking;};
 			void setAlignment( Alignment alignment ) { mAlignment = alignment; };
+
+			// Get the maximum bounds of actual glyphs, i.e. the visual size
+			ci::vec2 measure();
+
+
+			const std::vector<Line>& getLines() const { return mLines; };
+			std::vector<Line>& getLines() { return mLines; };
 
 		private:
 			int mLeading;

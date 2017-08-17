@@ -42,12 +42,12 @@ namespace txt
 		mMaxLinesReached = false;
 	}
 
-	ci::vec2 Layout::getSize()
+	ci::vec2 Layout::measure()
 	{
 		return mLines.back().runs.back().glyphs.back().bbox.getLowerRight();
 	}
 
-	void Layout::calculateLayout( std::string text, const Font& font )
+	void Layout::calculateLayout( std::string text, const Font& font, const ci::Color& color )
 	{
 		calculateLayout( AttributedString( text, font ) );
 	}
@@ -75,8 +75,8 @@ namespace txt
 
 	void Layout::addSubstringToCurLine( AttributedString::Substring& substring )
 	{
+		// Create a font for this substring
 		const Font runFont( substring.attributes.fontFamily, substring.attributes.fontStyle, substring.attributes.fontSize );
-		const ci::Color runColor = substring.attributes.color;
 
 		// Get the line height + ascender for this run
 
@@ -109,7 +109,7 @@ namespace txt
 		}
 
 		// Create a run to store our glyphs
-		Run run( runFont, runColor );
+		Run run( runFont, substring.attributes.color, substring.attributes.opacity );
 
 		// Shape the substring
 		Shaper shaper( runFont );

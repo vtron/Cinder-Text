@@ -3,17 +3,29 @@
 
 namespace txt
 {
+	TextBox::TextBox()
+		: TextBox( ci::vec2( Layout::GROW, Layout::GROW ) )
+	{}
+
 	TextBox::TextBox( ci::vec2 size )
 		: mFont( DefaultFont() )
 		, mSize( size )
+		, mColor( ci::Color::white() )
 		, mRenderer( std::make_shared<RendererGl>() )
 		, mNeedsLayout( true )
-	{}
+		, mExternalAttributedString( false )
+	{
+		ci::app::console() << "Text Box Constructed!" << std::endl;
+	}
+
+	ci::vec2 TextBox::measure()
+	{
+		layoutIfNeeded();
+		return mLayout.measure();
+	}
 
 	ci::vec2 TextBox::getSize()
 	{
-		layoutIfNeeded();
-		ci::app::console() << mLayout.getSize() << std::endl;
 		return mLayout.getSize();
 	}
 
@@ -33,7 +45,23 @@ namespace txt
 
 	TextBox& TextBox::setText( std::string text )
 	{
-		mAttrString = AttributedString( text, mFont );
+		mText = text;
+		mExternalAttributedString = false;
+		mNeedsLayout = true;
+		return *this;
+	}
+
+	TextBox& TextBox::setColor( ci::ColorA color )
+	{
+		mColor = color;
+		mNeedsLayout = true;
+		return *this;
+	}
+
+	TextBox& TextBox::setAttrString( AttributedString attrString )
+	{
+		mAttrString = attrString;
+		mExternalAttributedString = true;
 		mNeedsLayout = true;
 		return *this;
 	}
@@ -49,24 +77,19 @@ namespace txt
 
 	TextBox& TextBox::doLayout()
 	{
+		if( !mExternalAttributedString ) {
+			mAttrString = AttributedString( mText, mFont, mColor );
+		}
+
 		mLayout.calculateLayout( mAttrString );
 		mNeedsLayout = false;
 
 		return *this;
 	}
 
-
-	TextBox& TextBox::setAttrString( AttributedString attrString )
-	{
-		mAttrString = attrString;
-		mNeedsLayout = true;
-		return *this;
-	}
-
 	void TextBox::draw()
 	{
 		layoutIfNeeded();
-
 		mRenderer->draw( mLayout );
 	}
 }
