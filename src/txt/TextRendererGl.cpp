@@ -32,7 +32,7 @@ namespace txt
 		for( auto& line : layout.getLines() ) {
 			for( auto& run : line.runs ) {
 
-				ci::gl::color( run.color );
+				//ci::gl::color( run.color );
 
 				for( auto& glyph : run.glyphs ) {
 					ci::gl::ScopedMatrices matrices;

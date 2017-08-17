@@ -44,7 +44,6 @@ namespace txt
 
 	ci::vec2 Layout::getSize()
 	{
-		ci::app::console() << "Last glyph bbox: " << mLines.back().runs.back().glyphs.back().bbox.getLowerRight() << std::endl;
 		return mLines.back().runs.back().glyphs.back().bbox.getLowerRight();
 	}
 
