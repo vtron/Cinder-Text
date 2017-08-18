@@ -12,6 +12,9 @@
 
 namespace txt
 {
+	typedef enum Alignment { LEFT, CENTER, RIGHT } Alignment;
+	enum { GROW = 0 };
+
 	class Layout
 	{
 		public:
@@ -38,9 +41,6 @@ namespace txt
 			struct Line {
 				std::vector<Run> runs;
 			};
-
-			typedef enum Alignment { LEFT, CENTER, RIGHT } Alignment;
-			enum { GROW = 0 };
 
 			Layout();
 

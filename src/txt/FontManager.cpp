@@ -43,6 +43,11 @@ namespace txt
 		return familyStyle.style;
 	}
 
+	void FontManager::loadFace( const ci::DataSourceRef& dataSource, const std::string& family, const std::string& style )
+	{
+		loadFace( dataSource->getFilePath(), family, style );
+	}
+
 	void FontManager::loadFace( const ci::fs::path& path, const std::string& family, const std::string& style )
 	{
 		if( !mFaceIDsForPaths.count( path.string() ) ) {

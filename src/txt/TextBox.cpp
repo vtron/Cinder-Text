@@ -4,7 +4,7 @@
 namespace txt
 {
 	TextBox::TextBox()
-		: TextBox( ci::vec2( Layout::GROW, Layout::GROW ) )
+		: TextBox( ci::vec2( txt::GROW, txt::GROW ) )
 	{}
 
 	TextBox::TextBox( ci::vec2 size )
@@ -66,6 +66,14 @@ namespace txt
 		return *this;
 	}
 
+
+	TextBox& TextBox::setAlignment( Alignment alignment )
+	{
+		mLayout.setAlignment( alignment );
+		mNeedsLayout = true;
+		return *this;
+	}
+
 	TextBox& TextBox::layoutIfNeeded()
 	{
 		if( mNeedsLayout ) {
@@ -81,6 +89,7 @@ namespace txt
 			mAttrString = AttributedString( mText, mFont, mColor );
 		}
 
+		mLayout.setSize( mSize );
 		mLayout.calculateLayout( mAttrString );
 		mNeedsLayout = false;
 

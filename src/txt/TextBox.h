@@ -21,6 +21,7 @@ namespace txt
 			TextBox& setText( std::string text );
 			TextBox& setAttrString( AttributedString attrString );
 			TextBox& setColor( ci::ColorA color );
+			TextBox& setAlignment( Alignment alignment );
 
 			TextBox& layoutIfNeeded();
 			TextBox& doLayout();
