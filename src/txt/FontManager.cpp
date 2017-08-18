@@ -43,6 +43,33 @@ namespace txt
 		return familyStyle.style;
 	}
 
+	void FontManager::loadFace( const ci::fs::path& path, const std::string& family, const std::string& style )
+	{
+		if( !mFaceIDsForPaths.count( path.string() ) ) {
+			mNextFaceId++;
+
+			uint32_t faceId = mNextFaceId;
+			FTC_FaceID id = ( FTC_FaceID )faceId;
+
+			// Store the path <---> id relationship
+			mFaceIDsForPaths[path.string()] = id;
+			mFacePathsForFaceID[id] = path.string();
+
+			// Load the face family/style values
+			FaceFamilyAndStyle familyStyleFromFace( getFace( ( uint32_t )id ) );
+			FaceFamilyAndStyle familyStyleFromUser( family, style );
+
+			// If user didn't provide a fonts family or style try to use the values in the face
+			std::string f = family.empty() ? familyStyleFromFace.family : familyStyleFromUser.family;
+			std::string s = style.empty() ? familyStyleFromFace.style : familyStyleFromUser.style;
+
+			FaceFamilyAndStyle familyStyle( f, s );
+
+			// Store the family/style <----------> id relationship
+			registerFamilyStyleForFaceID( familyStyle, id );
+		}
+	}
+
 	// --------------------------------------------------------
 	// Freetype Functions
 
@@ -251,24 +278,6 @@ namespace txt
 		}
 
 		return ( uint32_t )mFaceIDsForFamilyAndStyle[familyStyle];
-	}
-
-	void FontManager::loadFace( ci::fs::path path )
-	{
-		if( !mFaceIDsForPaths.count( path.string() ) ) {
-			mNextFaceId++;
-
-			uint32_t faceId = mNextFaceId;
-			FTC_FaceID id = ( FTC_FaceID )faceId;
-
-			// Store the path <---> id relationship
-			mFaceIDsForPaths[path.string()] = id;
-			mFacePathsForFaceID[id] = path.string();
-
-			// Load the face and store they family + style info <---> faceId relationship
-			FaceFamilyAndStyle familyStyle( getFace( ( uint32_t )id ) );
-			registerFamilyStyleForFaceID( familyStyle, id );
-		}
 	}
 
 	void FontManager::loadFace( const FaceFamilyAndStyle& familyStyle )

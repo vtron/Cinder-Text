@@ -23,7 +23,6 @@ namespace txt
 
 		FaceFamilyAndStyle()
 		{
-
 		}
 
 		FaceFamilyAndStyle( FT_Face face )
@@ -91,7 +90,8 @@ namespace txt
 			static FontManagerRef get();
 
 			// Preload a face so that it can be referenced in rich text
-			void loadFace( ci::fs::path path );
+			// If family or style are not provided they will be read from the font
+			void loadFace( const ci::fs::path& path, const std::string& family = "", const std::string& style = "" );
 
 			// Get the font family or style for a previously loaded or system font
 			std::string getFontFamily( const Font& font );
