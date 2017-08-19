@@ -44,6 +44,26 @@ namespace txt
 
 	ci::vec2 Layout::measure()
 	{
+		ci::vec2 size( 0.f );
+
+		// Calculate width
+		for( auto& line : mLines ) {
+			float width = line.runs.back().glyphs.back().bbox.getLowerRight().x;
+
+			if( width > size.x ) {
+				size.x = width;
+			}
+		}
+
+		// Calculate Height
+		for( auto& run : mLines.back().runs ) {
+			for( auto& glyph : run.glyphs ) {
+				if( glyph.bbox.y2 > size.y ) {
+					size.y = glyph.bbox.y2;
+				}
+			}
+		}
+
 		return mLines.back().runs.back().glyphs.back().bbox.getLowerRight();
 	}
 
