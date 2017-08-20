@@ -18,14 +18,9 @@ namespace txt
 		ci::app::console() << "Text Box Constructed!" << std::endl;
 	}
 
-	ci::vec2 TextBox::measure()
-	{
-		layoutIfNeeded();
-		return mLayout.measure();
-	}
-
 	ci::vec2 TextBox::getSize()
 	{
+		layoutIfNeeded();
 		return mLayout.getSize();
 	}
 

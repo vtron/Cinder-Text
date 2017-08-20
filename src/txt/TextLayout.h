@@ -47,18 +47,12 @@ namespace txt
 			void calculateLayout( std::string text, const Font& font = DefaultFont(), const ci::Color& color = ci::ColorA( 1.f, 1.f, 1.f, 1.f ) );
 			void calculateLayout( const AttributedString& attrString );
 
-			ci::vec2 getSize()
-			{
-				return mSize;
-			};
+			ci::vec2 getSize();
 
 			void setSize( ci::vec2 size ) { mSize = size; }
 			void setLeading( float leading ) { mLeading = leading; };
 			void setTracking( float tracking ) { mTracking = tracking;};
 			void setAlignment( Alignment alignment ) { mAlignment = alignment; };
-
-			// Get the maximum bounds of actual glyphs, i.e. the visual size
-			ci::vec2 measure();
 
 
 			const std::vector<Line>& getLines() const { return mLines; };

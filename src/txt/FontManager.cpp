@@ -38,8 +38,16 @@ namespace txt
 
 	std::string FontManager::getFontStyle( const Font& font )
 	{
-		FaceFamilyAndStyle familyStyle( getFace( font ) );
-		ci::app::console() << familyStyle.style << std::endl;
+		FaceFamilyAndStyle familyStyle;
+		FTC_FaceID faceId = ( FTC_FaceID )font.getFaceId();
+
+		if( mFamilyAndStyleForFaceIDs.count( faceId ) != 0 ) {
+			familyStyle = mFamilyAndStyleForFaceIDs[faceId];
+		}
+		else {
+			familyStyle = FaceFamilyAndStyle( getFace( faceId ) );
+		}
+
 		return familyStyle.style;
 	}
 

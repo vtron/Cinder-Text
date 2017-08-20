@@ -42,29 +42,40 @@ namespace txt
 		mMaxLinesReached = false;
 	}
 
-	ci::vec2 Layout::measure()
+	ci::vec2 Layout::getSize()
 	{
 		ci::vec2 size( 0.f );
 
-		// Calculate width
-		for( auto& line : mLines ) {
-			float width = line.runs.back().glyphs.back().bbox.getLowerRight().x;
+		if( mSize.x == GROW && !mLines.empty() ) {
 
-			if( width > size.x ) {
-				size.x = width;
-			}
-		}
+			// Calculate width
+			for( auto& line : mLines ) {
+				float width = line.runs.back().glyphs.back().bbox.getLowerRight().x;
 
-		// Calculate Height
-		for( auto& run : mLines.back().runs ) {
-			for( auto& glyph : run.glyphs ) {
-				if( glyph.bbox.y2 > size.y ) {
-					size.y = glyph.bbox.y2;
+				if( width > size.x ) {
+					size.x = width;
 				}
 			}
 		}
+		else {
+			size.x = mSize.x;
+		}
 
-		return mLines.back().runs.back().glyphs.back().bbox.getLowerRight();
+		if( mSize.y == GROW && !mLines.empty() ) {
+			// Calculate Height
+			for( auto& run : mLines.back().runs ) {
+				for( auto& glyph : run.glyphs ) {
+					if( glyph.bbox.y2 > size.y ) {
+						size.y = glyph.bbox.y2;
+					}
+				}
+			}
+		}
+		else {
+			size.y = mSize.y;
+		}
+
+		return size;
 	}
 
 	void Layout::calculateLayout( std::string text, const Font& font, const ci::Color& color )
