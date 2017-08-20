@@ -57,7 +57,7 @@ namespace txt
 
 	AttributedString::AttributedString( const RichText& richText, const Font& baseFont, const ci::Color& color )
 	{
-		RichTextParser parser( richText.richText, baseFont, color );
+		RichTextParser parser( richText.richText, AttributeList( baseFont, color ) );
 		mSubstrings = parser.getSubstrings();
 	}
 
@@ -82,7 +82,7 @@ namespace txt
 		AttributeList curAttributes = mSubstrings.back().attributes;
 
 		// Parse and push back rich text
-		RichTextParser parser( richText.richText );
+		RichTextParser parser( richText.richText, curAttributes );
 		mSubstrings.reserve( mSubstrings.size() + parser.getSubstrings().size() );
 		mSubstrings.insert( mSubstrings.end(), parser.getSubstrings().begin(), parser.getSubstrings().end() );
 
@@ -96,6 +96,14 @@ namespace txt
 			case LINE_BREAK:
 				mSubstrings.back().forceBreak = true;
 				break;
+
+			case FONT: {
+				Font font = static_cast<const AttributeFont&>( attribute ).font;
+				mSubstrings.back().attributes.fontFamily = font.getFamily();
+				mSubstrings.back().attributes.fontStyle = font.getStyle();
+				mSubstrings.back().attributes.fontSize = font.getSize();
+			}
+			break;
 
 			case FONT_FAMILY: {
 				std::string family = static_cast<const AttributeFontFamily&>( attribute ).family;
@@ -150,10 +158,10 @@ namespace txt
 	static const char* ATTR_FONT_SIZE( "font-size" );
 	static const char* ATTR_COLOR( "color" );
 
-	RichTextParser::RichTextParser( std::string richText, const Font& baseFont, const ci::Color& baseColor )
+	RichTextParser::RichTextParser( std::string richText, const AttributeList& baseAttributes )
 	{
 		// Push first attribute
-		mAttributesStack.push( AttributeList( baseFont.getFamily(), baseFont.getStyle(), baseFont.getSize(), baseColor ) );
+		mAttributesStack.push( baseAttributes );
 		std::string wrappedText = "<txt>" + richText + "</txt>";
 		xml_document<> doc;
 		char* cstr = &wrappedText[0u];

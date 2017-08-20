@@ -15,6 +15,7 @@ namespace txt
 	// Attributed String
 	enum AttributeType {
 		LINE_BREAK,
+		FONT,
 		FONT_FAMILY,
 		FONT_STYLE,
 		FONT_SIZE,
@@ -31,6 +32,13 @@ namespace txt
 
 	struct AttributeLineBreak : public Attribute {
 		AttributeLineBreak() : Attribute( AttributeType::LINE_BREAK ) {};
+	};
+
+	struct AttributeFont : public Attribute {
+		AttributeFont( const Font& font )
+			: Attribute( AttributeType::FONT )
+			, font( font ) {};
+		const Font font;
 	};
 
 	struct AttributeFontFamily : public Attribute {
@@ -93,6 +101,11 @@ namespace txt
 	};
 
 	struct AttributeList {
+		AttributeList( const Font& font, const ci::Color& color )
+			: AttributeList( font.getFamily(), font.getStyle(), font.getSize(), color )
+		{
+
+		}
 		AttributeList( const std::string& fontFamily, const std::string& fontStyle, const int& fontSize, const ci::Color& color )
 			: fontFamily( fontFamily )
 			, fontStyle( fontStyle )
@@ -194,7 +207,7 @@ namespace txt
 	class RichTextParser
 	{
 		public:
-			RichTextParser( std::string richText, const Font& baseFont = DefaultFont(), const ci::Color& baseColor = ci::Color::white() );
+			RichTextParser( std::string richText, const AttributeList& baseAttributes );
 			const std::vector<AttributedString::Substring>& getSubstrings() const { return mSubstrings; };
 
 		protected:
