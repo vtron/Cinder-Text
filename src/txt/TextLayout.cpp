@@ -87,7 +87,7 @@ namespace txt
 	{
 		reset();
 
-		const std::vector<AttributedString::Substring> substrings = attrString.getSubstrings();
+		std::vector<AttributedString::Substring> substrings = attrString.getSubstrings();
 
 		for( int i = 0; i < substrings.size(); i++ ) {
 			AttributedString::Substring remainingSubstring = substrings[i];

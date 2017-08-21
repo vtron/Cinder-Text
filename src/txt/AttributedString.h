@@ -171,7 +171,7 @@ namespace txt
 			void addText( std::string text );
 			void addRichText( const RichText& richText );
 
-			const std::vector<Substring>& getSubstrings() const { return mSubstrings; };
+			std::vector<Substring> getSubstrings() const;
 			void clear();
 
 		private:

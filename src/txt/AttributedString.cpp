@@ -41,18 +41,7 @@ namespace txt
 		std::string textToParse = text;
 
 		AttributeList attributes( baseFont.getFamily(), baseFont.getStyle(), baseFont.getSize(), color ) ;
-
-		if( text.length() != 0 ) {
-			std::vector<std::string> lineBreakStrings = split( text, '\n' );
-
-			for( auto& str : lineBreakStrings ) {
-				Substring substring( str, attributes, str == lineBreakStrings.back() ? false : true );
-				mSubstrings.push_back( std::move( substring ) );
-			}
-		}
-		else {
-			mSubstrings.push_back( Substring( "", attributes ) );
-		}
+		mSubstrings.push_back( Substring( text, attributes ) );
 	}
 
 	AttributedString::AttributedString( const RichText& richText, const Font& baseFont, const ci::Color& color )
@@ -69,10 +58,33 @@ namespace txt
 		mSubstrings.clear();
 	}
 
+	std::vector<AttributedString::Substring> AttributedString::getSubstrings() const
+	{
+		std::vector<Substring> substrings;
+
+		for( auto& substring : mSubstrings ) {
+			if( substring.text.length() != 0 ) {
+				std::vector<std::string> lineBreakStrings = split( substring.text, '\n' );
+
+				for( auto& str : lineBreakStrings ) {
+					Substring substring( str, substring.attributes, str == lineBreakStrings.back() && substring.text.back() != '\n' ? false : true );
+					substrings.push_back( std::move( substring ) );
+				}
+			}
+			else {
+
+				substrings.push_back( Substring( "", substring.attributes, true ) );
+			}
+		}
+
+		return substrings;
+	}
+
 	void AttributedString::addText( std::string text )
 	{
 		// Copy current substring and start a new one
 		mSubstrings.push_back( mSubstrings.back() );
+
 		mSubstrings.back().text = text;
 	}
 
