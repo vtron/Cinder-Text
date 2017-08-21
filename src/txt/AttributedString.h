@@ -125,7 +125,7 @@ namespace txt
 		int kerning;
 
 		ci::Color color;
-		float opacity;
+		float opacity = 1.f;
 
 		friend std::ostream& operator<< ( std::ostream& os, AttributeList const& attr )
 		{
