@@ -50,10 +50,12 @@ namespace txt
 
 			// Calculate width
 			for( auto& line : mLines ) {
-				float width = line.runs.back().glyphs.back().bbox.getLowerRight().x;
+				if (!line.runs.empty() && !line.runs.back().glyphs.empty()) {
+					float width = line.runs.back().glyphs.back().bbox.getLowerRight().x;
 
-				if( width > size.x ) {
-					size.x = width;
+					if (width > size.x) {
+						size.x = width;
+					}
 				}
 			}
 		}
