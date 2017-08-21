@@ -158,11 +158,24 @@ namespace txt
 	static const char* ATTR_FONT_SIZE( "font-size" );
 	static const char* ATTR_COLOR( "color" );
 
+	void replaceAll(std::string& str, const std::string& from, const std::string& to) {
+		if (from.empty())
+			return;
+		size_t start_pos = 0;
+		while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+			str.replace(start_pos, from.length(), to);
+			start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+		}
+	}
+
 	RichTextParser::RichTextParser( std::string richText, const AttributeList& baseAttributes )
 	{
 		// Push first attribute
 		mAttributesStack.push( baseAttributes );
-		std::string wrappedText = "<txt>" + richText + "</txt>";
+
+		std::string textToParse = richText;
+		replaceAll(textToParse, "<br>", "<br/>");
+		std::string wrappedText = "<txt>" + textToParse + "</txt>";
 		xml_document<> doc;
 		char* cstr = &wrappedText[0u];
 		doc.parse<0>( cstr );
