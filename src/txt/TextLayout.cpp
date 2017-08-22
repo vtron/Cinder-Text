@@ -40,44 +40,12 @@ namespace txt
 		mAscender = 0.f;
 		mLineWidth = 0.f;
 		mMaxLinesReached = false;
+		mLayoutSize = mSize;
 	}
 
 	ci::vec2 Layout::getSize()
 	{
-		ci::vec2 size( 0.f );
-
-		if( mSize.x == GROW && !mLines.empty() ) {
-
-			// Calculate width
-			for( auto& line : mLines ) {
-				if (!line.runs.empty() && !line.runs.back().glyphs.empty()) {
-					float width = line.runs.back().glyphs.back().bbox.getLowerRight().x;
-
-					if (width > size.x) {
-						size.x = width;
-					}
-				}
-			}
-		}
-		else {
-			size.x = mSize.x;
-		}
-
-		if( mSize.y == GROW && !mLines.empty() ) {
-			// Calculate Height
-			for( auto& run : mLines.back().runs ) {
-				for( auto& glyph : run.glyphs ) {
-					if( glyph.bbox.y2 > size.y ) {
-						size.y = glyph.bbox.y2;
-					}
-				}
-			}
-		}
-		else {
-			size.y = mSize.y;
-		}
-
-		return size;
+		return mLayoutSize;
 	}
 
 	void Layout::calculateLayout( std::string text, const Font& font, const ci::Color& color )
@@ -259,8 +227,19 @@ namespace txt
 		// Add it to our lines
 		mLines.push_back( mCurLine );
 
+		// Update our layout size
+		for( auto& run : mCurLine.runs ) {
+			for( auto& glyph : run.glyphs ) {
+				ci::vec2 bottomRight = glyph.bbox.getLowerRight();
+				mLayoutSize.x = std::max( bottomRight.x, mLayoutSize.x );
+				mLayoutSize.y = std::max( bottomRight.y, mLayoutSize.y );
+			}
+		}
+
 		// Setup next line
-		mCurLine = Line();
+		{
+			mCurLine = Line();
+		}
 
 		mPen.x = 0.f;
 		mPen.y += mLineHeight + mLineLeading;

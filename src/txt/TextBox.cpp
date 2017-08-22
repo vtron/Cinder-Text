@@ -15,7 +15,6 @@ namespace txt
 		, mNeedsLayout( true )
 		, mExternalAttributedString( false )
 	{
-		ci::app::console() << "Text Box Constructed!" << std::endl;
 	}
 
 	ci::vec2 TextBox::getSize()

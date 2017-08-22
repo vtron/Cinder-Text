@@ -72,6 +72,7 @@ namespace txt
 			float mAscender = 0;
 
 			ci::vec2 mSize;
+			ci::vec2 mLayoutSize;
 
 			void addSubstringToCurLine( AttributedString::Substring& substring );
 			void addRunToCurLine( Run& run );
