@@ -158,7 +158,7 @@ namespace txt
 				addCurLine();
 
 				// Clip the substrings text by what we've already added and return
-				int remainingGlyphStart = i - ( int )curWord.size();
+				int remainingGlyphStart = shapedGlyphs[i].cluster - ( int )curWord.size();
 				substring.text = substring.text.substr( remainingGlyphStart, std::string::npos );
 				return;
 			}
