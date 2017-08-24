@@ -77,7 +77,7 @@ namespace txt
 				}
 			}
 			else {
-				substrings.push_back( Substring( "", substring.attributes, false ) );
+				substrings.push_back( substring );
 			}
 		}
 

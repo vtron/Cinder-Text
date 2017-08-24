@@ -181,7 +181,7 @@ namespace txt
 		addRunToCurLine( run );
 
 		// If the substring requests a line break push to next line
-		if( substring.forceBreak ) {
+		if( substring.forceBreak == true ) {
 			addCurLine();
 			substring.forceBreak = false;
 		}
