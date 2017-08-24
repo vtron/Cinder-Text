@@ -17,10 +17,10 @@ namespace txt
 	{
 	}
 
-	ci::vec2 TextBox::getSize()
+	ci::ivec2 TextBox::getSize()
 	{
 		layoutIfNeeded();
-		return mLayout.getSize();
+		return ci::ivec2( ceil( mLayout.getSize().x ), ceil( mLayout.getSize().y ) );
 	}
 
 	TextBox& TextBox::setSize( ci::vec2 size )

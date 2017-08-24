@@ -38,7 +38,7 @@ namespace txt
 
 					FT_BitmapGlyph ftGlyph = txt::FontManager::get()->getGlyphBitmap( run.font, glyph.index );
 
-					ci::gl::translate( ci::vec2( glyph.bbox.getUpperLeft() ) + ci::vec2( ftGlyph->left, 0.f ) );
+					ci::gl::translate( ci::vec2( glyph.bbox.getUpperLeft() ) );
 					drawGlyph( run.font, glyph.index );
 				}
 			}

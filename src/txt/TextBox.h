@@ -12,7 +12,7 @@ namespace txt
 			TextBox();
 			TextBox( ci::vec2 size );
 
-			ci::vec2 getSize();
+			ci::ivec2 getSize();
 			TextBox& setSize( ci::vec2 size );
 
 			TextBox& setFont( const Font& font );
