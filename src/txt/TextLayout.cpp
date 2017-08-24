@@ -132,9 +132,10 @@ namespace txt
 
 			// Get the glyph metrics/position
 			ci::vec2 advance = shapedGlyphs[i].advance;
-			ci::Rectf glyphBBox( pos, pos + FontManager::get()->getGlyphSize( runFont, shapedGlyphs[i].index ) );
+			//ci::Rectf glyphBBox( pos, pos + FontManager::get()->getGlyphSize( runFont, shapedGlyphs[i].index ) );
 
 			FT_BitmapGlyph bitmapGlyph = FontManager::get()->getGlyphBitmap( runFont, shapedGlyphs[i].index );
+			ci::Rectf glyphBBox( pos, pos + ci::vec2( bitmapGlyph->bitmap.width, bitmapGlyph->bitmap.rows ) );
 
 			// Create a layout glyph and add to current word
 			Layout::Glyph glyph = { shapedGlyphs[i].index, glyphBBox, bitmapGlyph->top };
