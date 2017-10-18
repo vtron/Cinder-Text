@@ -12,6 +12,10 @@
 #include "txt/Font.h"
 #include "txt/FontManager.h"
 
+#if defined( CINDER_MSW_DESKTOP )
+#define stricmp _stricmp
+#endif
+
 using namespace rapidxml;
 
 namespace txt
