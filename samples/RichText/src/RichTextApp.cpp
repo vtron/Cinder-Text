@@ -1,9 +1,10 @@
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
+#include "cinder/FileWatcher.h"
 
 #include "txt/FontManager.h"
-#include "txt/Layout.h"
+#include "txt/TextLayout.h"
 #include "txt/TextRendererGl.h"
 
 using namespace ci;
@@ -47,7 +48,7 @@ void RichTextApp::setup()
 
 	// Layout text
 	txt::AttributedString attr;
-	attr << txt::RichText(mAttrText);
+	attr << txt::RichText( mAttrText );
 	mLayout.setSize( mTextBox.getSize() );
 	mLayout.calculateLayout( attr );
 }

@@ -39,9 +39,6 @@
     <ClCompile Include="..\..\..\src\txt\FontManager.cpp">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\txt\Layout.cpp">
-      <Filter>Blocks\Cinder-Txt</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\txt\Shaper.cpp">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClCompile>
@@ -52,6 +49,9 @@
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\txt\TextRendererGl.cpp">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\txt\TextLayout.cpp">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,9 +68,6 @@
     <ClInclude Include="..\..\..\src\txt\FontManager.h">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\txt\Layout.h">
-      <Filter>Blocks\Cinder-Txt</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\txt\Renderer.h">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClInclude>
@@ -84,6 +81,9 @@
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\txt\TextRendererGl.h">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\TextLayout.h">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClInclude>
   </ItemGroup>

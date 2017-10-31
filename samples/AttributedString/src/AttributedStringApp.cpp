@@ -2,7 +2,7 @@
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 
-#include "txt/Layout.h"
+#include "txt/TextLayout.h"
 #include "txt/TextRendererGl.h"
 #include "txt/AttributedString.h"
 
@@ -21,26 +21,31 @@ class AttributedStringApp : public App
 		txt::Layout mLayout;
 		txt::RendererGl mRendererGl;
 
-		ci::Rectf mTextBox = ci::Rectf( 100.f, 100.f, 500.f, 500.f );
+		ci::Rectf mTextBox = ci::Rectf( 200.f, 200.f, 1000.f, 1000.f );
+		txt::AttributedString mAttrStr;
 
 		std::string testText = "This is a test of a basic string to be drawn in a textbox, testing 12345. This is a test of a basic string to be drawn in a textbox. This is a test of a basic string to be drawn in a textbox. This is a test of a basic string to be drawn in a textbox.";
 };
 
 void AttributedStringApp::setup()
 {
-	txt::AttributedString attrStr;
-	attrStr << "It's" << txt::AttributeColor( ci::ColorA( 1.0f, 0.f, 1.f ) ) << txt::AttributeFontFamily( "Helvetica" );
-	attrStr << " Wednesday" << txt::AttributeColor( ci::ColorA( 1.f, 1.f, 1.f ) )  << txt::AttributeFontStyle( "Italic" );
-	attrStr << " my" << txt::AttributeFontStyle( "Regular" ) << txt::AttributeLineBreak();
-	attrStr << "Dudes!" << txt::AttributeFontSize( 50.f ) << txt::AttributeFontStyle( "Bold" );
-	attrStr << txt::RichText( "<br/><span font-fammily=\"Helvetica\" font-style=\"Italic\" color=\"#ff00ff\">Rich Text</span>" );
+	setWindowSize( 1024.f, 768.f );
+
+	mAttrStr << "It's" << txt::AttributeColor( ci::ColorA( 1.0f, 0.f, 1.f ) ) << txt::AttributeFontFamily( "Helvetica" );
+	mAttrStr << " Wednesday" << txt::AttributeColor( ci::ColorA( 1.f, 1.f, 1.f ) )  << txt::AttributeFontStyle( "Italic" );
+	mAttrStr << " my" << txt::AttributeFontStyle( "Regular" ) << txt::AttributeLineBreak();
+	mAttrStr << "Dudes!" << txt::AttributeFontSize( 50.f ) << txt::AttributeFontStyle( "Bold" );
+	mAttrStr << txt::RichText( "<br/><span font-fammily=\"Helvetica\" font-style=\"Italic\" color=\"#ff0000\">Rich Text</span>" );
 
 	mLayout.setSize( mTextBox.getSize() );
-	mLayout.calculateLayout( attrStr );
+	mLayout.calculateLayout( mAttrStr );
 }
 
 void AttributedStringApp::mouseDown( MouseEvent event )
 {
+	mTextBox.set( mTextBox.x1, mTextBox.y1, event.getX(), event.getY() );
+	mLayout.setSize( mTextBox.getSize() );
+	mLayout.calculateLayout( mAttrStr );
 }
 
 void AttributedStringApp::update()
