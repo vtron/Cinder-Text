@@ -192,17 +192,17 @@ namespace txt
 		scaler->width = float( font.mSize ) * 64.f;
 		scaler->height = float( font.mSize ) * 64.f;
 
-		//SetProcessDPIAware(); //true
-		//HDC screen = GetDC( NULL );
-		//double hPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSX );
-		//double vPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSY );
-		//ReleaseDC( NULL, screen );
+		SetProcessDPIAware(); //true
+		HDC screen = GetDC( NULL );
+		double hPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSX );
+		double vPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSY );
+		ReleaseDC( NULL, screen );
 
-		//scaler->x_res = hPixelsPerInch;
-		//scaler->y_res = vPixelsPerInch;
+		scaler->x_res = hPixelsPerInch;
+		scaler->y_res = vPixelsPerInch;
 
-		scaler->x_res = 72;
-		scaler->y_res = 72;
+		//scaler->x_res = 72;
+		//scaler->y_res = 72;
 
 		return scaler;
 	}
