@@ -36,8 +36,6 @@ namespace txt
 				for( auto& glyph : run.glyphs ) {
 					ci::gl::ScopedMatrices matrices;
 
-					FT_BitmapGlyph ftGlyph = txt::FontManager::get()->getGlyphBitmap( run.font, glyph.index );
-
 					ci::gl::translate( ci::vec2( glyph.bbox.getUpperLeft() ) );
 					drawGlyph( run.font, glyph.index );
 				}
@@ -64,7 +62,7 @@ namespace txt
 	ci::gl::TextureRef RendererGl::getGlyphTexture( const  Font& font, unsigned int glyphIndex )
 	{
 		// Check to see if we have the font
-		if( mGlyphTextures.count( font ) == 0 || mGlyphTextures[font].count( glyphIndex ) ) {
+		if( mGlyphTextures.count( font ) == 0 || mGlyphTextures[font].count( glyphIndex ) == 0 ) {
 			cacheGlyphAsTexture( font, glyphIndex );
 		}
 
