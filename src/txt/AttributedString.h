@@ -106,6 +106,7 @@ namespace txt
 		{
 
 		}
+
 		AttributeList( const std::string& fontFamily, const std::string& fontStyle, const int& fontSize, const ci::Color& color )
 			: fontFamily( fontFamily )
 			, fontStyle( fontStyle )

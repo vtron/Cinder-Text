@@ -23,7 +23,9 @@ namespace txt
 	}
 
 	Layout::Layout()
-		: mTracking( 0 )
+		: mFont( DefaultFont() )
+		, mColor( ci::Color( 1.f, 1.f, 1.f ) )
+		, mTracking( 0 )
 		, mLeading( 0 )
 		, mAlignment( Alignment::LEFT )
 		, mSize( GROW )
@@ -31,7 +33,7 @@ namespace txt
 	{
 	}
 
-	void Layout::reset()
+	void Layout::resetLayout()
 	{
 		mLines.clear();
 		mPen = ci::vec2( 0.f );
@@ -43,19 +45,14 @@ namespace txt
 		mLayoutSize = mSize;
 	}
 
-	ci::vec2 Layout::getSize()
+	void Layout::calculateLayout( std::string text )
 	{
-		return mLayoutSize;
-	}
-
-	void Layout::calculateLayout( std::string text, const Font& font, const ci::Color& color )
-	{
-		calculateLayout( AttributedString( text, font ) );
+		calculateLayout( AttributedString( text, mFont, mColor ) );
 	}
 
 	void Layout::calculateLayout( const AttributedString& attrString )
 	{
-		reset();
+		resetLayout();
 
 		std::vector<AttributedString::Substring> substrings = attrString.getSubstrings();
 
@@ -120,6 +117,8 @@ namespace txt
 			HB_SCRIPT_LATIN,
 			HB_DIRECTION_LTR
 		};
+
+		//shaper.removeFeature( Shaper::Feature::LIGATURES );
 
 		std::vector<Shaper::Glyph> shapedGlyphs = shaper.getShapedText( shaperText );
 

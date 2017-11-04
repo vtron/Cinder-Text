@@ -3,6 +3,7 @@
 #include "cinder/gl/gl.h"
 #include "cinder/gl/scoped.h"
 #include "cinder/GeomIo.h"
+#include "cinder/ip/Fill.h"
 
 #include "txt/FontManager.h"
 
@@ -10,7 +11,12 @@ namespace txt
 {
 	RendererGl::RendererGl()
 	{
+		ci::gl::GlslProgRef shader = ci::gl::GlslProg::create( ci::app::loadAsset( "shaders/shader.vert" ), ci::app::loadAsset( "shaders/shader.frag" ) );
+		shader->uniform( "uTexArray", 0 );
+
+		mBatch = ci::gl::Batch::create( ci::geom::Rect( ci::Rectf( 0.f, 0.f, 1.f, 1.f ) ), shader );
 	}
+
 
 	void RendererGl::draw( const std::string& string, const ci::vec2& frame )
 	{
@@ -21,7 +27,8 @@ namespace txt
 	{
 		Layout layout;
 		layout.setSize( frame );
-		layout.calculateLayout( string, font );
+		layout.setFont( font );
+		layout.calculateLayout( string );
 		draw( layout );
 	}
 
@@ -34,53 +41,99 @@ namespace txt
 				ci::gl::color( ci::ColorA( run.color, run.opacity ) );
 
 				for( auto& glyph : run.glyphs ) {
-					ci::gl::ScopedMatrices matrices;
+					// Make sure we have the glyph
+					if( getFontCache( run.font ).glyphs.count( glyph.index ) != 0 ) {
+						ci::gl::ScopedMatrices matrices;
 
-					ci::gl::translate( ci::vec2( glyph.bbox.getUpperLeft() ) );
-					drawGlyph( run.font, glyph.index );
+						ci::gl::translate( ci::vec2( glyph.bbox.getLowerLeft() ) );
+						ci::gl::scale( glyph.bbox.getSize().x, -glyph.bbox.getSize().y );
+
+						ci::gl::ScopedBlendAlpha alphaBlend;
+						mBatch->getGlslProg()->uniform( "uLayer", getFontCache( run.font ).glyphs[glyph.index].layer );
+
+						ci::gl::Texture3dRef tex = getFontCache( run.font ).glyphs[glyph.index].texArray;
+
+						//ci::vec2 subTexSize = glyph.bbox.getSize() / ci::vec2( tex->getWidth(), tex->getHeight() );
+						mBatch->getGlslProg()->uniform( "uSubTexSize", getFontCache( run.font ).glyphs[glyph.index].subTexSize );
+
+						ci::gl::ScopedTextureBind texBind( tex, 0 );
+						mBatch->draw();
+					}
 				}
 			}
 		}
 	}
 
-	void RendererGl::drawGlyph( const Font& font, uint32_t glyphIndex )
+	RendererGl::FontCache& RendererGl::getFontCache( const Font& font )
 	{
-		ci::gl::draw( getGlyphTexture( font, glyphIndex ) );
-	}
-
-	//ci::gl::Texture3dRef RendererGl::getTexture3dForFont( Font& font )
-	//{
-	//	uint32_t faceId = ( uint32_t )font.faceId;
-
-	//	if( mFontTextures.count( faceId ) == 0 || mFontTextures[faceId].count( font.size ) ) {
-	//		cacheFont( font );
-	//	}
-
-	//	return mFontTextures[faceId][font.size];
-	//}
-
-	ci::gl::TextureRef RendererGl::getGlyphTexture( const  Font& font, unsigned int glyphIndex )
-	{
-		// Check to see if we have the font
-		if( mGlyphTextures.count( font ) == 0 || mGlyphTextures[font].count( glyphIndex ) == 0 ) {
-			cacheGlyphAsTexture( font, glyphIndex );
+		if( !mFontCaches.count( font ) ) {
+			cacheFont( font );
 		}
 
-		return mGlyphTextures[font][glyphIndex];
+		return mFontCaches[font];
 	}
 
-	void RendererGl::cacheGlyphAsTexture( const  Font& font, uint32_t glyphIndex )
+	// Cache glyphs to gl texture array(s)
+	void RendererGl::cacheFont( const Font& font )
 	{
-		FT_BitmapGlyph glyph = txt::FontManager::get()->getGlyphBitmap( font, glyphIndex );
-		ci::ChannelRef channel = ci::Channel::create( glyph->bitmap.width, glyph->bitmap.rows, glyph->bitmap.width * sizeof( unsigned char ), sizeof( unsigned char ), glyph->bitmap.buffer );
+		// Determine the max number of layers for texture arrays on platform
+		GLint maxLayersPerArray;
+		glGetIntegerv( GL_MAX_ARRAY_TEXTURE_LAYERS, &maxLayersPerArray );
 
-		ci::gl::Texture::Format format;
-		format.setSwizzleMask( std::array<GLint, 4> {GL_ONE, GL_ONE, GL_ONE, GL_RED } );
-		mGlyphTextures[font][glyphIndex] = ci::gl::Texture::create( *channel, format );
+		// Get the total number of glyphs
+		std::vector<uint32_t> glyphIndices = txt::FontManager::get()->getGlyphIndices( font );
+		unsigned int numGlyphs = glyphIndices.size();
+		//numGlyphs = txt::FontManager::get()->getNumGlyphs( font );
 
+		// Calculate max glyph size and pad out to 4 bytes
+		ci::ivec2 maxGlyphSize = txt::FontManager::get()->getMaxGlyphSize( font );
+		ci::ivec2 padding = ci::ivec2( 4 ) - ( maxGlyphSize % ci::ivec2( 4 ) );
+		maxGlyphSize += padding;
 
-		//ci::gl::Texture3d::Format format;
-		//format.setTarget( GL_TEXTURE_2D_ARRAY );
-		//ci::gl::Texture3dRef fontTex = ci::gl::Texture3d::create( 1, 1, ( GLint )numGlyphs, format );
+		ci::gl::Texture3d::Format format;
+		format.setTarget( GL_TEXTURE_2D_ARRAY );
+		format.setInternalFormat( GL_RED );
+
+		//format.setSwizzleMask( std::array<GLint, 4> {GL_ONE, GL_ONE, GL_ONE, GL_RED } );
+		ci::gl::Texture3dRef curTexArray = nullptr;
+
+		unsigned int curLayer = 0;
+		unsigned int totalLayers = 0;
+
+		// Go through each glyph and cache
+		for( auto& glyphIndex : txt::FontManager::get()->getGlyphIndices( font ) ) {
+
+			// Check to see if we need a new texture
+			if( !curTexArray || curLayer >= maxLayersPerArray ) {
+
+				unsigned int distFromTotal = numGlyphs - totalLayers;
+
+				unsigned int numLayers = distFromTotal >= maxLayersPerArray ? maxLayersPerArray : distFromTotal;
+				curTexArray = ci::gl::Texture3d::create( maxGlyphSize.x, maxGlyphSize.y, numLayers, format );
+
+				curLayer = 0;
+			}
+
+			// Add the glyph to our cur tex array
+			FT_BitmapGlyph glyph = txt::FontManager::get()->getGlyphBitmap( font, glyphIndex );
+			ci::ivec2 glyphSize( glyph->bitmap.width, glyph->bitmap.rows );
+
+			ci::ChannelRef channel = ci::Channel::create( glyphSize.x, glyphSize.y, glyphSize.x * sizeof( unsigned char ), sizeof( unsigned char ), glyph->bitmap.buffer );
+			ci::Channel8uRef expandedChannel = ci::Channel8u::create( maxGlyphSize.x, maxGlyphSize.y );
+			ci::ip::fill( expandedChannel.get(), ( uint8_t )0 );
+			expandedChannel->copyFrom( *channel, ci::Area( 0, 0, glyphSize.x, glyphSize.y ) );
+
+			ci::Surface8u surface( *expandedChannel );
+			curTexArray->update( surface, curLayer );
+
+			//curTexArray->update( glyph->bitmap.buffer, GL_RED, GL_UNSIGNED_BYTE, 0, glyph->bitmap.width, glyph->bitmap.rows, 1, 0, 0, curLayer );
+
+			mFontCaches[font].glyphs[glyphIndex].texArray = curTexArray;
+			mFontCaches[font].glyphs[glyphIndex].layer = curLayer;
+			mFontCaches[font].glyphs[glyphIndex].subTexSize = ci::vec2( glyphSize ) / ci::vec2( maxGlyphSize );
+
+			curLayer++;
+			totalLayers++;
+		}
 	}
 }

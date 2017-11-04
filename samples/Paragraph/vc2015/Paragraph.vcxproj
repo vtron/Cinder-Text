@@ -116,6 +116,7 @@
     <ClInclude Include="..\..\..\src\txt\Shaper.h" />
     <ClInclude Include="..\..\..\src\txt\SystemFonts.h" />
     <ClInclude Include="..\..\..\src\txt\TextLayout.h" />
+    <ClInclude Include="..\..\..\src\txt\TextRenderer.h" />
     <ClInclude Include="..\..\..\src\txt\TextRendererGl.h" />
     <ClInclude Include="..\include\Resources.h" />
   </ItemGroup>

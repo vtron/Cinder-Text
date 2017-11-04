@@ -22,11 +22,30 @@ namespace txt
 			virtual void draw( const Layout& layout );
 
 		private:
-			void drawGlyph( const Font& font, unsigned int glyphIndex );
+			void drawGlyph( const Font& font, unsigned int glyphIndex ) {};
 
-			ci::gl::TextureRef getGlyphTexture( const Font& font, unsigned int glyphIndex );
+			//ci::gl::TextureRef getGlyphTexture( const Font& font, unsigned int glyphIndex );
 
-			void cacheGlyphAsTexture( const Font& font, uint32_t glyphIndex );
-			std::unordered_map < Font, std::unordered_map<uint32_t, ci::gl::TextureRef > > mGlyphTextures;
+			//void cacheGlyphAsTexture( const Font& font, uint32_t glyphIndex );
+			//std::unordered_map < Font, std::unordered_map<uint32_t, ci::gl::TextureRef > > mGlyphTextures;
+			typedef struct {
+				ci::gl::Texture3dRef texArray;
+				unsigned int layer;
+				ci::vec2 subTexSize;
+			} GlyphCache;
+
+			typedef struct {
+				std::map<uint32_t, GlyphCache > glyphs;
+			} FontCache;
+
+			FontCache& getFontCache( const Font& font );
+			void cacheFont( const Font& font );
+
+
+
+			std::unordered_map<Font, FontCache> mFontCaches;
+
+			ci::gl::BatchRef mBatch;
+
 	};
 }

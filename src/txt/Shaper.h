@@ -44,7 +44,7 @@ namespace txt
 
 		private:
 			// Harfbuzz
-			hb_font_t* getHarfbuzzFont( Font& font );
+			hb_font_t* getHarfbuzzFont( Font& font ) { return mFont; };
 
 			hb_font_t* mFont;
 			hb_buffer_t* mBuffer;

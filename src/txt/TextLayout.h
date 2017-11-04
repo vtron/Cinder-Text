@@ -18,12 +18,14 @@ namespace txt
 	class Layout
 	{
 		public:
+			// A single character
 			typedef struct {
 				uint32_t index;
 				ci::Rectf bbox;
 				unsigned int top;
 			} Glyph;
 
+			// A group of characters with the same attributes
 			struct Run {
 				Run( const Font& font, const ci::Color& color, const float& opacity )
 					: font( font )
@@ -38,41 +40,59 @@ namespace txt
 				std::vector<Glyph> glyphs;
 			};
 
+			// A line of runs fit within the layout
 			struct Line {
 				std::vector<Run> runs;
 			};
 
 			Layout();
 
-			void calculateLayout( std::string text, const Font& font = DefaultFont(), const ci::Color& color = ci::ColorA( 1.f, 1.f, 1.f, 1.f ) );
+			// Layout Calculation
+			void calculateLayout( std::string text );
 			void calculateLayout( const AttributedString& attrString );
 
-			ci::vec2 getSize();
-
-			void setSize( ci::vec2 size ) { mSize = size; }
-			void setLeading( float leading ) { mLeading = leading; };
-			void setTracking( float tracking ) { mTracking = tracking;};
-			void setAlignment( Alignment alignment ) { mAlignment = alignment; };
-
-
+			// Lines
 			const std::vector<Line>& getLines() const { return mLines; };
 			std::vector<Line>& getLines() { return mLines; };
 
+			// Layout Attributes
+			const Font& getFont() { return mFont; }
+			Layout& setFont( const Font& font ) { mFont = font; return *this; }
+
+			const ci::Color& getColor() { return mColor; }
+			Layout& setColor( const ci::Color& color ) { mColor = color; }
+
+			const ci::vec2& getSize() { return mSize; }
+			Layout& setSize( ci::vec2 size ) { mSize = size; return *this; }
+
+			float getLeading() { return mLeading; }
+			Layout& setLeading( float leading ) { mLeading = leading; return *this; };
+
+			float getTracking() { return mTracking; }
+			Layout& setTracking( float tracking ) { mTracking = tracking; return *this; };
+
+			const Alignment& getAlignment() { return mAlignment; }
+			Layout& setAlignment( Alignment alignment ) { mAlignment = alignment; return *this; };
+
 		private:
-			int mLeading;
-			int mTracking;
+			// Attributes
+			Font mFont;
+			ci::Color mColor;
+			float mLeading;
+			float mTracking;
 			Alignment mAlignment;
 
-			void reset();
+			ci::vec2 mSize;
+			ci::vec2 mLayoutSize;
+
+			// Layout calculation
+			void resetLayout();
 			ci::vec2 mPen;
 			Line mCurLine;
 			float mLineWidth = 0;
 			float mLineHeight = 0;
 			float mLineLeading = 0;
 			float mAscender = 0;
-
-			ci::vec2 mSize;
-			ci::vec2 mLayoutSize;
 
 			void addSubstringToCurLine( AttributedString::Substring& substring );
 			void addRunToCurLine( Run& run );

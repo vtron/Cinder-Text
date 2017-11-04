@@ -48,6 +48,9 @@
     <ClInclude Include="..\..\..\src\txt\TextLayout.h">
       <Filter>blocks\Cinder-Txt</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\TextRenderer.h">
+      <Filter>blocks\Cinder-Txt</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">

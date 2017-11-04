@@ -25,6 +25,9 @@
 
 namespace txt
 {
+
+	// Windows
+#if defined( CINDER_MSW_DESKTOP )
 	HDC mFontDC = nullptr;
 
 	SystemFonts::SystemFonts()
@@ -36,7 +39,7 @@ namespace txt
 		mDefaultSize = 12;
 	}
 
-#if defined( CINDER_MSW_DESKTOP )
+
 	int CALLBACK EnumFacesExProc( ENUMLOGFONTEX* lpelfe, NEWTEXTMETRICEX* lpntme, int FontType, LPARAM lParam )
 	{
 		std::string familyName = ci::toUtf8( ( char16_t* )lpelfe->elfLogFont.lfFaceName );

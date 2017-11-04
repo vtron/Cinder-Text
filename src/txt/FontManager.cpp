@@ -108,6 +108,12 @@ namespace txt
 		return face;
 	}
 
+	unsigned int FontManager::getNumGlyphs( const Font& font )
+	{
+		ci::app::console() << "Num Glyphs: " << getFace( font )->num_glyphs << std::endl;
+		return getFace( font )->num_glyphs;
+	}
+
 	FT_Size FontManager::getSize( const Font& font )
 	{
 		FT_Size ftSize;
@@ -130,9 +136,27 @@ namespace txt
 	{
 		std::vector<FT_UInt> indices;
 
-		for( auto& character : string ) {
-			indices.push_back( getGlyphIndex( font, character, 0 ) );
+		// Get indices for a predetermined group of chars
+		if( !string.empty() ) {
+			for( auto& character : string ) {
+				indices.push_back( getGlyphIndex( font, character, 0 ) );
+			}
 		}
+
+		// Otherwise load all the indices
+		// This is probably pretty slow since it doesn't use caching
+		else {
+			FT_UInt index;
+			FT_ULong character = FT_Get_First_Char( getFace( font ), &index );
+
+			while( true ) {
+				indices.push_back( index );
+				character = FT_Get_Next_Char( getFace( font ), character, &index );
+
+				if( !index ) { break; }
+			}
+		}
+
 
 		return indices;
 	}
@@ -176,12 +200,19 @@ namespace txt
 		FT_Size size = getSize( font );
 		FT_BBox bbox = size->face->bbox;
 
-		bbox.xMin = FT_MulFix( bbox.xMin, size->metrics.x_scale );
-		bbox.yMin = FT_MulFix( bbox.yMin, size->metrics.y_scale );
-		bbox.xMax = FT_MulFix( bbox.xMax, size->metrics.x_scale );
-		bbox.yMax = FT_MulFix( bbox.yMax, size->metrics.y_scale );
+		int pixelsX = ::FT_MulFix( ( size->face->bbox.xMax - size->face->bbox.xMin ), size->metrics.x_scale );
+		int pixelsY = ::FT_MulFix( ( size->face->bbox.yMax - size->face->bbox.yMin ), size->metrics.y_scale );
 
-		return ci::vec2( bbox.xMax - bbox.xMin, bbox.yMax - bbox.yMin );
+		ci::vec2 maxSize( size->metrics.max_advance / 64.f, size->metrics.height / 64.f );
+		return maxSize;
+
+
+		//bbox.xMin = FT_MulFix( bbox.xMin / 64.f, size->metrics.x_scale );
+		//bbox.yMin = FT_MulFix( bbox.yMin / 64.f, size->metrics.y_scale );
+		//bbox.xMax = FT_MulFix( bbox.xMax / 64.f, size->metrics.x_scale );
+		//bbox.yMax = FT_MulFix( bbox.yMax / 64.f, size->metrics.y_scale );
+
+		//return ci::vec2( bbox.xMax - bbox.xMin, bbox.yMax - bbox.yMin );
 	}
 
 	FTC_Scaler FontManager::getScaler( const  Font& font )

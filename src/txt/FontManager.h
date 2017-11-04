@@ -100,17 +100,19 @@ namespace txt
 
 			// Freetype functions, used by renderers and shapers
 			uint32_t getGlyphIndex( const Font& font, FT_UInt32 charCode, FT_Int mapIndex = 0 );
-			std::vector<uint32_t> getGlyphIndices( const Font& font, std::string string );
+			std::vector<uint32_t> getGlyphIndices( const Font& font, std::string string = "" );
 
 			FT_Glyph getGlyph( const Font& font, unsigned int glyphIndex );
 			FT_BitmapGlyph getGlyphBitmap( const Font& font, unsigned int glyphIndex );
 
+			unsigned int getNumGlyphs( const Font& font );
 			ci::vec2 getGlyphSize( const Font& font, unsigned int glyphIndex );
 			ci::vec2 getMaxGlyphSize( const Font& font );
 
 			FT_Face getFace( const Font& font );
 			FT_Face getFace( uint32_t faceId );
 			FT_Face getFace( FTC_FaceID faceId );
+
 			FT_Size getSize( const Font& font );
 			FTC_Scaler getScaler( const Font& font );
 
