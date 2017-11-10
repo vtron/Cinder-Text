@@ -22,6 +22,8 @@ lib/
 *.VC.opendb
 *.VC.db
 *.opensdf
+*.vs
+.vs
 Debug/
 Release/
 Debug_ANGLE/
