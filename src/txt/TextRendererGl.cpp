@@ -59,6 +59,9 @@ namespace txt
 						ci::gl::ScopedTextureBind texBind( tex, 0 );
 						mBatch->draw();
 					}
+					else {
+						ci::app::console() << "Could not find glyph for index: " << glyph.index << std::endl;
+					}
 				}
 			}
 		}
