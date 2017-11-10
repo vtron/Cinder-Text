@@ -4,7 +4,8 @@
 #include <stack>
 #include <iostream>
 
-#include "rapidxml\rapidxml.hpp"
+#include "harfbuzz/hb.h"
+#include "rapidxml/rapidxml.hpp"
 
 #include "cinder/Color.h"
 
@@ -115,6 +116,9 @@ namespace txt
 			, opacity( 1.f )
 			, leading( 0 )
 			, kerning( 0 )
+			, language( "en" )
+			, script( HB_SCRIPT_LATIN )
+			, direction( HB_DIRECTION_LTR )
 		{
 		}
 
@@ -127,6 +131,11 @@ namespace txt
 
 		ci::Color color;
 		float opacity = 1.f;
+
+		// Shaper properties
+		std::string language;
+		hb_script_t script;
+		hb_direction_t direction;
 
 		friend std::ostream& operator<< ( std::ostream& os, AttributeList const& attr )
 		{

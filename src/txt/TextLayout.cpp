@@ -22,6 +22,17 @@ namespace txt
 		return newLineIndex == codepoint;
 	}
 
+	int calculateShapedGlyphsLength( const std::vector<Layout::Glyph>& glyphs )
+	{
+		int length = 0;
+
+		for( const auto& glyph : glyphs ) {
+			length += glyph.value.length();
+		}
+
+		return length;
+	}
+
 	Layout::Layout()
 		: mFont( DefaultFont() )
 		, mColor( ci::Color( 1.f, 1.f, 1.f ) )
@@ -113,32 +124,35 @@ namespace txt
 		Shaper shaper( runFont );
 		Shaper::Text shaperText = {
 			substring.text,
-			"en",
-			HB_SCRIPT_LATIN,
-			HB_DIRECTION_LTR
+			substring.attributes.language,
+			substring.attributes.script,
+			substring.attributes.direction
 		};
 
-		//shaper.removeFeature( Shaper::Feature::LIGATURES );
-
 		std::vector<Shaper::Glyph> shapedGlyphs = shaper.getShapedText( shaperText );
+
+		// Calculate linebreaks
+		std::vector<uint8_t> lineBreaks;
+		ci::calcLinebreaksUtf8( substring.text.c_str(), &lineBreaks );
 
 		// Track current word for line breaks (need to remove and switch to unicode breaking)
 		std::vector<Glyph> curWord;
 
 		for( int i = 0; i < shapedGlyphs.size(); i++ ) {
+			ci::app::console() << "Text: " << shapedGlyphs[i].text << std::endl;
+
 			// Add the offset (generally 0 for latin) to the pen pos
 			ci::vec2 pos = mPen + shapedGlyphs[i].offset;
 
 			// Get the glyph metrics/position
 			ci::vec2 advance = shapedGlyphs[i].advance;
-			//ci::Rectf glyphBBox( pos, pos + FontManager::get()->getGlyphSize( runFont, shapedGlyphs[i].index ) );
 
 			FT_BitmapGlyph bitmapGlyph = FontManager::get()->getGlyphBitmap( runFont, shapedGlyphs[i].index );
 			ci::vec2 glyphPos = pos + ci::vec2( bitmapGlyph->left, 0.f );
 			ci::Rectf glyphBBox( glyphPos, glyphPos + ci::vec2( bitmapGlyph->bitmap.width, bitmapGlyph->bitmap.rows ) );
 
 			// Create a layout glyph and add to current word
-			Layout::Glyph glyph = { shapedGlyphs[i].index, glyphBBox, bitmapGlyph->top };
+			Layout::Glyph glyph = { shapedGlyphs[i].index, glyphBBox, bitmapGlyph->top, shapedGlyphs[i].text };
 
 			// Move the pen forward
 			mPen.x += advance.x + kerning;
@@ -159,7 +173,7 @@ namespace txt
 				addCurLine();
 
 				// Clip the substrings text by what we've already added and return
-				int remainingGlyphStart = shapedGlyphs[i].cluster - ( int )curWord.size();
+				int remainingGlyphStart = shapedGlyphs[i].cluster + shapedGlyphs[i].text.length() - 1 - calculateShapedGlyphsLength( curWord );
 				substring.text = substring.text.substr( remainingGlyphStart, std::string::npos );
 				return;
 			}

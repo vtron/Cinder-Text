@@ -35,12 +35,14 @@ class CinderProjectApp : public App
 
 		ci::Rectf mTextBox = ci::Rectf( 100.f, 100.f, 800.f, 800.f );
 
-		std::string fontName = "SourceSerifPro/SourceSerifPro-Regular.otf";
-		//"NotoArabic/NotoSansArabic-Regular.ttf";
+		std::string fontName = "fonts/NotoSerif/NotoSerif-Regular.ttf";
+		//std::string fontName = "fonts/NotoArabic/NotoSansArabic-Regular.ttf";
+		//std::string fontName = "fonts/NotoChinese/NotoSansCJKsc-Regular.otf";
+
 
 		int mFontSize = 12;
 		std::string mTestText;
-		std::string testTextFilename = "english.txt";
+		std::string testTextFilename = "text/english.txt";
 };
 
 CinderProjectApp::CinderProjectApp() {}
@@ -97,6 +99,9 @@ void CinderProjectApp::textFileUpdated( const ci::WatchEvent& watchEvent )
 	//buffer << file.rdbuf();
 	//std::string str = buffer.str();
 	//std::cout << str;
+
+	//mTestText = str;
+	//updateLayout();
 
 	mTestText = ci::loadString( ci::loadFile( watchEvent.getFile() ) );
 	updateLayout();

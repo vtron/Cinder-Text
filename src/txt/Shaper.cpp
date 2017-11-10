@@ -76,11 +76,13 @@ namespace txt
 	{
 		hb_buffer_reset( mBuffer );
 
-		hb_buffer_set_direction( mBuffer, text.direction );
-		hb_buffer_set_script( mBuffer, text.script );
-		hb_buffer_set_language( mBuffer, hb_language_from_string( text.language.c_str(), text.language.size() ) );
+		//hb_buffer_set_direction( mBuffer, text.direction );
+		//hb_buffer_set_script( mBuffer, text.script );
+		//hb_buffer_set_language( mBuffer, hb_language_from_string( text.language.c_str(), text.language.size() ) );
 
 		hb_buffer_add_utf8( mBuffer, text.c_data(), text.data.length(), 0, text.data.length() );
+
+		hb_buffer_guess_segment_properties( mBuffer );
 
 		hb_shape( mFont, mBuffer, mFeatures.empty() ? NULL : &mFeatures[0], mFeatures.size() );
 
@@ -94,6 +96,21 @@ namespace txt
 			Glyph glyph;
 			glyph.index = glyph_info[i].codepoint;
 			glyph.cluster = glyph_info[i].cluster;
+
+			int clusterLength;
+
+			// Assign string values to clusters
+			// for decomposing at a later time
+			if( i != glyph_count - 1 ) {
+				clusterLength = glyph_info[i + 1].cluster - glyph_info[i].cluster;
+			}
+			else {
+				clusterLength = text.data.length() - glyph_info[i].cluster;
+			}
+
+			glyph.text = text.data.substr( glyph_info[i].cluster, clusterLength );
+
+
 
 			glyph.offset = ci::vec2( glyph_pos[i].x_offset / 64.f, glyph_pos[i].y_advance / 64.f );
 			glyph.advance = ci::vec2( glyph_pos[i].x_advance / 64.f, glyph_pos[i].y_advance / 64.f );

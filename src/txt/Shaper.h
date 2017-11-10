@@ -33,6 +33,7 @@ namespace txt
 				ci::vec2 offset;
 				ci::vec2 advance;
 				uint32_t cluster;
+				std::string text;
 			} Glyph;
 
 			Shaper( const Font& font );

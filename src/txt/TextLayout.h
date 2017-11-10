@@ -23,6 +23,7 @@ namespace txt
 				uint32_t index;
 				ci::Rectf bbox;
 				unsigned int top;
+				std::string value;
 			} Glyph;
 
 			// A group of characters with the same attributes
