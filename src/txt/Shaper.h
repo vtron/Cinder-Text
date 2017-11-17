@@ -34,6 +34,7 @@ namespace txt
 				ci::vec2 advance;
 				uint32_t cluster;
 				std::string text;
+				std::vector<int> textIndices;
 			} Glyph;
 
 			Shaper( const Font& font );

@@ -1,5 +1,7 @@
 #include "txt/TextLayout.h"
 
+#include <string.h>
+
 #include "harfbuzz/hb.h"
 
 #include "cinder/app/App.h"
@@ -7,6 +9,9 @@
 
 #include "txt/FontManager.h"
 #include "txt/Shaper.h"
+
+#include "libunibreak\linebreak.h"
+#include "libunibreak\wordbreak.h"
 
 namespace txt
 {
@@ -42,6 +47,24 @@ namespace txt
 		, mSize( GROW )
 		, mMaxLinesReached( false )
 	{
+		//const std::string testString( "testing test opportunity" );
+
+		//const char* lang = "en_US";
+		//const char* text = testString.c_str();
+		//size_t len;
+		//char* breaks;
+
+		//len = strlen( testString.c_str() );
+		//breaks = ( char* )malloc( len );
+
+		//set_wordbreaks_utf8( ( const utf8_t* )text, len, lang, breaks );
+
+		//ci::app::console() << std::endl;
+
+		//for( int i = 0; i < len; i++ ) {
+		//	ci::app::console() << "Can Break on " << text[i] << ": " << ( int )breaks[i] << std::endl;
+		//}
+
 	}
 
 	void Layout::resetLayout()
@@ -50,6 +73,7 @@ namespace txt
 		mPen = ci::vec2( 0.f );
 		mCurLine = Line();
 		mLineHeight = 0.f;
+		mLineLeading = 0.f;
 		mAscender = 0.f;
 		mLineWidth = 0.f;
 		mMaxLinesReached = false;
@@ -67,41 +91,60 @@ namespace txt
 
 		std::vector<AttributedString::Substring> substrings = attrString.getSubstrings();
 
+		// Go through each substring
 		for( int i = 0; i < substrings.size(); i++ ) {
 			AttributedString::Substring remainingSubstring = substrings[i];
 
-			while( remainingSubstring.text.size() || remainingSubstring.forceBreak ) {
+			// Keep track of the previous pass's size
+			// if it remains the same we are stuck
+			unsigned long prevSubstringSize = 0;
+
+			// Keep processing the substring until finished
+			while( ( remainingSubstring.text.size() ) || remainingSubstring.forceBreak ) {
+				// Don't bother continuing if we aren't going to display any more lines
 				if( mMaxLinesReached ) {
 					return;
 				}
 
+				// Process the remaining characters of the substring
 				addSubstringToCurLine( remainingSubstring );
+
+				// Make sure we actually processed something
+				if( remainingSubstring.text.size() == prevSubstringSize ) {
+					// Return to avoid infinite loop when a string or character
+					// will not fit our layout (too big)
+					return;
+				}
+				else {
+					// Record the previous size
+					prevSubstringSize = remainingSubstring.text.size();
+				}
+
 			}
 		}
 
 		addCurLine();
 	}
 
+	// Process substring till we hit a linebreak or the end of the substring
+	// then erase the characters we added
+	// (it would be clearer to return the remainder vs modify the reference, but this should be faster)
 	void Layout::addSubstringToCurLine( AttributedString::Substring& substring )
 	{
 		// Create a font for this substring
 		const Font runFont( substring.attributes.fontFamily, substring.attributes.fontStyle, substring.attributes.fontSize );
 
 		// Get the line height + ascender for this run
+		float lineHeight	= FontManager::get()->getSize( runFont )->metrics.height / 64.f;
+		float ascender		= FontManager::get()->getSize( runFont )->metrics.ascender / 64.f;
 
 		// Increase our current line height + ascender if this run is taller
-		float lineHeight = FontManager::get()->getSize( runFont )->metrics.height / 64.f;
-		float ascender = FontManager::get()->getSize( runFont )->metrics.ascender / 64.f;
+		int prevLineHeight	= mLineHeight;
+		int prevAscender	= mAscender;
 
-		int prevLineHeight = mLineHeight;
-		int prevAscender = mAscender;
-
-		mLineHeight = std::max( lineHeight, mLineHeight );
-		mLineLeading = mLeading + substring.attributes.leading;
-		mAscender = std::max( ascender, mAscender );
-
-		// Space betwen characters
-		float kerning = mTracking + substring.attributes.kerning;
+		mLineHeight		= std::max( lineHeight, mLineHeight );
+		mLineLeading	= std::max( mLineLeading, mLeading + substring.attributes.leading );
+		mAscender		= std::max( ascender, mAscender );
 
 		// Check for height clipping
 		// TODO: This needs to handle vertical layouts (clip width)
@@ -109,6 +152,9 @@ namespace txt
 			mMaxLinesReached = true;
 			return;
 		}
+
+		// Space betwen characters
+		float kerning = mTracking + substring.attributes.kerning;
 
 		// Check for pure line break
 		if( substring.forceBreak && substring.text == "" ) {
@@ -135,12 +181,7 @@ namespace txt
 		std::vector<uint8_t> lineBreaks;
 		ci::calcLinebreaksUtf8( substring.text.c_str(), &lineBreaks );
 
-		// Track current word for line breaks (need to remove and switch to unicode breaking)
-		std::vector<Glyph> curWord;
-
 		for( int i = 0; i < shapedGlyphs.size(); i++ ) {
-			ci::app::console() << "Text: " << shapedGlyphs[i].text << std::endl;
-
 			// Add the offset (generally 0 for latin) to the pen pos
 			ci::vec2 pos = mPen + shapedGlyphs[i].offset;
 
@@ -151,17 +192,37 @@ namespace txt
 			ci::vec2 glyphPos = pos + ci::vec2( bitmapGlyph->left, 0.f );
 			ci::Rectf glyphBBox( glyphPos, glyphPos + ci::vec2( bitmapGlyph->bitmap.width, bitmapGlyph->bitmap.rows ) );
 
-			// Create a layout glyph and add to current word
-			Layout::Glyph glyph = { shapedGlyphs[i].index, glyphBBox, bitmapGlyph->top, shapedGlyphs[i].text };
-
 			// Move the pen forward
 			mPen.x += advance.x + kerning;
 
 			// Check for a new line
 			// TODO: Right to left + vertical
 			if( mSize.x != GROW && mPen.x > mSize.x ) {
-				// Add the current run to the line
-				if( !run.glyphs.empty() ) {
+				// Go backwards through shaped glyphs to find the closest break
+				int lineBreakIndex = 0;
+				int shapedGlyphIndex = -1;
+
+				bool lineBreakFound = false;
+
+				for( int j = i; j >= 0; j-- ) {
+					if( lineBreakFound ) { break; }
+
+					// Unpack the glyph's cluster
+					for( int k = shapedGlyphs[j].textIndices.size() - 1; k >= 0; k-- ) {
+						// Look for allowed breaks
+						if( lineBreaks[shapedGlyphs[j].textIndices[k]] == ci::UNICODE_ALLOW_BREAK ) {
+							lineBreakIndex = shapedGlyphs[j].textIndices[k];
+							shapedGlyphIndex = j;
+							lineBreakFound = true;
+							break;
+						}
+					}
+				}
+
+				// Clip the current run to the linebreak position
+				// and add to the current line
+				if( !run.glyphs.empty() && shapedGlyphIndex != -1 ) {
+					run.glyphs.erase( run.glyphs.begin() + shapedGlyphIndex, run.glyphs.end() );
 					addRunToCurLine( run );
 					run.glyphs.clear();
 				}
@@ -170,27 +231,23 @@ namespace txt
 					mAscender = prevAscender;
 				}
 
+				// Our line is complete, add it to our layout
 				addCurLine();
 
 				// Clip the substrings text by what we've already added and return
-				int remainingGlyphStart = shapedGlyphs[i].cluster + shapedGlyphs[i].text.length() - 1 - calculateShapedGlyphsLength( curWord );
-				substring.text = substring.text.substr( remainingGlyphStart, std::string::npos );
+				substring.text = substring.text.substr( lineBreakIndex, std::string::npos );
+
 				return;
 			}
 
-			// Add glyph to current word
-			curWord.push_back( glyph );
-
-			// If we found whitespace push the current word into the run
-			if( isWhitespace( run.font, shapedGlyphs[i].index ) ) {
-				run.glyphs.insert( run.glyphs.end(), curWord.begin(), curWord.end() );
-				curWord.clear();
-			}
+			// Create a layout glyph and add to run
+			Layout::Glyph glyph = { shapedGlyphs[i].index, glyphBBox, bitmapGlyph->top, shapedGlyphs[i].text };
+			run.glyphs.push_back( glyph );
 		}
 
 		// Once we've gone through everything add the remaining word
 		// (Only reached if we haven't filled a line)
-		run.glyphs.insert( run.glyphs.end(), curWord.begin(), curWord.end() );
+		//run.glyphs.insert( run.glyphs.end(), curWord.begin(), curWord.end() );
 		addRunToCurLine( run );
 
 		// If the substring requests a line break push to next line
@@ -201,6 +258,21 @@ namespace txt
 
 		substring.text.clear();
 	}
+
+	//std::vector<int> getTextIndicesForShapedText()
+	//// Returns the index of 'text' that corresponds to first available unicode break
+	//int getUnicodeBreakIndex( const std::vector<Shaper::Glyph>& shapedGlyphs, int startIndex, const std::string& text, const std::vector<uint8_t>& lineBreaks )
+	//{
+	//	// Walk backward from start index till we find a good break point
+	//	for( int i = startIndex; i >= shapedGlyphs.size(); i-- ) {
+	//		//move forward to the last characer in the cluster
+	//		int startIndex = shapedGlyphs[i].cluster + shapedGlyphs[i].text.length - 1;
+
+	//		for( int j = startIndex; j <= i; j-- ) {
+	//			if(lineBreaks[j] == )
+	//		}
+	//	}
+	//}
 
 	void Layout::addRunToCurLine( Run& run )
 	{

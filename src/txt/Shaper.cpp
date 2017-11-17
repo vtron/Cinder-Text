@@ -110,7 +110,9 @@ namespace txt
 
 			glyph.text = text.data.substr( glyph_info[i].cluster, clusterLength );
 
-
+			for( int j = glyph.cluster; j < glyph.cluster + clusterLength; j++ ) {
+				glyph.textIndices.push_back( j );
+			}
 
 			glyph.offset = ci::vec2( glyph_pos[i].x_offset / 64.f, glyph_pos[i].y_advance / 64.f );
 			glyph.advance = ci::vec2( glyph_pos[i].x_advance / 64.f, glyph_pos[i].y_advance / 64.f );

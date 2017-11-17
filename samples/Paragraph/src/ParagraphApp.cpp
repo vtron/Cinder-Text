@@ -40,7 +40,7 @@ class CinderProjectApp : public App
 		//std::string fontName = "fonts/NotoChinese/NotoSansCJKsc-Regular.otf";
 
 
-		int mFontSize = 12;
+		int mFontSize = 25;
 		std::string mTestText;
 		std::string testTextFilename = "text/english.txt";
 };
@@ -138,12 +138,12 @@ void CinderProjectApp::keyDown( KeyEvent event )
 	}
 
 	else if( event.getChar() == '+' ) {
-		mFontSize++;
+		mFontSize += 5;
 	}
 
 	else if( event.getChar() == '-' ) {
 		if( mFontSize > 1 ) {
-			mFontSize--;
+			mFontSize -= 5;
 		}
 	}
 

@@ -223,11 +223,13 @@ namespace txt
 		scaler->width = float( font.mSize ) * 64.f;
 		scaler->height = float( font.mSize ) * 64.f;
 
-		SetProcessDPIAware(); //true
+		//SetProcessDPIAware(); //true
 		HDC screen = GetDC( NULL );
 		double hPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSX );
 		double vPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSY );
 		ReleaseDC( NULL, screen );
+		ci::app::console() << "Resolution: " << hPixelsPerInch << std::endl;
+
 
 		scaler->x_res = hPixelsPerInch;
 		scaler->y_res = vPixelsPerInch;
