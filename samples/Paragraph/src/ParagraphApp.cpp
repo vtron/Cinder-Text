@@ -40,7 +40,7 @@ class CinderProjectApp : public App
 		//std::string fontName = "fonts/NotoChinese/NotoSansCJKsc-Regular.otf";
 
 
-		int mFontSize = 25;
+		int mFontSize = 12;
 		std::string mTestText;
 		std::string testTextFilename = "text/english.txt";
 };
@@ -53,11 +53,7 @@ void CinderProjectApp::setup()
 
 	ci::FileWatcher::instance().watch( ci::app::getAssetPath( testTextFilename ), std::bind( &CinderProjectApp::textFileUpdated, this, std::placeholders::_1 ) );
 
-
-	GLint max_layers;
-	glGetIntegerv( GL_MAX_ARRAY_TEXTURE_LAYERS, &max_layers );
-
-	ci::app::console() << "texture array layers: " << max_layers << std::endl;
+	ci::app::console() << "Window width: " << getWindowWidth() << std::endl;
 }
 
 void CinderProjectApp::update()
@@ -74,7 +70,7 @@ void CinderProjectApp::draw()
 	ci::gl::color( 0.25, 0.25, 0.25 );
 	ci::gl::drawStrokedRect( ci::Rectf( ci::vec2( 0.f ), mTextBox.getSize() ) );
 
-	ci::gl::color( 1, 1, 1 );
+	ci::gl::color( 0.f, 1, 1 );
 	mRendererGl.draw( mLayout );
 }
 
