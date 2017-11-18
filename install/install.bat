@@ -5,8 +5,6 @@
 
 set PATH=%PATH%;C:\Program Files\7-Zip\
 
-
-
 :: Global vars
 SET VS_VERSION="Visual Studio 14 2015 Win64"
 SET START_PATH=%cd%
@@ -15,12 +13,12 @@ SET TMP_BUILD_DIR=%TMP_DIR%\build
 SET TMP_INCLUDE_DIR=%TMP_BUILD_DIR%\include
 SET TMP_LIB_DIR=%TMP_BUILD_DIR%\lib
 
-set CMAKE_FLAGS=-DCMAKE_INSTALL_PREFIX:PATH=%TMP_BUILD_DIR%
-set CMAKE_FLAGS=%CMAKE_FLAGS% -DCMAKE_C_FLAGS_DEBUG="/MTd"
-set CMAKE_FLAGS=%CMAKE_FLAGS% -DCMAKE_C_FLAGS_RELEASE="/MT"
-set CMAKE_FLAGS=%CMAKE_FLAGS% -DCMAKE_CXX_FLAGS_DEBUG="/MTd"
-set CMAKE_FLAGS=%CMAKE_FLAGS% -DCMAKE_CXX_FLAGS_RELEASE="/MT"
-set CMAKE_FLAGS=%CMAKE_FLAGS% /NODEFAULTLIB:library
+SET CMAKE_FLAGS=-DCMAKE_INSTALL_PREFIX:PATH=%TMP_BUILD_DIR%
+SET CMAKE_FLAGS=%CMAKE_FLAGS% -DCMAKE_C_FLAGS_DEBUG="/MTd"
+SET CMAKE_FLAGS=%CMAKE_FLAGS% -DCMAKE_C_FLAGS_RELEASE="/MT"
+SET CMAKE_FLAGS=%CMAKE_FLAGS% -DCMAKE_CXX_FLAGS_DEBUG="/MTd"
+SET CMAKE_FLAGS=%CMAKE_FLAGS% -DCMAKE_CXX_FLAGS_RELEASE="/MT"
+SET CMAKE_FLAGS=%CMAKE_FLAGS% /NODEFAULTLIB:library
 
 :: Create tmp dir
 IF EXIST %TMP_DIR% (
@@ -28,8 +26,32 @@ IF EXIST %TMP_DIR% (
 )
 
 mkdir %TMP_DIR%
+mkdir %TMP_LIB_DIR%
+mkdir %TMP_INCLUDE_DIR%
 cd %TMP_DIR%
 
+:: ---------------------------------------------------------------------------------------------
+:: Build libs
+CALL :buildFreetype
+CALL :buildHarfbuzz
+CALL :buildFreetypeHarfbuzz
+CALL :buildLibunibreak
+
+:: ---------------------------------------------------------------------------------------------
+:: Finish + clean up
+CALL :print_message Finishing
+cd %START_PATH%
+
+robocopy %TMP_INCLUDE_DIR% ../include /E /MOVE
+robocopy %TMP_LIB_DIR% ../lib /E /MOVE
+
+@RD /S /Q %TMP_DIR%
+
+exit
+
+:: ---------------------------------------------------------------------------------------------
+:: ---------------------------------------------------------------------------------------------
+:: Library building functions
 
 :: ---------------------------------------------------------------------------------------------
 :: Freetype 2
@@ -47,7 +69,7 @@ CALL :print_message Downloading Freetype 2
 
 CALL :download_pkg %FREETYPE_PKG_URL%, %FREETYPE_DIR_NAME%, %FREETYPE_DIR%
 
-:: Build
+:: Make
 CALL :print_message Making Freetype 2
 
 mkdir %FREETYPE_BUILD_DIR%
@@ -60,6 +82,8 @@ cmake %FREETYPE_CMAKE_CONFIG% .. -G %VS_VERSION%
 :: Build
 CALL :print_message Building Freetype 2
 msbuild INSTALL.vcxproj /p:PlatformToolset=v140 /p:Configuration="Release" /p:Platform="x64"
+
+EXIT /B 0
 
 
 :: ---------------------------------------------------------------------------------------------
@@ -98,6 +122,8 @@ cmake %HARFBUZZ_CMAKE_CONFIG% .. -G %VS_VERSION%
 CALL :print_message Building Harfbuzz
 msbuild INSTALL.vcxproj /p:PlatformToolset=v140 /p:Configuration="Release" /p:Platform="x64"
 
+EXIT /B 0
+
 :: ---------------------------------------------------------------------------------------------
 ::Freetype 2 with Harfbuzz
 :buildFreetypeHarfbuzz
@@ -118,19 +144,41 @@ cmake %FREETYPEHB_CMAKE_CONFIG% .. -G %VS_VERSION%
 CALL :print_message Building Freetype 2 with Harfbuzz
 msbuild INSTALL.vcxproj /p:PlatformToolset=v140 /p:Configuration="Release" /p:Platform="x64"
 
+EXIT /B 0
+
 :: ---------------------------------------------------------------------------------------------
-:: Finish
-CALL :print_message Finishing
-cd %START_PATH%
+:: libunibreak
+:: https://github.com/adah1972
+:buildLibunibreak
 
-robocopy %TMP_INCLUDE_DIR% ../include /E /MOVE
-robocopy %TMP_LIB_DIR% ../lib /E /MOVE
+SET UNIBREAK_PKG=libunibreak-4.0.tar.gz
+SET UNIBREAK_PKG_URL=https://github.com/adah1972/libunibreak/releases/download/libunibreak_4_0/%UNIBREAK_PKG%
+SET UNIBREAK_DIR_NAME=libunibreak
+SET UNIBREAK_DIR=%TMP_DIR%\%UNIBREAK_DIR_NAME%
+SET UNIBREAK_BUILD_DIR=%UNIBREAK_DIR%\src
+SET UNIBREAK_HEADER_DIR=%TMP_INCLUDE_DIR%\libunibreak
 
-@RD /S /Q %TMP_DIR%
+:: Download
+CALL :print_message Downloading libunibreak
 
-:: --------------------------------
-:: --------------------------------
-:: Functions
+CALL :download_pkg %UNIBREAK_PKG_URL%, %UNIBREAK_DIR_NAME%, %UNIBREAK_DIR%
+
+:: Build (using nmake)
+CALL :print_message Making libunibreak
+
+mkdir %UNIBREAK_BUILD_DIR%
+cd %UNIBREAK_BUILD_DIR%
+
+nmake -f Makefile.msvc CFG="libunibreak - Win32 Release"
+robocopy Release %TMP_LIB_DIR% unibreak.lib
+robocopy .\ %TMP_INCLUDE_DIR%\%UNIBREAK_DIR_NAME% *.h
+
+EXIT /B 0
+
+
+:: ---------------------------------------------------------------------------------------------
+:: ---------------------------------------------------------------------------------------------
+:: Utility Functions
 
 ::Print out a status message
 :print_message
@@ -143,8 +191,6 @@ EXIT /B 0
 ::Download a file and clean up
 :download_pkg URL, FOLDER_NAME, FOLDER_PATH
 powershell -command "& { (New-Object Net.WebClient).DownloadFile('%~1 ', '%~2.tar.bz2') }"
-
-::curl -L %~1 -o %~2.tar.bz2
 
 7z x %~2.tar.bz2
 7z x %~2.tar
