@@ -9,9 +9,52 @@
 
 namespace txt
 {
+	// Shader
+	const char* vertShader = R"V0G0N(
+		#version 150
+
+		uniform mat4	ciModelViewProjection;
+
+		in vec4		ciPosition;
+		in vec2		ciTexCoord0;
+		in vec4		ciColor;
+
+		out highp vec2 texCoord;
+		out vec4 globalColor;
+
+		void main( void )
+		{
+			texCoord = ciTexCoord0;
+			globalColor = ciColor;
+			gl_Position	= ciModelViewProjection * ciPosition;
+		}
+	)V0G0N";
+
+	const char* fragShader = R"V0G0N(
+		#version 150
+
+		uniform sampler2DArray uTexArray;
+		uniform uint uLayer;
+		uniform vec2 uSubTexSize;
+
+		in vec2 texCoord;
+		in vec4 globalColor;
+
+		out vec4 color;
+
+		void main( void )
+		{ 
+			vec3 coord = vec3(texCoord.x * uSubTexSize.x, texCoord.y * uSubTexSize.y, uLayer);
+			vec4 texColor = texture( uTexArray, coord );
+
+			color = vec4(1.0, 1.0, 1.0, texColor.r);
+			color = color * globalColor;
+		}
+	)V0G0N";
 	RendererGl::RendererGl()
 	{
-		ci::gl::GlslProgRef shader = ci::gl::GlslProg::create( ci::app::loadAsset( "shaders/shader.vert" ), ci::app::loadAsset( "shaders/shader.frag" ) );
+		ci::gl::GlslProgRef shader = ci::gl::GlslProg::create( vertShader, fragShader );
+		//ci::gl::GlslProgRef shader = ci::gl::GlslProg::create( ci::app::loadAsset( "shaders/shader.vert" ), ci::app::loadAsset( "shaders/shader.frag" ) );
 		shader->uniform( "uTexArray", 0 );
 
 		mBatch = ci::gl::Batch::create( ci::geom::Rect( ci::Rectf( 0.f, 0.f, 1.f, 1.f ) ), shader );
