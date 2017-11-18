@@ -192,8 +192,10 @@ namespace txt
 			ci::vec2 glyphPos = pos + ci::vec2( bitmapGlyph->left, 0.f );
 			ci::Rectf glyphBBox( glyphPos, glyphPos + ci::vec2( bitmapGlyph->bitmap.width, bitmapGlyph->bitmap.rows ) );
 
-			// Move the pen forward
-			mPen.x += advance.x + kerning;
+			// Move the pen forward, except with white space at the beginning of a line
+			if( mPen.x != 0 || !isWhitespace( runFont, shapedGlyphs[i].index ) ) {
+				mPen.x += advance.x + kerning;
+			}
 
 			// Check for a new line
 			// TODO: Right to left + vertical
@@ -235,7 +237,7 @@ namespace txt
 				addCurLine();
 
 				// Clip the substrings text by what we've already added and return
-				substring.text = substring.text.substr( lineBreakIndex + 1, std::string::npos );
+				substring.text = substring.text.substr( lineBreakIndex, std::string::npos );
 
 				return;
 			}
