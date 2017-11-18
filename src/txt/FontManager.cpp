@@ -228,8 +228,6 @@ namespace txt
 		double hPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSX );
 		double vPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSY );
 		ReleaseDC( NULL, screen );
-		ci::app::console() << "Resolution: " << hPixelsPerInch << std::endl;
-
 
 		scaler->x_res = hPixelsPerInch;
 		scaler->y_res = vPixelsPerInch;
