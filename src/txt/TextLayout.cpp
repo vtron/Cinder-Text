@@ -235,7 +235,7 @@ namespace txt
 				addCurLine();
 
 				// Clip the substrings text by what we've already added and return
-				substring.text = substring.text.substr( lineBreakIndex, std::string::npos );
+				substring.text = substring.text.substr( lineBreakIndex + 1, std::string::npos );
 
 				return;
 			}
@@ -258,21 +258,6 @@ namespace txt
 
 		substring.text.clear();
 	}
-
-	//std::vector<int> getTextIndicesForShapedText()
-	//// Returns the index of 'text' that corresponds to first available unicode break
-	//int getUnicodeBreakIndex( const std::vector<Shaper::Glyph>& shapedGlyphs, int startIndex, const std::string& text, const std::vector<uint8_t>& lineBreaks )
-	//{
-	//	// Walk backward from start index till we find a good break point
-	//	for( int i = startIndex; i >= shapedGlyphs.size(); i-- ) {
-	//		//move forward to the last characer in the cluster
-	//		int startIndex = shapedGlyphs[i].cluster + shapedGlyphs[i].text.length - 1;
-
-	//		for( int j = startIndex; j <= i; j-- ) {
-	//			if(lineBreaks[j] == )
-	//		}
-	//	}
-	//}
 
 	void Layout::addRunToCurLine( Run& run )
 	{
