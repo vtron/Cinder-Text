@@ -126,8 +126,9 @@ namespace txt
 		addCurLine();
 	}
 
-	// Process substring till we hit a linebreak or the end of the substring
-	// then erase the characters we added
+	// Process substring till we hit a linebreak, go past the max line-length
+	// or reach the end of the substring
+	// If we don't reach the end, erase the characters we added from the substring
 	// (it would be clearer to return the remainder vs modify the reference, but this should be faster)
 	void Layout::addSubstringToCurLine( AttributedString::Substring& substring )
 	{
@@ -182,6 +183,25 @@ namespace txt
 		ci::calcLinebreaksUtf8( substring.text.c_str(), &lineBreaks );
 
 		for( int i = 0; i < shapedGlyphs.size(); i++ ) {
+			// Check for unicode line breaks
+			for( auto& index : shapedGlyphs[i].textIndices ) {
+				if( lineBreaks[index] == ci::UNICODE_MUST_BREAK ) {
+					// Add the current run then move to next line
+					addRunToCurLine( run );
+					addCurLine();
+
+					// Clip the substring after the break
+					int clipStart = shapedGlyphs[i].textIndices.back() + 1;
+
+					if( clipStart < substring.text.size() ) {
+						substring.text = substring.text.substr( clipStart, std::string::npos );
+					}
+
+					// Done
+					return;
+				}
+			}
+
 			// Add the offset (generally 0 for latin) to the pen pos
 			ci::vec2 pos = mPen + shapedGlyphs[i].offset;
 
@@ -192,7 +212,7 @@ namespace txt
 			ci::vec2 glyphPos = pos + ci::vec2( bitmapGlyph->left, 0.f );
 			ci::Rectf glyphBBox( glyphPos, glyphPos + ci::vec2( bitmapGlyph->bitmap.width, bitmapGlyph->bitmap.rows ) );
 
-			// Move the pen forward, except with white space at the beginning of a line
+			// Move the pen forward, excep	t with white space at the beginning of a line
 			if( mPen.x != 0 || !isWhitespace( runFont, shapedGlyphs[i].index ) ) {
 				mPen.x += advance.x + kerning;
 			}
@@ -264,7 +284,10 @@ namespace txt
 	void Layout::addRunToCurLine( Run& run )
 	{
 		mCurLine.runs.push_back( run );
-		mLineWidth = run.glyphs.back().bbox.x2;
+
+		if( !run.glyphs.empty() ) {
+			mLineWidth = run.glyphs.back().bbox.x2;
+		}
 	}
 
 	void Layout::addCurLine( )

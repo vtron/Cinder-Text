@@ -62,32 +62,6 @@ namespace txt
 		mSubstrings.clear();
 	}
 
-	std::vector<AttributedString::Substring> AttributedString::getSubstrings() const
-	{
-		std::vector<Substring> substrings;
-
-		for( auto& substring : mSubstrings ) {
-			if( substring.text.length() != 0 ) {
-				std::vector<std::string> lineBreakStrings = split( substring.text, '\n' );
-
-				if( lineBreakStrings.empty() ) {
-					substrings.push_back( Substring( "", substring.attributes, true ) );
-				}
-				else {
-					for( auto& str : lineBreakStrings ) {
-						Substring substring( str, substring.attributes, str == lineBreakStrings.back() && substring.text.back() != '\n' ? false : true );
-						substrings.push_back( std::move( substring ) );
-					}
-				}
-			}
-			else {
-				substrings.push_back( substring );
-			}
-		}
-
-		return substrings;
-	}
-
 	void AttributedString::addText( std::string text )
 	{
 		// Copy current substring and start a new one
