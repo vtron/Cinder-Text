@@ -10,6 +10,9 @@
 
 #include "cinder/Unicode.h"
 
+#include <string>
+#include <iostream>
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -38,7 +41,6 @@ class CinderProjectApp : public App
 		std::string fontName = "fonts/NotoSerif/NotoSerif-Regular.ttf";
 		//std::string fontName = "fonts/NotoArabic/NotoSansArabic-Regular.ttf";
 		//std::string fontName = "fonts/NotoChinese/NotoSansCJKsc-Regular.otf";
-
 
 		int mFontSize = 12;
 		std::string mTestText;
@@ -86,6 +88,40 @@ void CinderProjectApp::updateLayout()
 	mLayout.calculateLayout( mTestText );
 }
 
+std::string unescape( const std::string& s )
+{
+	std::string res;
+	std::string::const_iterator it = s.begin();
+
+	while( it != s.end() ) {
+		char c = *it++;
+
+		if( c == '\\' && it != s.end() ) {
+			switch( *it++ ) {
+				case '\\':
+					c = '\\';
+					break;
+
+				case 'n':
+					c = '\n';
+					break;
+
+				case 't':
+					c = '\t';
+					break;
+
+				// all other escapes
+				default:
+					// invalid escape sequence - skip it. alternatively you can copy it as is, throw an exception...
+					continue;
+			}
+		}
+
+		res += c;
+	}
+
+	return res;
+}
 
 void CinderProjectApp::textFileUpdated( const ci::WatchEvent& watchEvent )
 {
@@ -99,7 +135,9 @@ void CinderProjectApp::textFileUpdated( const ci::WatchEvent& watchEvent )
 	//mTestText = str;
 	//updateLayout();
 
-	mTestText = ci::loadString( ci::loadFile( watchEvent.getFile() ) );
+	mTestText = unescape( ci::loadString( ci::loadFile( watchEvent.getFile() ) ) );
+
+
 	updateLayout();
 }
 
