@@ -1,6 +1,8 @@
 #include "txt/FontManager.h"
 
+#ifdef CINDER_MSW
 #include <ShellScalingAPI.h>
+#endif
 
 #include "cinder/app/App.h"
 #include "cinder/Log.h"
@@ -203,7 +205,8 @@ namespace txt
 		int pixelsX = ::FT_MulFix( ( size->face->bbox.xMax - size->face->bbox.xMin ), size->metrics.x_scale );
 		int pixelsY = ::FT_MulFix( ( size->face->bbox.yMax - size->face->bbox.yMin ), size->metrics.y_scale );
 
-		ci::vec2 maxSize( size->metrics.max_advance / 64.f, size->metrics.height / 64.f );
+		//ci::vec2 maxSize( size->metrics.max_advance / 64.f, size->metrics.height / 64.f );
+		ci::vec2 maxSize( pixelsX / 64.f, pixelsY / 64.f );
 		return maxSize;
 
 
@@ -223,12 +226,13 @@ namespace txt
 		scaler->width = float( font.mSize ) * 64.f;
 		scaler->height = float( font.mSize ) * 64.f;
 
-		//SetProcessDPIAware(); //true
+		double hPixelsPerInch, vPixelsPerInch;
+#ifdef CINDER_MSW
 		HDC screen = GetDC( NULL );
-		double hPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSX );
-		double vPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSY );
+		hPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSX );
+		vPixelsPerInch = GetDeviceCaps( screen, LOGPIXELSY );
 		ReleaseDC( NULL, screen );
-
+#endif
 		scaler->x_res = hPixelsPerInch;
 		scaler->y_res = vPixelsPerInch;
 

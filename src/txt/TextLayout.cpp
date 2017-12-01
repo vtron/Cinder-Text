@@ -10,6 +10,8 @@
 #include "txt/FontManager.h"
 #include "txt/Shaper.h"
 
+
+
 #include "libunibreak\linebreak.h"
 #include "libunibreak\wordbreak.h"
 
@@ -97,10 +99,10 @@ namespace txt
 
 			// Keep track of the previous pass's size
 			// if it remains the same we are stuck
-			unsigned long prevSubstringSize = 0;
+			unsigned long prevSubstringSize = -1;
 
 			// Keep processing the substring until finished
-			while( ( remainingSubstring.text.size() ) || remainingSubstring.forceBreak ) {
+			while( ( remainingSubstring.text.size() ) ) {
 				// Don't bother continuing if we aren't going to display any more lines
 				if( mMaxLinesReached ) {
 					return;
@@ -157,20 +159,16 @@ namespace txt
 		// Space betwen characters
 		float kerning = mTracking + substring.attributes.kerning;
 
-		// Check for pure line break
-		if( substring.forceBreak && substring.text == "" ) {
-			addCurLine();
-			substring.forceBreak = false;
-			return;
-		}
-
 		// Create a run to store our glyphs
 		Run run( runFont, substring.attributes.color, substring.attributes.opacity );
+
+		// Pad out the substring so we can ignore the last break (needs improvement)
+		std::string paddedSubstring = substring.text + " ";
 
 		// Shape the substring
 		Shaper shaper( runFont );
 		Shaper::Text shaperText = {
-			substring.text,
+			paddedSubstring,
 			substring.attributes.language,
 			substring.attributes.script,
 			substring.attributes.direction
@@ -180,28 +178,9 @@ namespace txt
 
 		// Calculate linebreaks
 		std::vector<uint8_t> lineBreaks;
-		ci::calcLinebreaksUtf8( substring.text.c_str(), &lineBreaks );
+		ci::calcLinebreaksUtf8( paddedSubstring.c_str(), &lineBreaks );
 
-		for( int i = 0; i < shapedGlyphs.size(); i++ ) {
-			// Check for unicode line breaks
-			for( auto& index : shapedGlyphs[i].textIndices ) {
-				if( lineBreaks[index] == ci::UNICODE_MUST_BREAK ) {
-					// Add the current run then move to next line
-					addRunToCurLine( run );
-					addCurLine();
-
-					// Clip the substring after the break
-					int clipStart = shapedGlyphs[i].textIndices.back() + 1;
-
-					if( clipStart < substring.text.size() ) {
-						substring.text = substring.text.substr( clipStart, std::string::npos );
-					}
-
-					// Done
-					return;
-				}
-			}
-
+		for( int i = 0; i < shapedGlyphs.size() - 1; i++ ) {
 			// Add the offset (generally 0 for latin) to the pen pos
 			ci::vec2 pos = mPen + shapedGlyphs[i].offset;
 
@@ -265,6 +244,32 @@ namespace txt
 			// Create a layout glyph and add to run
 			Layout::Glyph glyph = { shapedGlyphs[i].index, glyphBBox, bitmapGlyph->top, shapedGlyphs[i].text };
 			run.glyphs.push_back( glyph );
+
+			// Check for unicode line breaks
+
+
+			for( auto& index : shapedGlyphs[i].textIndices ) {
+				ci::app::console() << lineBreaks[index] << std::endl;
+
+				if( lineBreaks[index] == ci::UNICODE_MUST_BREAK ) {
+					// Add the current run then move to next line
+					addRunToCurLine( run );
+					addCurLine();
+
+					// Clip the substring after the break
+					int clipStart = shapedGlyphs[i].textIndices.back() + 1;
+
+					if( clipStart < substring.text.size() ) {
+						substring.text = substring.text.substr( clipStart, std::string::npos );
+					}
+					else {
+						substring.text = "";
+					}
+
+					// Done
+					return;
+				}
+			}
 		}
 
 		// Once we've gone through everything add the remaining word
@@ -273,10 +278,10 @@ namespace txt
 		addRunToCurLine( run );
 
 		// If the substring requests a line break push to next line
-		if( substring.forceBreak == true ) {
-			addCurLine();
-			substring.forceBreak = false;
-		}
+		//if( substring.forceBreak == true ) {
+		//	addCurLine();
+		//	substring.forceBreak = false;
+		//}
 
 		substring.text.clear();
 	}
@@ -325,12 +330,10 @@ namespace txt
 		mLines.push_back( mCurLine );
 
 		// Update our layout size
+		mLayoutSize.x = std::max( mLineWidth, mLayoutSize.x );
+
 		for( auto& run : mCurLine.runs ) {
-			for( auto& glyph : run.glyphs ) {
-				ci::vec2 bottomRight = glyph.bbox.getLowerRight();
-				mLayoutSize.x = std::max( bottomRight.x, mLayoutSize.x );
-				mLayoutSize.y = std::max( bottomRight.y, mLayoutSize.y );
-			}
+			mLayoutSize.y = std::max( FontManager::get()->getMaxGlyphSize( run.font ).y, mLayoutSize.y );
 		}
 
 		// Setup next line

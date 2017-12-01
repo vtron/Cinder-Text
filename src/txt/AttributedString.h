@@ -155,13 +155,11 @@ namespace txt
 				Substring( std::string text, const AttributeList& attributes, bool forceBreak = false )
 					: text( text )
 					, attributes( attributes )
-					, forceBreak( forceBreak )
 				{
 				}
 
 				std::string text;
 				AttributeList attributes;
-				bool forceBreak;
 
 				friend std::ostream& operator<< ( std::ostream& os, Substring const& s )
 				{

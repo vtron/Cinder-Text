@@ -12,28 +12,10 @@
 #include "txt/Font.h"
 #include "txt/FontManager.h"
 
-#if defined( CINDER_MSW_DESKTOP )
-#define stricmp _stricmp
-#endif
-
 using namespace rapidxml;
 
 namespace txt
 {
-	// Split on a character (from https://stackoverflow.com/a/27511119)
-	std::vector<std::string> split( const std::string& s, char delim )
-	{
-		std::stringstream ss( s );
-		std::string item;
-		std::vector<std::string> elems;
-
-		while( std::getline( ss, item, delim ) ) {
-			elems.push_back( std::move( item ) );
-		}
-
-		return elems;
-	}
-
 	AttributedString::AttributedString()
 		: AttributedString( "", DefaultFont() )
 	{
@@ -88,7 +70,7 @@ namespace txt
 	{
 		switch( attribute.type ) {
 			case LINE_BREAK:
-				mSubstrings.back().forceBreak = true;
+				mSubstrings.back().text += "\n";
 				break;
 
 			case FONT: {
@@ -184,7 +166,6 @@ namespace txt
 
 	void RichTextParser::parseNode( rapidxml::xml_node<>* node )
 	{
-		bool lineBreak = strcmp( node->name(), ATTR_LINE_BREAK ) == 0;
 		pushNodeAttributes( node );
 
 		if( node->first_node() != 0 ) {
@@ -198,7 +179,12 @@ namespace txt
 				mSubstrings.push_back( AttributedString::Substring( node->value(), mAttributesStack.top() ) );
 			}
 			else if( stricmp( node->name(), ATTR_LINE_BREAK ) == 0 ) {
-				mSubstrings.push_back( AttributedString::Substring( "", mAttributesStack.top(), true ) );
+				if( !mSubstrings.size() ) {
+					mSubstrings.push_back( AttributedString::Substring( "\n", mAttributesStack.top() ) );
+				}
+				else {
+					mSubstrings.back().text += "\n";
+				}
 			}
 		}
 

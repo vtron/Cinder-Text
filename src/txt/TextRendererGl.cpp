@@ -103,7 +103,7 @@ namespace txt
 						mBatch->draw();
 					}
 					else {
-						ci::app::console() << "Could not find glyph for index: " << glyph.index << std::endl;
+						//ci::app::console() << "Could not find glyph for index: " << glyph.index << std::endl;
 					}
 				}
 			}
@@ -151,7 +151,6 @@ namespace txt
 
 			// Check to see if we need a new texture
 			if( !curTexArray || curLayer >= maxLayersPerArray ) {
-
 				unsigned int distFromTotal = numGlyphs - totalLayers;
 
 				unsigned int numLayers = distFromTotal >= maxLayersPerArray ? maxLayersPerArray : distFromTotal;
@@ -172,14 +171,12 @@ namespace txt
 			ci::Surface8u surface( *expandedChannel );
 			curTexArray->update( surface, curLayer );
 
-			//curTexArray->update( glyph->bitmap.buffer, GL_RED, GL_UNSIGNED_BYTE, 0, glyph->bitmap.width, glyph->bitmap.rows, 1, 0, 0, curLayer );
-
 			mFontCaches[font].glyphs[glyphIndex].texArray = curTexArray;
 			mFontCaches[font].glyphs[glyphIndex].layer = curLayer;
 			mFontCaches[font].glyphs[glyphIndex].subTexSize = ci::vec2( glyphSize ) / ci::vec2( maxGlyphSize );
 
 			curLayer++;
-			totalLayers++;
+			totalLayers = totalLayers + 1;
 		}
 	}
 }
