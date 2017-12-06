@@ -36,7 +36,9 @@ class CinderProjectApp : public App
 		float mTracking = 0.f;
 		float mLeading = 0.f;
 
-		ci::Rectf mTextBox = ci::Rectf( 100.f, 100.f, 800.f, 800.f );
+		ci::vec2 mTextBoxPos = ci::vec2( 200.f, 200.f );
+		ci::vec2 mTextBoxSize = ci::vec2( 600.f, txt::GROW );
+		//ci::Rectf mTextBox = ci::Rectf( 100.f, 100.f, 800.f, 800.f );
 
 		std::string fontName = "fonts/NotoSerif/NotoSerif-Regular.ttf";
 		//std::string fontName = "fonts/NotoArabic/NotoSansArabic-Regular.ttf";
@@ -67,10 +69,10 @@ void CinderProjectApp::draw()
 	gl::clear( Color( 0, 0, 0 ) );
 	ci::gl::enableAlphaBlending();
 	ci::gl::ScopedMatrices matrices;
-	ci::gl::translate( mTextBox.getUpperLeft() );
+	ci::gl::translate( mTextBoxPos );
 
 	ci::gl::color( 0.25, 0.25, 0.25 );
-	ci::gl::drawStrokedRect( ci::Rectf( ci::vec2( 0.f ), mTextBox.getSize() ) );
+	ci::gl::drawStrokedRect( ci::Rectf( ci::vec2( 0.f ), mTextBoxSize ) );
 
 	ci::gl::color( 0.f, 1, 1 );
 	mRendererGl.draw( mLayout );
@@ -82,7 +84,7 @@ void CinderProjectApp::updateLayout()
 	txt::Font mFont( ci::app::loadAsset( fontName ), mFontSize );
 
 	mLayout.setFont( mFont );
-	mLayout.setSize( mTextBox.getSize() );
+	mLayout.setSize( mTextBoxSize );
 	mLayout.setTracking( mTracking );
 	mLayout.setLeading( mLeading );
 	mLayout.calculateLayout( mTestText );
