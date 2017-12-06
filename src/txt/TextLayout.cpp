@@ -66,7 +66,6 @@ namespace txt
 		//for( int i = 0; i < len; i++ ) {
 		//	ci::app::console() << "Can Break on " << text[i] << ": " << ( int )breaks[i] << std::endl;
 		//}
-
 	}
 
 	void Layout::resetLayout()
@@ -80,6 +79,21 @@ namespace txt
 		mLineWidth = 0.f;
 		mMaxLinesReached = false;
 		mLayoutSize = mSize;
+	}
+
+	const ci::vec2 Layout::measure()
+	{
+		ci::vec2 size( mSize );
+
+		if( size.x == txt::GROW ) {
+			size.x = mLineWidth;
+		}
+
+		if( size.y == txt::GROW ) {
+			size.y = mPen.y;
+		}
+
+		return size;
 	}
 
 	void Layout::calculateLayout( std::string text )

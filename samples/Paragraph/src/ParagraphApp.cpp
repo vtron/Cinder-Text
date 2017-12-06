@@ -72,7 +72,7 @@ void CinderProjectApp::draw()
 	ci::gl::translate( mTextBoxPos );
 
 	ci::gl::color( 0.25, 0.25, 0.25 );
-	ci::gl::drawStrokedRect( ci::Rectf( ci::vec2( 0.f ), mTextBoxSize ) );
+	ci::gl::drawStrokedRect( ci::Rectf( ci::vec2( 0.f ), mLayout.measure() ) );
 
 	ci::gl::color( 0.f, 1, 1 );
 	mRendererGl.draw( mLayout );

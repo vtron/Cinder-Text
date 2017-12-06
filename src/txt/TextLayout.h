@@ -66,6 +66,8 @@ namespace txt
 			const ci::vec2& getSize() { return mSize; }
 			Layout& setSize( ci::vec2 size ) { mSize = size; return *this; }
 
+			const ci::vec2 measure();
+
 			float getLeading() { return mLeading; }
 			Layout& setLeading( float leading ) { mLeading = leading; return *this; };
 

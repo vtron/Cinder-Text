@@ -88,8 +88,13 @@ std::string unescape( const std::string& s )
 void TextboxApp::textFileUpdated( const ci::WatchEvent& watchEvent )
 {
 	mTextBox.setText( unescape( ci::loadString( ci::loadFile( watchEvent.getFile() ) ) ) );
+	mTextBox.doLayout();
+	ci::app::console() << "Height: " << mTextBox.getSize().y << std::endl;
 }
 
 
 
-CINDER_APP( TextboxApp, RendererGl )
+CINDER_APP( TextboxApp, RendererGl, [&]( App::Settings* settings )
+{
+	settings->setHighDensityDisplayEnabled( true );
+} )

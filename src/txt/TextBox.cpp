@@ -20,7 +20,8 @@ namespace txt
 	ci::ivec2 TextBox::getSize()
 	{
 		layoutIfNeeded();
-		return ci::ivec2( ceil( mLayout.getSize().x ), ceil( mLayout.getSize().y ) );
+		ci::vec2 size = mLayout.measure();
+		return ci::ivec2( ceil( size.x ), ceil( size.y ) );
 	}
 
 	TextBox& TextBox::setSize( ci::vec2 size )
