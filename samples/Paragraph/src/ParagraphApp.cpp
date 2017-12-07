@@ -37,14 +37,14 @@ class CinderProjectApp : public App
 		float mLeading = 0.f;
 
 		ci::vec2 mTextBoxPos = ci::vec2( 200.f, 200.f );
-		ci::vec2 mTextBoxSize = ci::vec2( 600.f, txt::GROW );
+		ci::vec2 mTextBoxSize = ci::vec2( 600.f, 600.f );
 		//ci::Rectf mTextBox = ci::Rectf( 100.f, 100.f, 800.f, 800.f );
 
 		std::string fontName = "fonts/NotoSerif/NotoSerif-Regular.ttf";
 		//std::string fontName = "fonts/NotoArabic/NotoSansArabic-Regular.ttf";
 		//std::string fontName = "fonts/NotoChinese/NotoSansCJKsc-Regular.otf";
 
-		int mFontSize = 12;
+		int mFontSize = 12.f;
 		std::string mTestText;
 		std::string testTextFilename = "text/english.txt";
 };
