@@ -10,8 +10,6 @@
 #include "txt/FontManager.h"
 #include "txt/Shaper.h"
 
-
-
 #include "libunibreak\linebreak.h"
 #include "libunibreak\wordbreak.h"
 
@@ -71,11 +69,11 @@ namespace txt
 	void Layout::resetLayout()
 	{
 		mLines.clear();
-		mPen = ci::vec2( 0.f );
+		mCharPos = 0.f;
+		mLinePos = 0.f;
 		mCurLine = Line();
 		mLineHeight = 0.f;
 		mLineLeading = 0.f;
-		mAscender = 0.f;
 		mLineWidth = 0.f;
 		mMaxLinesReached = false;
 		mLayoutSize = mSize;
@@ -90,7 +88,7 @@ namespace txt
 		}
 
 		if( size.y == txt::GROW ) {
-			size.y = mPen.y;
+			size.y = mLinePos;
 		}
 
 		return size;
@@ -157,15 +155,13 @@ namespace txt
 
 		// Increase our current line height + ascender if this run is taller
 		int prevLineHeight	= mLineHeight;
-		int prevAscender	= mAscender;
 
 		mLineHeight		= std::max( lineHeight, mLineHeight );
 		mLineLeading	= std::max( mLineLeading, mLeading + substring.attributes.leading );
-		mAscender		= std::max( ascender, mAscender );
 
 		// Check for height clipping
 		// TODO: This needs to handle vertical layouts (clip width)
-		if( mSize.y != GROW && mPen.y + mLineHeight > mSize.y ) {
+		if( mSize.y != GROW && mLinePos + mLineHeight + mLeading > mSize.y ) {
 			mMaxLinesReached = true;
 			return;
 		}
@@ -196,7 +192,7 @@ namespace txt
 
 		for( int i = 0; i < shapedGlyphs.size() - 1; i++ ) {
 			// Add the offset (generally 0 for latin) to the pen pos
-			ci::vec2 pos = mPen + shapedGlyphs[i].offset;
+			ci::vec2 pos = ci::vec2( mCharPos, mLinePos ) + shapedGlyphs[i].offset;
 
 			// Get the glyph metrics/position
 			ci::vec2 advance = shapedGlyphs[i].advance;
@@ -205,14 +201,14 @@ namespace txt
 			ci::vec2 glyphPos = pos + ci::vec2( bitmapGlyph->left, 0.f );
 			ci::Rectf glyphBBox( glyphPos, glyphPos + ci::vec2( bitmapGlyph->bitmap.width, bitmapGlyph->bitmap.rows ) );
 
-			// Move the pen forward, excep	t with white space at the beginning of a line
-			if( mPen.x != 0 || !isWhitespace( runFont, shapedGlyphs[i].index ) ) {
-				mPen.x += advance.x + kerning;
+			// Move the pen forward, except with white space at the beginning of a line
+			if( mCharPos != 0 || !isWhitespace( runFont, shapedGlyphs[i].index ) ) {
+				mCharPos += advance.x + kerning;
 			}
 
 			// Check for a new line
 			// TODO: Right to left + vertical
-			if( mSize.x != GROW && mPen.x > mSize.x ) {
+			if( mSize.x != GROW && mCharPos > mSize.x ) {
 				// Go backwards through shaped glyphs to find the closest break
 				int lineBreakIndex = 0;
 				int shapedGlyphIndex = -1;
@@ -243,7 +239,6 @@ namespace txt
 				}
 				else {
 					mLineHeight = prevLineHeight;
-					mAscender = prevAscender;
 				}
 
 				// Our line is complete, add it to our layout
@@ -314,7 +309,7 @@ namespace txt
 		// Set the Y glyph position based on culmulative line-height
 		for( auto& run : mCurLine.runs ) {
 			for( auto& glyph : run.glyphs ) {
-				glyph.bbox.offset( ci::vec2( 0.f, mAscender - glyph.top ) );
+				glyph.bbox.offset( ci::vec2( 0.f, mLineHeight + mLeading - glyph.top ) );
 			}
 		}
 
@@ -355,11 +350,10 @@ namespace txt
 			mCurLine = Line();
 		}
 
-		mPen.x = 0.f;
-		mPen.y += mLineHeight + mLineLeading;
+		mCharPos = 0.f;
+		mLinePos += mLineHeight + mLeading + mLineLeading;
 
 		mLineWidth = 0;
 		mLineHeight = 0.f;
-		mAscender = 0.f;
 	}
 }

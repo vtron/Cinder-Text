@@ -4,6 +4,7 @@
 #include "cinder/gl/scoped.h"
 #include "cinder/GeomIo.h"
 #include "cinder/ip/Fill.h"
+#include "cinder/ip/Flip.h"
 
 #include "txt/FontManager.h"
 
@@ -40,6 +41,8 @@ namespace txt
 		in vec2 texCoord;
 		in vec4 globalColor;
 
+		uniform vec4 runColor;
+
 		out vec4 color;
 
 		void main( void )
@@ -49,6 +52,7 @@ namespace txt
 
 			color = vec4(1.0, 1.0, 1.0, texColor.r);
 			color = color * globalColor;
+			//color = vec4(1.0,0.0,0.0,1.0);
 		}
 	)V0G0N";
 	RendererGl::RendererGl()
@@ -59,7 +63,6 @@ namespace txt
 
 		mBatch = ci::gl::Batch::create( ci::geom::Rect( ci::Rectf( 0.f, 0.f, 1.f, 1.f ) ), shader );
 	}
-
 
 	void RendererGl::draw( const std::string& string, const ci::vec2& frame )
 	{
@@ -88,8 +91,8 @@ namespace txt
 					if( getFontCache( run.font ).glyphs.count( glyph.index ) != 0 ) {
 						ci::gl::ScopedMatrices matrices;
 
-						ci::gl::translate( ci::vec2( glyph.bbox.getLowerLeft() ) );
-						ci::gl::scale( glyph.bbox.getSize().x, -glyph.bbox.getSize().y );
+						ci::gl::translate( ci::vec2( glyph.bbox.getUpperLeft() ) );
+						ci::gl::scale( glyph.bbox.getSize().x, glyph.bbox.getSize().y );
 
 						ci::gl::ScopedBlendAlpha alphaBlend;
 						mBatch->getGlslProg()->uniform( "uLayer", getFontCache( run.font ).glyphs[glyph.index].layer );
@@ -162,11 +165,12 @@ namespace txt
 			// Add the glyph to our cur tex array
 			FT_BitmapGlyph glyph = txt::FontManager::get()->getGlyphBitmap( font, glyphIndex );
 			ci::ivec2 glyphSize( glyph->bitmap.width, glyph->bitmap.rows );
-
 			ci::ChannelRef channel = ci::Channel::create( glyphSize.x, glyphSize.y, glyphSize.x * sizeof( unsigned char ), sizeof( unsigned char ), glyph->bitmap.buffer );
+			ci::ChannelRef flippedChannel = ci::Channel::create( glyphSize.x, glyphSize.y );
+			ci::ip::flipVertical( *channel, flippedChannel.get() );
 			ci::Channel8uRef expandedChannel = ci::Channel8u::create( maxGlyphSize.x, maxGlyphSize.y );
 			ci::ip::fill( expandedChannel.get(), ( uint8_t )0 );
-			expandedChannel->copyFrom( *channel, ci::Area( 0, 0, glyphSize.x, glyphSize.y ) );
+			expandedChannel->copyFrom( *flippedChannel, ci::Area( 0, 0, glyphSize.x, glyphSize.y ) );
 
 			ci::Surface8u surface( *expandedChannel );
 			curTexArray->update( surface, curLayer );

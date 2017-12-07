@@ -90,12 +90,12 @@ namespace txt
 
 			// Layout calculation
 			void resetLayout();
-			ci::vec2 mPen;
+
+			float mCharPos, mLinePos;
 			Line mCurLine;
 			float mLineWidth = 0;
 			float mLineHeight = 0;
 			float mLineLeading = 0;
-			float mAscender = 0;
 
 			void addSubstringToCurLine( AttributedString::Substring& substring );
 			void addRunToCurLine( Run& run );
