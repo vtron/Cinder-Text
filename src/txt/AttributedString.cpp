@@ -178,7 +178,7 @@ namespace txt
 			if( node->value_size() != 0 ) {
 				mSubstrings.push_back( AttributedString::Substring( node->value(), mAttributesStack.top() ) );
 			}
-			else if( stricmp( node->name(), ATTR_LINE_BREAK ) == 0 ) {
+			else if( _stricmp( node->name(), ATTR_LINE_BREAK ) == 0 ) {
 				if( !mSubstrings.size() ) {
 					mSubstrings.push_back( AttributedString::Substring( "\n", mAttributesStack.top() ) );
 				}
