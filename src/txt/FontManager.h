@@ -109,6 +109,8 @@ namespace txt
 			ci::vec2 getGlyphSize( const Font& font, unsigned int glyphIndex );
 			ci::vec2 getMaxGlyphSize( const Font& font );
 
+			float getLineHeight( const Font& font );
+
 			FT_Face getFace( const Font& font );
 			FT_Face getFace( uint32_t faceId );
 			FT_Face getFace( FTC_FaceID faceId );

@@ -17,6 +17,7 @@ namespace txt
 			const unsigned int getSize() const { return mSize; }
 			std::string getFamily() const;
 			std::string getStyle() const;
+			float getLineHeight() const;
 
 			bool operator==( const Font& other ) const
 			{
@@ -31,7 +32,7 @@ namespace txt
 				return *this;
 			}
 
-			friend std::ostream& operator<< (std::ostream& os, Font const& font)
+			friend std::ostream& operator<< ( std::ostream& os, Font const& font )
 			{
 				os << "Font:" << std::endl;
 				os << "Family: " << font.getFamily() << std::endl;
@@ -42,9 +43,9 @@ namespace txt
 
 			friend class FontManager;
 
-	private:
-		uint32_t mFaceId;
-		unsigned int mSize;
+		private:
+			uint32_t mFaceId;
+			unsigned int mSize;
 	};
 
 	struct DefaultFont : public Font {

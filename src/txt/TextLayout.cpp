@@ -42,7 +42,6 @@ namespace txt
 		: mFont( DefaultFont() )
 		, mColor( ci::Color( 1.f, 1.f, 1.f ) )
 		, mTracking( 0 )
-		, mLeading( 0 )
 		, mAlignment( Alignment::LEFT )
 		, mSize( GROW )
 		, mMaxLinesReached( false )
@@ -72,9 +71,8 @@ namespace txt
 		mCharPos = 0.f;
 		mLinePos = 0.f;
 		mCurLine = Line();
-		mLineHeight = 0.f;
-		mLineLeading = 0.f;
-		mLineWidth = 0.f;
+		mCurLineHeight = 0.f;
+		mCurLineWidth = 0.f;
 		mMaxLinesReached = false;
 		mLayoutSize = mSize;
 	}
@@ -84,7 +82,7 @@ namespace txt
 		ci::vec2 size( mSize );
 
 		if( size.x == txt::GROW ) {
-			size.x = mLineWidth;
+			size.x = mCurLineWidth;
 		}
 
 		if( size.y == txt::GROW ) {
@@ -150,24 +148,39 @@ namespace txt
 		const Font runFont( substring.attributes.fontFamily, substring.attributes.fontStyle, substring.attributes.fontSize );
 
 		// Get the line height + ascender for this run
-		float lineHeight	= FontManager::get()->getSize( runFont )->metrics.height / 64.f;
+		float lineHeight;
+
+		// Check for substring line height
+		if( !substring.attributes.lineHeight.isDefault() ) {
+			lineHeight = substring.attributes.lineHeight.getValue( runFont.getSize() );
+		}
+		// Default to our layout line height
+		else {
+			if( !mLineHeight.isDefault() ) {
+				lineHeight = mLineHeight.getValue( runFont.getSize() );
+			}
+			else {
+				// Otherwise use the default for the font
+				lineHeight = runFont.getLineHeight();
+			}
+		}
+
 		float ascender		= FontManager::get()->getSize( runFont )->metrics.ascender / 64.f;
 
 		// Increase our current line height + ascender if this run is taller
-		int prevLineHeight	= mLineHeight;
+		int prevLineHeight	= mCurLineHeight;
 
-		mLineHeight		= std::max( lineHeight, mLineHeight );
-		mLineLeading	= std::max( mLineLeading, mLeading + substring.attributes.leading );
+		mCurLineHeight		= std::max( lineHeight, mCurLineHeight );
 
 		// Check for height clipping
 		// TODO: This needs to handle vertical layouts (clip width)
-		if( mSize.y != GROW && mLinePos + mLineHeight + mLeading > mSize.y ) {
+		if( mSize.y != GROW && mLinePos + mCurLineHeight > mSize.y ) {
 			mMaxLinesReached = true;
 			return;
 		}
 
-		// Space betwen characters
-		float kerning = mTracking + substring.attributes.kerning;
+		// Space between characters
+		float kerning = mTracking.getValue( runFont.getSize() ) + substring.attributes.kerning.getValue( runFont.getSize() );
 
 		// Create a run to store our glyphs
 		Run run( runFont, substring.attributes.color, substring.attributes.opacity );
@@ -238,7 +251,7 @@ namespace txt
 					run.glyphs.clear();
 				}
 				else {
-					mLineHeight = prevLineHeight;
+					mCurLineHeight = prevLineHeight;
 				}
 
 				// Our line is complete, add it to our layout
@@ -300,7 +313,7 @@ namespace txt
 		mCurLine.runs.push_back( run );
 
 		if( !run.glyphs.empty() ) {
-			mLineWidth = run.glyphs.back().bbox.x2;
+			mCurLineWidth = run.glyphs.back().bbox.x2;
 		}
 	}
 
@@ -309,7 +322,7 @@ namespace txt
 		// Set the Y glyph position based on culmulative line-height
 		for( auto& run : mCurLine.runs ) {
 			for( auto& glyph : run.glyphs ) {
-				glyph.bbox.offset( ci::vec2( 0.f, mLineHeight + mLeading - glyph.top ) );
+				glyph.bbox.offset( ci::vec2( 0.f, mCurLineHeight - glyph.top ) );
 			}
 		}
 
@@ -321,7 +334,7 @@ namespace txt
 
 				case CENTER:
 				case RIGHT:
-					float remainingWidth = mSize.x - mLineWidth;
+					float remainingWidth = mSize.x - mCurLineWidth;
 
 					float xOffset = ( mAlignment == CENTER ) ? remainingWidth / 2.f : remainingWidth;
 
@@ -339,7 +352,7 @@ namespace txt
 		mLines.push_back( mCurLine );
 
 		// Update our layout size
-		mLayoutSize.x = std::max( mLineWidth, mLayoutSize.x );
+		mLayoutSize.x = std::max( mCurLineWidth, mLayoutSize.x );
 
 		for( auto& run : mCurLine.runs ) {
 			mLayoutSize.y = std::max( FontManager::get()->getMaxGlyphSize( run.font ).y, mLayoutSize.y );
@@ -351,9 +364,9 @@ namespace txt
 		}
 
 		mCharPos = 0.f;
-		mLinePos += mLineHeight + mLeading + mLineLeading;
+		mLinePos += mCurLineHeight;
 
-		mLineWidth = 0;
-		mLineHeight = 0.f;
+		mCurLineHeight = mLineHeight.getValue( mFont.getSize() );
+		mCurLineWidth = 0;
 	}
 }

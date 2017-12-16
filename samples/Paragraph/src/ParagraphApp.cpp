@@ -33,8 +33,9 @@ class CinderProjectApp : public App
 		txt::Layout mLayout;
 		txt::RendererGl mRendererGl;
 
+		int mFontSize = 12.f;
 		float mTracking = 0.f;
-		float mLeading = 0.f;
+		float mLineHeight = mFontSize;
 
 		ci::vec2 mTextBoxPos = ci::vec2( 200.f, 200.f );
 		ci::vec2 mTextBoxSize = ci::vec2( 600.f, 600.f );
@@ -44,7 +45,6 @@ class CinderProjectApp : public App
 		//std::string fontName = "fonts/NotoArabic/NotoSansArabic-Regular.ttf";
 		//std::string fontName = "fonts/NotoChinese/NotoSansCJKsc-Regular.otf";
 
-		int mFontSize = 12.f;
 		std::string mTestText;
 		std::string testTextFilename = "text/english.txt";
 };
@@ -86,7 +86,7 @@ void CinderProjectApp::updateLayout()
 	mLayout.setFont( mFont );
 	mLayout.setSize( mTextBoxSize );
 	mLayout.setTracking( mTracking );
-	mLayout.setLeading( mLeading );
+	mLayout.setLineHeight( mLineHeight );
 	mLayout.calculateLayout( mTestText );
 }
 
@@ -158,19 +158,19 @@ void CinderProjectApp::keyDown( KeyEvent event )
 	}
 
 	else if( event.getCode() == KeyEvent::KEY_UP ) {
-		mLeading--;
+		mLineHeight--;
 	}
 
 	else if( event.getCode() == KeyEvent::KEY_DOWN ) {
-		mLeading++;
+		mLineHeight++;
 	}
 
 	else if( event.getCode() == KeyEvent::KEY_LEFT ) {
-		mTracking--;
+		mTracking -= 0.5;
 	}
 
 	else if( event.getCode() == KeyEvent::KEY_RIGHT ) {
-		mTracking++;
+		mTracking += 0.5;
 	}
 
 	else if( event.getChar() == '+' ) {

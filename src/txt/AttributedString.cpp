@@ -110,14 +110,14 @@ namespace txt
 				mSubstrings.back().attributes.opacity = opacity;
 			}
 
-			case LEADING: {
-				const int leading = static_cast<const AttributeLeading&>( attribute ).leading;
-				mSubstrings.back().attributes.leading = leading;
+			case LINE_HEIGHT: {
+				const Unit lineHeight = static_cast<const AttributeLineHeight&>( attribute ).lineHeight;
+				mSubstrings.back().attributes.lineHeight = lineHeight;
 				break;
 			}
 
 			case KERNING: {
-				const int kerning = static_cast<const AttributeKerning&>( attribute ).kerning;
+				const Unit kerning = static_cast<const AttributeKerning&>( attribute ).kerning;
 				mSubstrings.back().attributes.kerning = kerning;
 				break;
 			}

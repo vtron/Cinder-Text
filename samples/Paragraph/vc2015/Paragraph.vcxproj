@@ -126,6 +126,7 @@
     <ClInclude Include="..\..\..\src\txt\TextLayout.h" />
     <ClInclude Include="..\..\..\src\txt\TextRenderer.h" />
     <ClInclude Include="..\..\..\src\txt\TextRendererGl.h" />
+    <ClInclude Include="..\..\..\src\txt\TextUnits.h" />
     <ClInclude Include="..\include\Resources.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

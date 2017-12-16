@@ -9,6 +9,7 @@
 #include "txt/Font.h"
 #include "txt/FontManager.h"
 #include "txt/AttributedString.h"
+#include "txt/TextUnits.h"
 
 namespace txt
 {
@@ -68,11 +69,13 @@ namespace txt
 
 			const ci::vec2 measure();
 
-			float getLeading() { return mLeading; }
-			Layout& setLeading( float leading ) { mLeading = leading; return *this; };
+			float getLineHeight() { return mLineHeight.getValue( getFont().getSize() ); }
+			Layout& setLineHeight( const float& lineHeight ) { mLineHeight = txt::Unit( lineHeight ); return *this; };
+			Layout& setLineHeight( const Unit& lineHeight ) { mLineHeight = lineHeight; return *this; };
 
-			float getTracking() { return mTracking; }
-			Layout& setTracking( float tracking ) { mTracking = tracking; return *this; };
+			float getTracking() { return mTracking.getValue( getFont().getSize() ); }
+			Layout& setTracking( float tracking ) { mTracking = txt::Unit( tracking ); return *this; };
+			Layout& setTracking( const Unit& tracking ) { mTracking = tracking; return *this; };
 
 			const Alignment& getAlignment() { return mAlignment; }
 			Layout& setAlignment( Alignment alignment ) { mAlignment = alignment; return *this; };
@@ -81,9 +84,9 @@ namespace txt
 			// Attributes
 			Font mFont;
 			ci::Color mColor;
-			float mLeading;
-			float mTracking;
 			Alignment mAlignment;
+			txt::Unit mLineHeight;
+			txt::Unit mTracking;
 
 			ci::vec2 mSize;
 			ci::vec2 mLayoutSize;
@@ -93,9 +96,8 @@ namespace txt
 
 			float mCharPos, mLinePos;
 			Line mCurLine;
-			float mLineWidth = 0;
-			float mLineHeight = 0;
-			float mLineLeading = 0;
+			float mCurLineWidth = 0;
+			float mCurLineHeight = 0;
 
 			void addSubstringToCurLine( AttributedString::Substring& substring );
 			void addRunToCurLine( Run& run );

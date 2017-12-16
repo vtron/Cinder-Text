@@ -28,12 +28,19 @@ namespace txt
 	{
 	}
 
-	std::string Font::getFamily() const {
-		return FontManager::get()->getFontFamily(*this);
+	std::string Font::getFamily() const
+	{
+		return FontManager::get()->getFontFamily( *this );
 	}
 
-	std::string Font::getStyle() const {
-		return FontManager::get()->getFontStyle(*this);
+	std::string Font::getStyle() const
+	{
+		return FontManager::get()->getFontStyle( *this );
+	}
+
+	float Font::getLineHeight() const
+	{
+		return FontManager::get()->getLineHeight( *this );
 	}
 
 	DefaultFont::DefaultFont()

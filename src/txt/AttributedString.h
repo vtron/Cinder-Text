@@ -10,6 +10,7 @@
 #include "cinder/Color.h"
 
 #include "txt/Font.h"
+#include "txt/TextUnits.h"
 
 namespace txt
 {
@@ -22,7 +23,7 @@ namespace txt
 		FONT_SIZE,
 		COLOR,
 		OPACITY,
-		LEADING,
+		LINE_HEIGHT,
 		KERNING
 	};
 
@@ -80,18 +81,24 @@ namespace txt
 		const float opacity;
 	};
 
-	struct AttributeLeading : public Attribute {
-		AttributeLeading( const int& leading ) : Attribute( AttributeType::LEADING ),
-			leading( leading ) {};
+	struct AttributeLineHeight : public Attribute {
+		AttributeLineHeight( const float& lineHeight ) : Attribute( AttributeType::LINE_HEIGHT ),
+			lineHeight( Unit( lineHeight ) ) {};
 
-		const int leading;
+		AttributeLineHeight( const Unit& lineHeight ) : Attribute( AttributeType::LINE_HEIGHT ),
+			lineHeight( lineHeight ) {};
+
+		const Unit lineHeight;
 	};
 
 	struct AttributeKerning : public Attribute {
-		AttributeKerning( const int& kerning ) : Attribute( AttributeType::LEADING ),
+		AttributeKerning( const float& kerning ) : Attribute( AttributeType::KERNING ),
+			kerning( Unit( kerning ) ) {};
+
+		AttributeKerning( const Unit& kerning ) : Attribute( AttributeType::KERNING ),
 			kerning( kerning ) {};
 
-		const int kerning;
+		const Unit kerning;
 	};
 
 	struct RichText {
@@ -114,7 +121,6 @@ namespace txt
 			, fontSize( fontSize )
 			, color( color )
 			, opacity( 1.f )
-			, leading( 0 )
 			, kerning( 0 )
 			, language( "en" )
 			, script( HB_SCRIPT_LATIN )
@@ -126,8 +132,8 @@ namespace txt
 		std::string fontStyle;
 		int fontSize;
 
-		int leading;
-		int kerning;
+		Unit lineHeight;
+		Unit kerning;
 
 		ci::Color color;
 		float opacity = 1.f;

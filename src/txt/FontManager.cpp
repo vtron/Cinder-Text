@@ -53,6 +53,11 @@ namespace txt
 		return familyStyle.style;
 	}
 
+	float FontManager::getLineHeight( const Font& font )
+	{
+		return getSize( font )->metrics.height / 64.f;
+	}
+
 	void FontManager::loadFace( const ci::DataSourceRef& dataSource, const std::string& family, const std::string& style )
 	{
 		loadFace( dataSource->getFilePath(), family, style );
