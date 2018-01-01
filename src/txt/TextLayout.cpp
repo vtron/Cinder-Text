@@ -268,11 +268,7 @@ namespace txt
 			run.glyphs.push_back( glyph );
 
 			// Check for unicode line breaks
-
-
 			for( auto& index : shapedGlyphs[i].textIndices ) {
-				ci::app::console() << lineBreaks[index] << std::endl;
-
 				if( lineBreaks[index] == ci::UNICODE_MUST_BREAK ) {
 					// Add the current run then move to next line
 					addRunToCurLine( run );
