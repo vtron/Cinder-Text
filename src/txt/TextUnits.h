@@ -1,5 +1,6 @@
 #pragma once
 
+#include "cinder/app/App.h"
 
 namespace txt
 {
@@ -37,14 +38,14 @@ namespace txt
 						return mValue;
 
 					case PT:
-						return mValue; // Get Cinder's window scale and apply here
+						return mValue / ci::app::getWindowContentScale(); // Get Cinder's window scale and apply here
 
 					case EM:
 					case PCT:
 						return mValue * baseValue;
 				}
-
 			}
+
 			UnitType getValueType() { return mType; }
 
 			bool isDefault() { return mIsDefault; }
