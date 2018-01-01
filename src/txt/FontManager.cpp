@@ -227,9 +227,9 @@ namespace txt
 	{
 		FTC_Scaler scaler = new FTC_ScalerRec_();
 		scaler->face_id = ( FTC_FaceID )font.mFaceId;
-		scaler->pixel = 0;
-		scaler->width = float( font.mSize ) * 64.f;
-		scaler->height = float( font.mSize ) * 64.f;
+		scaler->pixel = 1;
+		scaler->width = float( font.mSize );
+		scaler->height = float( font.mSize );
 
 		double hPixelsPerInch, vPixelsPerInch;
 #ifdef CINDER_MSW
