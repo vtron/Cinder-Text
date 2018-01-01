@@ -30,20 +30,24 @@ class CinderProjectApp : public App
 		void updateLayout();
 		void textFileUpdated( const ci::WatchEvent& event );
 
+		std::shared_ptr<txt::Font> mFont;
+
 		txt::Layout mLayout;
 		txt::RendererGl mRendererGl;
 
-		int mFontSize = 12.f;
+		int mFontSize = 14.f;
 		float mTracking = 0.f;
-		float mLineHeight = mFontSize;
+
+		float mLineHeight = 1.2;
 
 		ci::vec2 mTextBoxPos = ci::vec2( 200.f, 200.f );
 		ci::vec2 mTextBoxSize = ci::vec2( 600.f, 600.f );
 		//ci::Rectf mTextBox = ci::Rectf( 100.f, 100.f, 800.f, 800.f );
 
-		std::string fontName = "fonts/NotoSerif/NotoSerif-Regular.ttf";
+		//std::string fontName = "fonts/NotoSerif/NotoSerif-Regular.ttf";
 		//std::string fontName = "fonts/NotoArabic/NotoSansArabic-Regular.ttf";
 		//std::string fontName = "fonts/NotoChinese/NotoSansCJKsc-Regular.otf";
+		std::string fontName = "fonts/SourceSerifPro/SourceSerifPro-Regular.otf";
 
 		std::string mTestText;
 		std::string testTextFilename = "text/english.txt";
@@ -55,9 +59,10 @@ void CinderProjectApp::setup()
 {
 	setWindowSize( 1024.f, 768.f );
 
-	ci::FileWatcher::instance().watch( ci::app::getAssetPath( testTextFilename ), std::bind( &CinderProjectApp::textFileUpdated, this, std::placeholders::_1 ) );
+	mFont = std::make_shared<txt::Font>( ci::app::loadAsset( fontName ), mFontSize );
+	//mLineHeight = mFont->getLineHeight();
 
-	ci::app::console() << "Window width: " << getWindowWidth() << std::endl;
+	ci::FileWatcher::instance().watch( ci::app::getAssetPath( testTextFilename ), std::bind( &CinderProjectApp::textFileUpdated, this, std::placeholders::_1 ) );
 }
 
 void CinderProjectApp::update()
@@ -81,13 +86,19 @@ void CinderProjectApp::draw()
 
 void CinderProjectApp::updateLayout()
 {
-	txt::Font mFont( ci::app::loadAsset( fontName ), mFontSize );
+	mFont = std::make_shared<txt::Font>( ci::app::loadAsset( fontName ), mFontSize );
 
-	mLayout.setFont( mFont );
+	mLayout.setFont( *mFont );
 	mLayout.setSize( mTextBoxSize );
 	mLayout.setTracking( mTracking );
-	mLayout.setLineHeight( mLineHeight );
+	//mLayout.setLineHeight( mLineHeight );
+	mLayout.setLineHeight( txt::Unit( mLineHeight, txt::EM ) );
 	mLayout.calculateLayout( mTestText );
+
+
+
+	ci::app::console() << "Default line-height: " << mFont->getLineHeight() << std::endl;
+	ci::app::console() << "Line-height: " << mLayout.getLineHeight() << std::endl;
 }
 
 std::string unescape( const std::string& s )
@@ -127,19 +138,7 @@ std::string unescape( const std::string& s )
 
 void CinderProjectApp::textFileUpdated( const ci::WatchEvent& watchEvent )
 {
-	//std::ifstream file( watchEvent.getFile().c_str(), ios::binary );
-	//std::stringstream buffer;
-
-	//buffer << file.rdbuf();
-	//std::string str = buffer.str();
-	//std::cout << str;
-
-	//mTestText = str;
-	//updateLayout();
-
 	mTestText = unescape( ci::loadString( ci::loadFile( watchEvent.getFile() ) ) );
-
-
 	updateLayout();
 }
 
