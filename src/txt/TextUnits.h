@@ -31,7 +31,7 @@ namespace txt
 				mIsDefault = false;
 			}
 
-			float getValue( float baseValue )
+			float getValue( float baseValue ) const
 			{
 				switch( mType ) {
 					case PX:
@@ -46,9 +46,9 @@ namespace txt
 				}
 			}
 
-			UnitType getValueType() { return mType; }
+			UnitType getValueType() const { return mType; }
 
-			bool isDefault() { return mIsDefault; }
+			bool isDefault() const { return mIsDefault; }
 
 		private:
 			float mValue;
