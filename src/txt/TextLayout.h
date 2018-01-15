@@ -10,6 +10,7 @@
 #include "txt/FontManager.h"
 #include "txt/AttributedString.h"
 #include "txt/TextUnits.h"
+#include "txt/Shaper.h"
 
 namespace txt
 {
@@ -94,10 +95,21 @@ namespace txt
 			// Layout calculation
 			void resetLayout();
 
+			// Line breaking
+			struct BreakIndices {
+				int textBreakIndex = -1;
+				int glyphBreakIndex = -1;
+				bool found = false;
+			};
+			BreakIndices getClosestBreakForShapedText( int startIndex, const std::vector<Shaper::Glyph>& shapedGlyphs, const std::vector<uint8_t> lineBreaks, const hb_direction_t& direction );
+
+			ci::vec2 mCurDirection;
 			float mCharPos, mLinePos;
 			Line mCurLine;
 			float mCurLineWidth = 0;
 			float mCurLineHeight = 0;
+
+			float getLineHeightForSubstring( const AttributedString::Substring& substring, const Font& runFont );
 
 			void addSubstringToCurLine( AttributedString::Substring& substring );
 			void addRunToCurLine( Run& run );
