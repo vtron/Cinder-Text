@@ -76,13 +76,13 @@ namespace txt
 	{
 		hb_buffer_reset( mBuffer );
 
-		//hb_buffer_set_direction( mBuffer, text.direction );
-		//hb_buffer_set_script( mBuffer, text.script );
-		//hb_buffer_set_language( mBuffer, hb_language_from_string( text.language.c_str(), text.language.size() ) );
+		hb_buffer_set_direction( mBuffer, text.direction );
+		hb_buffer_set_script( mBuffer, text.script );
+		hb_buffer_set_language( mBuffer, hb_language_from_string( text.language.c_str(), text.language.size() ) );
 
 		hb_buffer_add_utf8( mBuffer, text.c_data(), text.data.length(), 0, text.data.length() );
 
-		hb_buffer_guess_segment_properties( mBuffer );
+		//hb_buffer_guess_segment_properties( mBuffer );
 
 		hb_shape( mFont, mBuffer, mFeatures.empty() ? NULL : &mFeatures[0], mFeatures.size() );
 

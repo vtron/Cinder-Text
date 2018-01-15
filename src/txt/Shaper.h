@@ -10,6 +10,7 @@
 
 namespace txt
 {
+
 	class Shaper
 	{
 		public:
