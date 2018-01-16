@@ -78,6 +78,15 @@ namespace txt
 			Layout& setTracking( float tracking ) { mTracking = txt::Unit( tracking ); return *this; };
 			Layout& setTracking( const Unit& tracking ) { mTracking = tracking; return *this; };
 
+			std::string getLanguage() { return mLanguage; }
+			Layout& setLanguage( std::string language ) { mLanguage = language; return *this; }
+
+			hb_script_t getScript() { return mScript; }
+			Layout& setScript( hb_script_t script ) { mScript = script; return *this; }
+
+			hb_direction_t getDirection() { return mDirection; }
+			Layout& setDirection( hb_direction_t direction ) { mDirection = direction; return *this; }
+
 			const Alignment& getAlignment() { return mAlignment; }
 			Layout& setAlignment( Alignment alignment ) { mAlignment = alignment; return *this; };
 
@@ -88,6 +97,10 @@ namespace txt
 			Alignment mAlignment;
 			txt::Unit mLineHeight;
 			txt::Unit mTracking;
+
+			std::string mLanguage;
+			hb_script_t mScript;
+			hb_direction_t mDirection;
 
 			ci::vec2 mSize;
 			ci::vec2 mLayoutSize;

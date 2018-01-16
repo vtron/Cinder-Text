@@ -43,6 +43,9 @@ namespace txt
 		, mTracking( 0 )
 		, mAlignment( Alignment::LEFT )
 		, mSize( GROW )
+		, mLanguage( "en" )
+		, mScript( HB_SCRIPT_LATIN )
+		, mDirection( HB_DIRECTION_LTR )
 		, mMaxLinesReached( false )
 	{
 		//const std::string testString( "testing test opportunity" );
@@ -164,8 +167,12 @@ namespace txt
 	// (it would be clearer to return the remainder vs modify the reference, but this should be faster)
 	void Layout::addSubstringToCurLine( AttributedString::Substring& substring )
 	{
-		mCurDirection.x = substring.attributes.direction == HB_DIRECTION_LTR ? 1 : -1;
-		//mCurDirection = ci::vec2( 1, 1 );
+		// Determine direction, script and language with overrides
+		std::string language = substring.attributes.language == "" ? mLanguage : substring.attributes.language;
+		hb_script_t script = substring.attributes.script == HB_SCRIPT_INVALID ? mScript : substring.attributes.script;
+		hb_direction_t direction = substring.attributes.direction == HB_DIRECTION_INVALID ? mDirection : substring.attributes.direction;
+
+		mCurDirection.x = direction == HB_DIRECTION_LTR ? 1 : -1;
 
 		// Create a run for this substring
 		const Font runFont( substring.attributes.fontFamily, substring.attributes.fontStyle, substring.attributes.fontSize );
@@ -201,16 +208,20 @@ namespace txt
 		Shaper shaper( runFont );
 		Shaper::Text shaperText = {
 			substring.text,
-			substring.attributes.language,
-			substring.attributes.script,
-			substring.attributes.direction
+			language,
+			script,
+			direction
 		};
 
 		std::vector<Shaper::Glyph> shapedGlyphs = shaper.getShapedText( shaperText );
 
+		if( direction == HB_DIRECTION_RTL ) {
+			std::reverse( shapedGlyphs.begin(), shapedGlyphs.end() );
+		}
+
 		for( int i = 0; i < shapedGlyphs.size(); i++ ) {
 			// Get directional offset + advance
-			ci::vec2 offset = shapedGlyphs[i].offset;// *mCurDirection;
+			ci::vec2 offset = shapedGlyphs[i].offset * mCurDirection;
 			ci::vec2 advance = shapedGlyphs[i].advance * mCurDirection;
 
 			// Add the offset (generally 0 for latin) to the pen pos
@@ -218,8 +229,17 @@ namespace txt
 
 			// Get the glyph metrics/position
 			FT_BitmapGlyph bitmapGlyph = FontManager::get()->getGlyphBitmap( runFont, shapedGlyphs[i].index );
-			ci::vec2 glyphPos = pos + ci::vec2( bitmapGlyph->left, 0.f );
-			ci::Rectf glyphBBox( glyphPos, glyphPos + ci::vec2( bitmapGlyph->bitmap.width, bitmapGlyph->bitmap.rows ) );
+			ci::vec2 glyphPos;
+			ci::Rectf glyphBBox;
+
+			if( direction == HB_DIRECTION_LTR ) {
+				glyphPos = pos + ci::vec2( bitmapGlyph->left, 0.f );
+				glyphBBox = ci::Rectf( glyphPos, glyphPos + ci::vec2( bitmapGlyph->bitmap.width, bitmapGlyph->bitmap.rows ) );
+			}
+			else {
+				glyphPos = pos - ci::vec2( shapedGlyphs[i].advance.x - bitmapGlyph->left, 0.f );
+				glyphBBox = ci::Rectf( glyphPos, glyphPos + ci::vec2( bitmapGlyph->bitmap.width, bitmapGlyph->bitmap.rows ) );
+			}
 
 			// Move the pen forward, except with white space at the beginning of a line
 			if( mCharPos != 0 || !isWhitespace( runFont, shapedGlyphs[i].index ) ) {
@@ -229,13 +249,13 @@ namespace txt
 			// Check for a new line
 			// TODO: Right to left + vertical
 			if( mSize.x != GROW && fabs( mCharPos ) > mSize.x ) {
-				BreakIndices breaks = getClosestBreakForShapedText( i, shapedGlyphs, lineBreaks, substring.attributes.direction );
+				BreakIndices breaks = getClosestBreakForShapedText( i, shapedGlyphs, lineBreaks, direction );
 
 				if( breaks.found ) {
 					// Clip the current run to the linebreak position
 					// and add to the current line
 					if( !run.glyphs.empty() ) {
-						switch( substring.attributes.direction ) {
+						switch( direction ) {
 							case HB_DIRECTION_LTR:
 								run.glyphs.erase( run.glyphs.begin() + breaks.glyphBreakIndex, run.glyphs.end() );
 								substring.text = substring.text.substr( breaks.textBreakIndex, std::string::npos );
@@ -370,7 +390,7 @@ namespace txt
 
 		int increment = direction == HB_DIRECTION_LTR ? -1 : 1;
 
-		for( int i = startIndex; i >= 0 && i < shapedGlyphs.size(); i += increment ) {
+		for( int i = startIndex; i >= 0; i-- ) {
 			if( indices.found ) { break; }
 
 			// Unpack the glyph's cluster
@@ -384,6 +404,8 @@ namespace txt
 				}
 			}
 		}
+
+		ci::app::console() << indices.glyphBreakIndex << std::endl;
 
 		return indices;
 	}

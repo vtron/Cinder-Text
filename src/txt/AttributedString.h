@@ -122,9 +122,9 @@ namespace txt
 			, color( color )
 			, opacity( 1.f )
 			, kerning( 0 )
-			, language( "en" )
-			, script( HB_SCRIPT_LATIN )
-			, direction( HB_DIRECTION_LTR )
+			, language( "" )
+			, script( HB_SCRIPT_INVALID )
+			, direction( HB_DIRECTION_INVALID )
 		{
 		}
 

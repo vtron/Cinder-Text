@@ -35,7 +35,7 @@ class CinderProjectApp : public App
 		txt::Layout mLayout;
 		txt::RendererGl mRendererGl;
 
-		int mFontSize = 14.f;
+		int mFontSize = 24.f;
 		float mTracking = 0.f;
 
 		float mLineHeight = 1.2;
@@ -44,13 +44,30 @@ class CinderProjectApp : public App
 		ci::vec2 mTextBoxSize = ci::vec2( 600.f, 600.f );
 		//ci::Rectf mTextBox = ci::Rectf( 100.f, 100.f, 800.f, 800.f );
 
-		//std::string fontName = "fonts/NotoSerif/NotoSerif-Regular.ttf";
-		//std::string fontName = "fonts/NotoArabic/NotoSansArabic-Regular.ttf";
+		//// English
+		//std::string fontName = "fonts/notoserif/notoserif-regular.ttf";
+		//std::string testTextFilename = "text/english.txt";
+		//std::string mLanguage = "en";
+		//hb_script_t mScript = HB_SCRIPT_LATIN;
+		//hb_direction_t mDirection = HB_DIRECTION_LTR;
+
+		// Arabic
+		std::string fontName = "fonts/NotoArabic/NotoSansArabic-Regular.ttf";
+		std::string testTextFilename = "text/arabic.txt";
+		std::string mLanguage = "ar";
+		hb_script_t mScript = HB_SCRIPT_ARABIC;
+		hb_direction_t mDirection = HB_DIRECTION_RTL;
+
+		//// Simplified Chinese
 		//std::string fontName = "fonts/NotoChinese/NotoSansCJKsc-Regular.otf";
-		std::string fontName = "fonts/SourceSerifPro/SourceSerifPro-Regular.otf";
+		//std::string testTextFilename = "text/simplifiedChinese.txt";
+
+		// Cyrillic
+		//std::string fontName = "fonts/SourceSerifPro/SourceSerifPro-Regular.otf";
+		//std::string testTextFilename = "text/cyrillic.txt";
+
 
 		std::string mTestText;
-		std::string testTextFilename = "text/english.txt";
 };
 
 CinderProjectApp::CinderProjectApp() {}
@@ -91,6 +108,9 @@ void CinderProjectApp::updateLayout()
 	mLayout.setFont( *mFont );
 	mLayout.setSize( mTextBoxSize );
 	mLayout.setTracking( mTracking );
+	mLayout.setLanguage( mLanguage );
+	mLayout.setScript( mScript );
+	mLayout.setDirection( mDirection );
 	//mLayout.setLineHeight( mLineHeight );
 	mLayout.setLineHeight( txt::Unit( mLineHeight, txt::EM ) );
 	mLayout.calculateLayout( mTestText );
