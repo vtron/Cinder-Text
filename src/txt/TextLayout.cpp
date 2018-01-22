@@ -336,7 +336,9 @@ namespace txt
 		// Set the Y glyph position based on culmulative line-height
 		for( auto& run : mCurLine.runs ) {
 			for( auto& glyph : run.glyphs ) {
-				glyph.bbox.offset( ci::vec2( 0.f, mCurLineHeight - glyph.top ) );
+				float xOffset = ( mDirection == HB_DIRECTION_RTL ? mSize.x : 0.0 );
+				float yOffset = mCurLineHeight - glyph.top;
+				glyph.bbox.offset( ci::vec2( xOffset, yOffset ) );
 			}
 		}
 
