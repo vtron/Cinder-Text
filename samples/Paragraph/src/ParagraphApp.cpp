@@ -45,18 +45,18 @@ class CinderProjectApp : public App
 		//ci::Rectf mTextBox = ci::Rectf( 100.f, 100.f, 800.f, 800.f );
 
 		// English
-		//std::string fontName = "fonts/notoserif/notoserif-regular.ttf";
-		//std::string testTextFilename = "text/english.txt";
-		//std::string mLanguage = "en";
-		//hb_script_t mScript = HB_SCRIPT_LATIN;
-		//hb_direction_t mDirection = HB_DIRECTION_LTR;
+		std::string fontName = "fonts/notoserif/notoserif-regular.ttf";
+		std::string testTextFilename = "text/english.txt";
+		std::string mLanguage = "en";
+		hb_script_t mScript = HB_SCRIPT_LATIN;
+		hb_direction_t mDirection = HB_DIRECTION_LTR;
 
 		// Arabic
-		std::string fontName = "fonts/NotoArabic/NotoSansArabic-Regular.ttf";
-		std::string testTextFilename = "text/arabic.txt";
-		std::string mLanguage = "ar";
-		hb_script_t mScript = HB_SCRIPT_ARABIC;
-		hb_direction_t mDirection = HB_DIRECTION_RTL;
+		//std::string fontName = "fonts/NotoArabic/NotoSansArabic-Regular.ttf";
+		//std::string testTextFilename = "text/arabic.txt";
+		//std::string mLanguage = "ar";
+		//hb_script_t mScript = HB_SCRIPT_ARABIC;
+		//hb_direction_t mDirection = HB_DIRECTION_RTL;
 
 		//// Simplified Chinese
 		//std::string fontName = "fonts/NotoChinese/NotoSansCJKsc-Regular.otf";

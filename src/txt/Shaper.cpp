@@ -112,8 +112,10 @@ namespace txt
 		// which is a PITA if you are line breaking
 		// If we have RTL text, invert glyph parsing so that we get it in logical order
 		// vs visual order
-		reverseHBArray( glyph_info, glyph_count );
-		reverseHBArray( glyph_pos, glyph_count );
+		if( text.direction == HB_DIRECTION_RTL ) {
+			reverseHBArray( glyph_info, glyph_count );
+			reverseHBArray( glyph_pos, glyph_count );
+		}
 
 		std::vector<Glyph> glyphs;
 
