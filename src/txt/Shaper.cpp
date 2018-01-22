@@ -72,6 +72,23 @@ namespace txt
 		}
 	}
 
+	// Reverse Harfbuzz arrays, used for RTL text shaping
+	template <typename t>
+	void reverseHBArray( t* arr, int length )
+	{
+		int start = 0;
+		int end = length - 1;
+		t temp;
+
+		while( start < end ) {
+			temp = arr[start];
+			arr[start] = arr[end];
+			arr[end] = temp;
+			start++;
+			end--;
+		}
+	}
+
 	std::vector<Shaper::Glyph> Shaper::getShapedText( Text& text )
 	{
 		hb_buffer_reset( mBuffer );
@@ -90,6 +107,14 @@ namespace txt
 		hb_glyph_info_t* glyph_info = hb_buffer_get_glyph_infos( mBuffer, &glyph_count );
 		hb_glyph_position_t* glyph_pos = hb_buffer_get_glyph_positions( mBuffer, &glyph_count );
 
+
+		// By default Harbuzz returns Glyphs in visual LTR order,
+		// which is a PITA if you are line breaking
+		// If we have RTL text, invert glyph parsing so that we get it in logical order
+		// vs visual order
+		reverseHBArray( glyph_info, glyph_count );
+		reverseHBArray( glyph_pos, glyph_count );
+
 		std::vector<Glyph> glyphs;
 
 		for( int i = 0; i < glyph_count; i++ ) {
@@ -97,10 +122,10 @@ namespace txt
 			glyph.index = glyph_info[i].codepoint;
 			glyph.cluster = glyph_info[i].cluster;
 
-			int clusterLength;
-
 			// Assign string values to clusters
 			// for decomposing at a later time
+			int clusterLength = 0;
+
 			if( i != glyph_count - 1 ) {
 				clusterLength = glyph_info[i + 1].cluster - glyph_info[i].cluster;
 			}

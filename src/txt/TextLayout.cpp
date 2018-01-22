@@ -215,10 +215,6 @@ namespace txt
 
 		std::vector<Shaper::Glyph> shapedGlyphs = shaper.getShapedText( shaperText );
 
-		if( direction == HB_DIRECTION_RTL ) {
-			std::reverse( shapedGlyphs.begin(), shapedGlyphs.end() );
-		}
-
 		for( int i = 0; i < shapedGlyphs.size(); i++ ) {
 			// Get directional offset + advance
 			ci::vec2 offset = shapedGlyphs[i].offset * mCurDirection;
@@ -255,20 +251,7 @@ namespace txt
 					// Clip the current run to the linebreak position
 					// and add to the current line
 					if( !run.glyphs.empty() ) {
-						switch( direction ) {
-							case HB_DIRECTION_LTR:
-								run.glyphs.erase( run.glyphs.begin() + breaks.glyphBreakIndex, run.glyphs.end() );
-								substring.text = substring.text.substr( breaks.textBreakIndex, std::string::npos );
-								break;
-
-							case HB_DIRECTION_RTL:
-								run.glyphs.erase( run.glyphs.begin(), run.glyphs.begin() + breaks.glyphBreakIndex );
-
-								// FIXME, should go backwards (?)
-								substring.text = substring.text.substr( breaks.textBreakIndex, std::string::npos );
-								break;
-						}
-
+						run.glyphs.erase( run.glyphs.begin() + breaks.glyphBreakIndex, run.glyphs.end() );
 
 						addRunToCurLine( run );
 						run.glyphs.clear();
@@ -278,7 +261,7 @@ namespace txt
 					}
 
 					// Clip the substrings text by what we've already added and return
-					//substring.text = substring.text.substr( lineBreakIndex, std::string::npos );
+					substring.text = substring.text.substr( breaks.textBreakIndex, std::string::npos );
 				}
 
 				// Our line is complete, add it to our layout
@@ -316,7 +299,6 @@ namespace txt
 
 		// Once we've gone through everything add the remaining word
 		// (Only reached if we haven't filled a line)
-		//run.glyphs.insert( run.glyphs.end(), curWord.begin(), curWord.end() );
 		addRunToCurLine( run );
 
 		substring.text.clear();
@@ -390,8 +372,6 @@ namespace txt
 	{
 		Layout::BreakIndices indices;
 
-		int increment = direction == HB_DIRECTION_LTR ? -1 : 1;
-
 		for( int i = startIndex; i >= 0; i-- ) {
 			if( indices.found ) { break; }
 
@@ -406,8 +386,6 @@ namespace txt
 				}
 			}
 		}
-
-		ci::app::console() << indices.glyphBreakIndex << std::endl;
 
 		return indices;
 	}

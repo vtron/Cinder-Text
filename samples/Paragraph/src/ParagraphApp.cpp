@@ -44,7 +44,7 @@ class CinderProjectApp : public App
 		ci::vec2 mTextBoxSize = ci::vec2( 600.f, 600.f );
 		//ci::Rectf mTextBox = ci::Rectf( 100.f, 100.f, 800.f, 800.f );
 
-		//// English
+		// English
 		//std::string fontName = "fonts/notoserif/notoserif-regular.ttf";
 		//std::string testTextFilename = "text/english.txt";
 		//std::string mLanguage = "en";
@@ -114,11 +114,6 @@ void CinderProjectApp::updateLayout()
 	//mLayout.setLineHeight( mLineHeight );
 	mLayout.setLineHeight( txt::Unit( mLineHeight, txt::EM ) );
 	mLayout.calculateLayout( mTestText );
-
-
-
-	ci::app::console() << "Default line-height: " << mFont->getLineHeight() << std::endl;
-	ci::app::console() << "Line-height: " << mLayout.getLineHeight() << std::endl;
 }
 
 std::string unescape( const std::string& s )
