@@ -171,12 +171,17 @@ void CinderProjectApp::keyDown( KeyEvent event )
 		mLayout.setAlignment( txt::Alignment::RIGHT );
 	}
 
+	else if( event.getCode() == KeyEvent::KEY_4 ) {
+
+		mLayout.setAlignment( txt::Alignment::JUSTIFIED );
+	}
+
 	else if( event.getCode() == KeyEvent::KEY_UP ) {
-		mLineHeight--;
+		mLineHeight -= 0.1;
 	}
 
 	else if( event.getCode() == KeyEvent::KEY_DOWN ) {
-		mLineHeight++;
+		mLineHeight += 0.1;
 	}
 
 	else if( event.getCode() == KeyEvent::KEY_LEFT ) {

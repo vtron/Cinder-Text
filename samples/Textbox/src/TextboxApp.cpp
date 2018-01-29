@@ -19,14 +19,15 @@ class TextboxApp : public App
 		void draw() override;
 
 		void textFileUpdated( const ci::WatchEvent& event );
-		std::string testTextFilename = "text/english.txt";
+		std::string testTextFilename = "text/simplifiedChinese.txt";
 
 		txt::TextBox mTextBox;
 };
 
 void TextboxApp::setup()
 {
-	txt::Font font( loadAsset( "fonts/SourceSerifPro/SourceSerifPro-Regular.otf" ), 12 );
+	//txt::Font font( loadAsset( "fonts/SourceSerifPro/SourceSerifPro-Regular.otf" ), 12 );
+	txt::Font font( loadAsset( "fonts/NotoChinese/NotoSansCJKsc-Medium.otf" ), 12 );
 	mTextBox.setSize( ci::vec2( 400, txt::GROW ) )
 	.setFont( txt::Font( "Arial", 11 ) )
 	.setFont( font );

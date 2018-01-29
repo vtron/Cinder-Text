@@ -14,7 +14,7 @@
 
 namespace txt
 {
-	typedef enum Alignment { LEFT, CENTER, RIGHT } Alignment;
+	typedef enum Alignment { LEFT, CENTER, RIGHT, JUSTIFIED } Alignment;
 	enum { GROW = 0 };
 
 	class Layout
@@ -46,6 +46,18 @@ namespace txt
 			// A line of runs fit within the layout
 			struct Line {
 				std::vector<Run> runs;
+				int width;
+				int getTotalGlyphs()
+				{
+					int totalGlyphs = 0;
+
+					for( auto& run : runs ) {
+						totalGlyphs += run.glyphs.size();
+					}
+
+					return totalGlyphs;
+				}
+
 			};
 
 			Layout();
@@ -126,7 +138,8 @@ namespace txt
 
 			void addSubstringToCurLine( AttributedString::Substring& substring );
 			void addRunToCurLine( Run& run );
-			void addCurLine( );
+			void addCurLine();
+			void applyAlignment();
 			std::vector<Line> mLines;
 
 			bool mMaxLinesReached = false;

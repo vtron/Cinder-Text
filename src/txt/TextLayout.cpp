@@ -117,6 +117,7 @@ namespace txt
 			while( ( remainingSubstring.text.size() ) ) {
 				// Don't bother continuing if we aren't going to display any more lines
 				if( mMaxLinesReached ) {
+					applyAlignment();
 					return;
 				}
 
@@ -127,6 +128,7 @@ namespace txt
 				if( remainingSubstring.text.size() == prevSubstringSize ) {
 					// Return to avoid infinite loop when a string or character
 					// will not fit our layout (too big)
+					applyAlignment();
 					return;
 				}
 				else {
@@ -137,6 +139,7 @@ namespace txt
 		}
 
 		addCurLine();
+		applyAlignment();
 	}
 
 	float Layout::getLineHeightForSubstring( const AttributedString::Substring& substring, const Font& runFont )
@@ -324,27 +327,7 @@ namespace txt
 			}
 		}
 
-		// Align in frame (if necessary)
-		if( mSize.x != GROW ) {
-			switch( mAlignment ) {
-				case LEFT:
-					break;
-
-				case CENTER:
-				case RIGHT:
-					float remainingWidth = mSize.x - mCurLineWidth;
-
-					float xOffset = ( mAlignment == CENTER ) ? remainingWidth / 2.f : remainingWidth;
-
-					for( auto& run : mCurLine.runs ) {
-						for( auto& glyph : run.glyphs ) {
-							glyph.bbox.offset( ci::vec2( xOffset, 0.f ) );
-						}
-					}
-
-					break;
-			}
-		}
+		mCurLine.width = mCurLineWidth;
 
 		// Add it to our lines
 		mLines.push_back( mCurLine );
@@ -366,6 +349,82 @@ namespace txt
 
 		mCurLineHeight = mLineHeight.getValue( mFont.getSize() );
 		mCurLineWidth = 0;
+	}
+
+	void Layout::applyAlignment()
+	{
+		if( mSize.x == GROW ) {
+			return;
+		}
+
+		// Align in frame (if necessary)
+		for( int i = 0; i < mLines.size(); i++ ) {
+			switch( mAlignment ) {
+				case LEFT:
+					break;
+
+				case CENTER:
+				case RIGHT: {
+					float remainingWidth = mSize.x - mLines[i].width;
+
+					float xOffset = ( mAlignment == CENTER ) ? remainingWidth / 2.f : remainingWidth;
+
+					for( auto& run : mLines[i].runs ) {
+						for( auto& glyph : run.glyphs ) {
+							glyph.bbox.offset( ci::vec2( xOffset, 0.f ) );
+						}
+					}
+
+					break;
+				}
+
+				// This whole thing points to a lot of optimization possibilities
+				// in lines,runs and glyphs
+				case JUSTIFIED: {
+					if( i == mLines.size() - 1 || mLines[i + 1].getTotalGlyphs() == 1 ) {
+						continue;
+					}
+
+					float remainingWidth = mSize.x - mLines[i].width;
+
+					// A custom iterator would be awesome here
+					std::vector<Glyph*> glyphRefs;
+					std::vector<bool> glyphIsWhitespace;
+					int totalWhitespaces = 0;
+
+					for( auto& run : mLines[i].runs ) {
+						// Get the char index for whitespace given this run's font
+						FT_UInt spaceIndex = FontManager::get()->getGlyphIndex( run.font, ' ' );
+
+						int index = 0;
+
+						for( auto& glyph : run.glyphs ) {
+							glyphRefs.push_back( &glyph );
+							bool isWhitespace = index != 0 && glyph.index == spaceIndex;
+
+							if( isWhitespace ) {
+								totalWhitespaces++;
+							}
+
+							glyphIsWhitespace.push_back( isWhitespace );
+							index++;
+						}
+					}
+
+					float justificationPadding = remainingWidth / totalWhitespaces;
+
+					for( int i = 0; i < glyphRefs.size(); i++ ) {
+						if( glyphIsWhitespace[i] && i != 0 && i < glyphRefs.size() - 1 ) {
+							for( int j = i + 1; j < glyphRefs.size(); j++ ) {
+								glyphRefs[j]->bbox.offset( ci::vec2( justificationPadding, 0.f ) );
+							}
+						}
+					}
+
+					break;
+				}
+			}
+		}
 	}
 
 	Layout::BreakIndices Layout::getClosestBreakForShapedText( int startIndex, const std::vector<Shaper::Glyph>& shapedGlyphs, const std::vector<uint8_t> lineBreaks, const hb_direction_t& direction )
