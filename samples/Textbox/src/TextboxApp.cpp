@@ -27,6 +27,7 @@ class TextboxApp : public App
 void TextboxApp::setup()
 {
 	//txt::Font font( loadAsset( "fonts/SourceSerifPro/SourceSerifPro-Regular.otf" ), 12 );
+	//txt::Font font( loadAsset( "fonts/NotoSans/NotoSans-Regular.ttf" ), 12 );
 	txt::Font font( loadAsset( "fonts/NotoChinese/NotoSansCJKsc-Medium.otf" ), 12 );
 	mTextBox.setSize( ci::vec2( 400, txt::GROW ) )
 	.setFont( txt::Font( "Arial", 11 ) )
@@ -90,7 +91,6 @@ void TextboxApp::textFileUpdated( const ci::WatchEvent& watchEvent )
 {
 	mTextBox.setText( unescape( ci::loadString( ci::loadFile( watchEvent.getFile() ) ) ) );
 	mTextBox.doLayout();
-	ci::app::console() << "Height: " << mTextBox.getSize().y << std::endl;
 }
 
 

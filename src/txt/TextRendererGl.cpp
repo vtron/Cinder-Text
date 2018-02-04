@@ -94,7 +94,7 @@ namespace txt
 						ci::gl::translate( ci::vec2( glyph.bbox.getUpperLeft() ) );
 						ci::gl::scale( glyph.bbox.getSize().x, glyph.bbox.getSize().y );
 
-						ci::gl::ScopedBlendAlpha alphaBlend;
+						//ci::gl::ScopedBlendAlpha alphaBlend;
 						mBatch->getGlslProg()->uniform( "uLayer", getFontCache( run.font ).glyphs[glyph.index].layer );
 
 						ci::gl::Texture3dRef tex = getFontCache( run.font ).glyphs[glyph.index].texArray;

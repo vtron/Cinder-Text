@@ -14,8 +14,37 @@
 
 namespace txt
 {
-	bool isWhitespace( const Font& font, int codepoint )
+	bool isWhitespace( const Font& font, uint32_t codepoint )
 	{
+		std::string separatorSpaces;
+		separatorSpaces += ' '; // SPACE
+		separatorSpaces += '\u00A0'; // NO-BREAK SPACE
+		separatorSpaces += '\u1680'; // OGHAM SPACE MARK
+		separatorSpaces += '\u2000'; // EN QUAD
+		separatorSpaces += '\u2001'; // EM QUAD
+		separatorSpaces += '\u2002'; // EN SPACE
+		separatorSpaces += '\u2003'; // EM SPACE
+		separatorSpaces += '\u2004'; // THREE-PER-EM SPACE
+		separatorSpaces += '\u2005'; // FOUR-PER-EM SPACE
+		separatorSpaces += '\u2006'; // SIX-PER-EM SPACE
+		separatorSpaces += '\u2007'; // FIGURE SPACE
+		separatorSpaces += '\u2008'; // PUNCTUATION SPACE
+		separatorSpaces += '\u2009'; // THIN SPACE
+		separatorSpaces += '\u200A'; // HAIR SPACE
+		separatorSpaces += '\u202F'; // NARROW NO-BREAK SPACE
+		separatorSpaces += '\u205F'; // MEDIUM MATHEMATICAL SPACE
+		separatorSpaces += '\u3000'; // IDEOGRAPHIC SPACE
+
+		std::vector<uint32_t> separatorSpaceIndices = FontManager::get()->getGlyphIndices( font, separatorSpaces );
+
+		std::vector<uint32_t>::iterator iter = std::find( separatorSpaceIndices.begin(), separatorSpaceIndices.end(), codepoint );
+
+		if( iter == separatorSpaceIndices.end() ) {
+			return false;
+		}
+
+		return true;
+
 		FT_UInt spaceIndex = FontManager::get()->getGlyphIndex( font, ' ' );
 		return codepoint == spaceIndex;
 	}
@@ -353,20 +382,17 @@ namespace txt
 
 	void Layout::applyAlignment()
 	{
-		if( mSize.x == GROW ) {
+		if( mSize.x == GROW || mAlignment == LEFT ) {
 			return;
 		}
 
 		// Align in frame (if necessary)
 		for( int i = 0; i < mLines.size(); i++ ) {
-			switch( mAlignment ) {
-				case LEFT:
-					break;
+			float remainingWidth = mSize.x - mLines[i].width;
 
+			switch( mAlignment ) {
 				case CENTER:
 				case RIGHT: {
-					float remainingWidth = mSize.x - mLines[i].width;
-
 					float xOffset = ( mAlignment == CENTER ) ? remainingWidth / 2.f : remainingWidth;
 
 					for( auto& run : mLines[i].runs ) {
@@ -384,8 +410,6 @@ namespace txt
 					if( i == mLines.size() - 1 || mLines[i + 1].getTotalGlyphs() == 1 ) {
 						continue;
 					}
-
-					float remainingWidth = mSize.x - mLines[i].width;
 
 					// A custom iterator would be awesome here
 					std::vector<Glyph*> glyphRefs;

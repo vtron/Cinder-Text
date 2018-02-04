@@ -45,11 +45,11 @@ class CinderProjectApp : public App
 		//ci::Rectf mTextBox = ci::Rectf( 100.f, 100.f, 800.f, 800.f );
 
 		// English
-		std::string fontName = "fonts/notoserif/notoserif-regular.ttf";
-		std::string testTextFilename = "text/english.txt";
-		std::string mLanguage = "en";
-		hb_script_t mScript = HB_SCRIPT_LATIN;
-		hb_direction_t mDirection = HB_DIRECTION_LTR;
+		//std::string fontName = "fonts/notoserif/notoserif-regular.ttf";
+		//std::string testTextFilename = "text/english.txt";
+		//std::string mLanguage = "en";
+		//hb_script_t mScript = HB_SCRIPT_LATIN;
+		//hb_direction_t mDirection = HB_DIRECTION_LTR;
 
 		// Arabic
 		//std::string fontName = "fonts/NotoArabic/NotoSansArabic-Regular.ttf";
@@ -58,13 +58,19 @@ class CinderProjectApp : public App
 		//hb_script_t mScript = HB_SCRIPT_ARABIC;
 		//hb_direction_t mDirection = HB_DIRECTION_RTL;
 
-		//// Simplified Chinese
+		// Simplified Chinese
 		//std::string fontName = "fonts/NotoChinese/NotoSansCJKsc-Regular.otf";
 		//std::string testTextFilename = "text/simplifiedChinese.txt";
+		//std::string mLanguage = "zh-Hans";
+		//hb_script_t mScript = HB_SCRIPT_HAN;
+		//hb_direction_t mDirection = HB_DIRECTION_LTR;
 
 		// Cyrillic
-		//std::string fontName = "fonts/SourceSerifPro/SourceSerifPro-Regular.otf";
-		//std::string testTextFilename = "text/cyrillic.txt";
+		std::string fontName = "fonts/SourceSerifPro/SourceSerifPro-Regular.otf";
+		std::string testTextFilename = "text/cyrillic.txt";
+		std::string mLanguage = "ru";
+		hb_script_t mScript = HB_SCRIPT_CYRILLIC;
+		hb_direction_t mDirection = HB_DIRECTION_LTR;
 
 
 		std::string mTestText;
