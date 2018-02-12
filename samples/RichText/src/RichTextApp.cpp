@@ -29,8 +29,6 @@ class RichTextApp : public App
 
 		ci::Rectf mTextBox;
 
-		txt::RendererGl mRendererGl;
-
 		// Base font, need to remove this, shouldn't be required
 		std::shared_ptr<txt::Font> mBaseFont;
 
@@ -87,7 +85,7 @@ void RichTextApp::draw()
 	ci::gl::drawStrokedRect( ci::Rectf( ci::vec2( 0.f ), mTextBox.getSize() ) );
 
 	ci::gl::color( 1, 1, 1 );
-	mRendererGl.draw( mLayout );
+	txt::RendererGl::instance()->draw( mLayout );
 
 }
 
