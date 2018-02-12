@@ -11,7 +11,7 @@ namespace txt
 		: mFont( DefaultFont() )
 		, mSize( size )
 		, mColor( ci::Color::white() )
-		, mRenderer( std::make_shared<RendererGl>() )
+		, mRenderer( txt::RendererGl::instance() )
 		, mNeedsLayout( true )
 		, mExternalAttributedString( false )
 	{
