@@ -55,13 +55,16 @@ namespace txt
 			//color = vec4(1.0,0.0,0.0,1.0);
 		}
 	)V0G0N";
+
 	RendererGl::RendererGl()
 	{
 		ci::gl::GlslProgRef shader = ci::gl::GlslProg::create( vertShader, fragShader );
 		//ci::gl::GlslProgRef shader = ci::gl::GlslProg::create( ci::app::loadAsset( "shaders/shader.vert" ), ci::app::loadAsset( "shaders/shader.frag" ) );
 		shader->uniform( "uTexArray", 0 );
 
-		mBatch = ci::gl::Batch::create( ci::geom::Rect( ci::Rectf( 0.f, 0.f, 1.f, 1.f ) ), shader );
+		if( mBatch == nullptr ) {
+			mBatch = ci::gl::Batch::create( ci::geom::Rect( ci::Rectf( 0.f, 0.f, 1.f, 1.f ) ), shader );
+		}
 	}
 
 	void RendererGl::draw( const std::string& string, const ci::vec2& frame )
@@ -88,7 +91,7 @@ namespace txt
 
 				for( auto& glyph : run.glyphs ) {
 					// Make sure we have the glyph
-					if( getFontCache( run.font ).glyphs.count( glyph.index ) != 0 ) {
+					if( RendererGl::getFontCache( run.font ).glyphs.count( glyph.index ) != 0 ) {
 						ci::gl::ScopedMatrices matrices;
 
 						ci::gl::translate( ci::vec2( glyph.bbox.getUpperLeft() ) );
@@ -113,10 +116,15 @@ namespace txt
 		}
 	}
 
+	void RendererGl::preloadFont( const Font& font )
+	{
+		RendererGl::getFontCache( font );
+	}
+
 	RendererGl::FontCache& RendererGl::getFontCache( const Font& font )
 	{
 		if( !mFontCaches.count( font ) ) {
-			cacheFont( font );
+			RendererGl::cacheFont( font );
 		}
 
 		return mFontCaches[font];

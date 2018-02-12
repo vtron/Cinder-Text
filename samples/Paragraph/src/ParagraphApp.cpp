@@ -33,7 +33,6 @@ class CinderProjectApp : public App
 		std::shared_ptr<txt::Font> mFont;
 
 		txt::Layout mLayout;
-		txt::RendererGl mRendererGl;
 
 		int mFontSize = 24.f;
 		float mTracking = 0.f;
@@ -59,18 +58,18 @@ class CinderProjectApp : public App
 		//hb_direction_t mDirection = HB_DIRECTION_RTL;
 
 		// Simplified Chinese
-		//std::string fontName = "fonts/NotoChinese/NotoSansCJKsc-Regular.otf";
-		//std::string testTextFilename = "text/simplifiedChinese.txt";
-		//std::string mLanguage = "zh-Hans";
-		//hb_script_t mScript = HB_SCRIPT_HAN;
-		//hb_direction_t mDirection = HB_DIRECTION_LTR;
+		std::string fontName = "fonts/NotoChinese/NotoSansCJKsc-Regular.otf";
+		std::string testTextFilename = "text/simplifiedChinese.txt";
+		std::string mLanguage = "zh-Hans";
+		hb_script_t mScript = HB_SCRIPT_HAN;
+		hb_direction_t mDirection = HB_DIRECTION_LTR;
 
 		// Cyrillic
-		std::string fontName = "fonts/SourceSerifPro/SourceSerifPro-Regular.otf";
-		std::string testTextFilename = "text/cyrillic.txt";
-		std::string mLanguage = "ru";
-		hb_script_t mScript = HB_SCRIPT_CYRILLIC;
-		hb_direction_t mDirection = HB_DIRECTION_LTR;
+		//std::string fontName = "fonts/SourceSerifPro/SourceSerifPro-Regular.otf";
+		//std::string testTextFilename = "text/cyrillic.txt";
+		//std::string mLanguage = "ru";
+		//hb_script_t mScript = HB_SCRIPT_CYRILLIC;
+		//hb_direction_t mDirection = HB_DIRECTION_LTR;
 
 
 		std::string mTestText;
@@ -83,6 +82,7 @@ void CinderProjectApp::setup()
 	setWindowSize( 1024.f, 768.f );
 
 	mFont = std::make_shared<txt::Font>( ci::app::loadAsset( fontName ), mFontSize );
+	txt::RendererGl::instance()->preloadFont( *mFont );
 	//mLineHeight = mFont->getLineHeight();
 
 	ci::FileWatcher::instance().watch( ci::app::getAssetPath( testTextFilename ), std::bind( &CinderProjectApp::textFileUpdated, this, std::placeholders::_1 ) );
@@ -103,7 +103,7 @@ void CinderProjectApp::draw()
 	ci::gl::drawStrokedRect( ci::Rectf( ci::vec2( 0.f ), mLayout.measure() ) );
 
 	ci::gl::color( 0.f, 1, 1 );
-	mRendererGl.draw( mLayout );
+	txt::RendererGl::instance()->draw( mLayout );
 }
 
 
@@ -213,5 +213,5 @@ void CinderProjectApp::keyDown( KeyEvent event )
 
 CINDER_APP( CinderProjectApp, RendererGl, [&]( App::Settings* settings )
 {
-	settings->setHighDensityDisplayEnabled( true );
+	//settings->setHighDensityDisplayEnabled( true );
 } )

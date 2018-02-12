@@ -11,17 +11,27 @@
 
 namespace txt
 {
+	class RendererGl;
+	typedef std::shared_ptr<RendererGl> RendererGlRef;
+
 	class RendererGl
 		: public txt::Renderer
 	{
 		public:
-			RendererGl();
+			static RendererGlRef instance()
+			{
+				static RendererGlRef ref( new RendererGl() );
+				return ref;
+			}
 
-			virtual void draw( const std::string& text, const ci::vec2& size = ci::vec2( 0 ) );
-			virtual void draw( const std::string& text, const Font& font, const ci::vec2 size = ci::vec2( 0 ) );
-			virtual void draw( const Layout& layout );
+			void draw( const std::string& text, const ci::vec2& size = ci::vec2( 0 ) ) override;
+			void draw( const std::string& text, const Font& font, const ci::vec2 size = ci::vec2( 0 ) ) override;
+			void draw( const Layout& layout ) override;
+
+			void preloadFont( const Font& font ) override;
 
 		private:
+			RendererGl();
 			void drawGlyph( const Font& font, unsigned int glyphIndex ) {};
 
 			//ci::gl::TextureRef getGlyphTexture( const Font& font, unsigned int glyphIndex );
@@ -41,11 +51,8 @@ namespace txt
 			FontCache& getFontCache( const Font& font );
 			void cacheFont( const Font& font );
 
-
-
 			std::unordered_map<Font, FontCache> mFontCaches;
 
 			ci::gl::BatchRef mBatch;
-
 	};
 }
