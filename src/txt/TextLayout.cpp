@@ -71,6 +71,7 @@ namespace txt
 		, mColor( ci::Color( 1.f, 1.f, 1.f ) )
 		, mTracking( 0 )
 		, mAlignment( Alignment::LEFT )
+		, mUseDefaultAlignment( true )
 		, mSize( GROW )
 		, mLanguage( "en" )
 		, mScript( HB_SCRIPT_LATIN )
@@ -341,16 +342,19 @@ namespace txt
 		mCurLine.runs.push_back( run );
 
 		if( !run.glyphs.empty() ) {
-			mCurLineWidth = run.glyphs.back().bbox.x2;
+			mCurLineWidth = mDirection == HB_DIRECTION_RTL ? run.glyphs.back().bbox.x1 : run.glyphs.back().bbox.x2;
 		}
 	}
 
 	void Layout::addCurLine( )
 	{
+		// Removed any negative widths from RTL
+		mCurLineWidth = fabs( mCurLineWidth );
+
 		// Set the Y glyph position based on culmulative line-height
 		for( auto& run : mCurLine.runs ) {
 			for( auto& glyph : run.glyphs ) {
-				float xOffset = ( mDirection == HB_DIRECTION_RTL ? mSize.x : 0.0 );
+				float xOffset = ( mDirection == HB_DIRECTION_RTL ? mCurLineWidth : 0.0 );
 				float yOffset = mCurLineHeight - glyph.top;
 				glyph.bbox.offset( ci::vec2( xOffset, yOffset ) );
 			}
@@ -388,9 +392,13 @@ namespace txt
 
 		// Align in frame (if necessary)
 		for( int i = 0; i < mLines.size(); i++ ) {
+			ci::app::console() << mLines[i].width << std::endl;
 			float remainingWidth = mSize.x - mLines[i].width;
 
 			switch( mAlignment ) {
+				case LEFT:
+					return;
+
 				case CENTER:
 				case RIGHT: {
 					float xOffset = ( mAlignment == CENTER ) ? remainingWidth / 2.f : remainingWidth;

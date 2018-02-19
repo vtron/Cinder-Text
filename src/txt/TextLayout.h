@@ -97,16 +97,32 @@ namespace txt
 			Layout& setScript( hb_script_t script ) { mScript = script; return *this; }
 
 			hb_direction_t getDirection() { return mDirection; }
-			Layout& setDirection( hb_direction_t direction ) { mDirection = direction; return *this; }
+			Layout& setDirection( hb_direction_t direction )
+			{
+				mDirection = direction;
+
+				// If alignment isn't manually set, default to LEFT for LTR and RIGHT for RTL
+				if( mUseDefaultAlignment ) {
+					mAlignment = mDirection == HB_DIRECTION_LTR ? Alignment::LEFT : Alignment::RIGHT;
+				}
+
+				return *this;
+			}
 
 			const Alignment& getAlignment() { return mAlignment; }
-			Layout& setAlignment( Alignment alignment ) { mAlignment = alignment; return *this; };
+			Layout& setAlignment( Alignment alignment )
+			{
+				mAlignment = alignment;
+				mUseDefaultAlignment = false;
+				return *this;
+			};
 
 		private:
 			// Attributes
 			Font mFont;
 			ci::Color mColor;
 			Alignment mAlignment;
+			bool mUseDefaultAlignment;
 			txt::Unit mLineHeight;
 			txt::Unit mTracking;
 
