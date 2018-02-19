@@ -91,16 +91,20 @@ namespace txt
 
 	std::vector<Shaper::Glyph> Shaper::getShapedText( Text& text )
 	{
+		// Clear our buffer and add the text to it
 		hb_buffer_reset( mBuffer );
+		hb_buffer_add_utf8( mBuffer, text.c_data(), text.data.length(), 0, text.data.length() );
 
+		// Set Segment properties
+		// Harfbuzz can guess the properties, this is probably best in most scenarios
+		//hb_buffer_guess_segment_properties( mBuffer );
+
+		// Alternatively we can set direction, script and language
 		hb_buffer_set_direction( mBuffer, text.direction );
 		hb_buffer_set_script( mBuffer, text.script );
 		hb_buffer_set_language( mBuffer, hb_language_from_string( text.language.c_str(), text.language.size() ) );
 
-		hb_buffer_add_utf8( mBuffer, text.c_data(), text.data.length(), 0, text.data.length() );
-
-		//hb_buffer_guess_segment_properties( mBuffer );
-
+		// Shape the text
 		hb_shape( mFont, mBuffer, mFeatures.empty() ? NULL : &mFeatures[0], mFeatures.size() );
 
 		unsigned int glyph_count;
@@ -111,12 +115,15 @@ namespace txt
 		// By default Harbuzz returns Glyphs in visual LTR order,
 		// which is a PITA if you are line breaking
 		// If we have RTL text, invert glyph parsing so that we get it in logical order
-		// vs visual order
+		// vs visual order.
+		// This lets us treat RTL and LTR runs the same when processing.
 		if( text.direction == HB_DIRECTION_RTL ) {
 			reverseHBArray( glyph_info, glyph_count );
 			reverseHBArray( glyph_pos, glyph_count );
 		}
 
+		// Create glyphs w/original text and cluster info
+		// in case they need to be deconstructed later
 		std::vector<Glyph> glyphs;
 
 		for( int i = 0; i < glyph_count; i++ ) {
