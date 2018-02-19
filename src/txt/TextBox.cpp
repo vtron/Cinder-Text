@@ -84,8 +84,6 @@ namespace txt
 			mAttrString = AttributedString( mText, mFont, mColor );
 		}
 
-		mLayout.setLanguage( "zh-Hans" );
-		mLayout.setScript( HB_SCRIPT_HAN );
 		mLayout.setSize( mSize );
 		mLayout.calculateLayout( mAttrString );
 		mNeedsLayout = false;
