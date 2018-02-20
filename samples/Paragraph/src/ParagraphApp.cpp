@@ -82,7 +82,7 @@ void CinderProjectApp::setup()
 	setWindowSize( 1024.f, 768.f );
 
 	mFont = std::make_shared<txt::Font>( ci::app::loadAsset( fontName ), mFontSize );
-	mRenderer.loadFont( *mFont );
+	txt::gl::TextureRenderer::loadFont( *mFont );
 	//mLineHeight = mFont->getLineHeight();
 
 	ci::FileWatcher::instance().watch( ci::app::getAssetPath( testTextFilename ), std::bind( &CinderProjectApp::textFileUpdated, this, std::placeholders::_1 ) );

@@ -167,7 +167,9 @@ namespace txt
 
 		void TextureRenderer::loadFont( const Font& font )
 		{
-			TextureRenderer::getCacheForFont( font );
+			if( !mFontCaches.count( font ) ) {
+				TextureRenderer::cacheFont( font );
+			}
 		}
 
 		void TextureRenderer::unloadFont( const Font& font )

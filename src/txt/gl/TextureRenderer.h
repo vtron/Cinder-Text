@@ -22,11 +22,10 @@ namespace txt
 				//void draw( const std::string& text, const ci::vec2& size = ci::vec2( 0 ) ) override;
 				//void draw( const std::string& text, const Font& font, const ci::vec2 size = ci::vec2( 0 ) ) override;
 				void draw() override;
+				void setLayout( const txt::Layout& layout ) override;
 
-				void loadFont( const Font& font ) override;
-				void unloadFont( const Font& font ) override;
-
-				virtual void setLayout( const txt::Layout& layout ) override;
+				static void loadFont( const Font& font );
+				static void unloadFont( const Font& font );
 
 			private:
 				// Texture (FBO) caching
@@ -48,8 +47,8 @@ namespace txt
 				} FontCache;
 
 				FontCache& getCacheForFont( const Font& font );
-				void cacheFont( const Font& font );
-				void uncacheFont( const Font& font );
+				static void cacheFont( const Font& font );
+				static void uncacheFont( const Font& font );
 
 				static std::unordered_map<Font, FontCache> mFontCaches;
 		};

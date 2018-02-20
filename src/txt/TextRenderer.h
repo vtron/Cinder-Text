@@ -23,9 +23,6 @@ namespace txt
 
 			virtual void draw() = 0;
 
-			virtual void loadFont( const Font& font ) = 0;
-			virtual void unloadFont( const Font& font ) = 0;
-
 			virtual void setLayout( const Layout& layout ) { mLayout = layout; }
 			virtual const Layout& getLayout( const Layout& layout ) { return mLayout; }
 
