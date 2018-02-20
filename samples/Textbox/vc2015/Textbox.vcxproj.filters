@@ -19,6 +19,9 @@
     <Filter Include="Blocks\Cinder-Txt">
       <UniqueIdentifier>{2337a3f4-4bfc-42f6-8074-2308c5212b97}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Blocks\Cinder-Txt\gl">
+      <UniqueIdentifier>{ae06c188-5fcf-4c92-aebb-b3f76ee7c389}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\TextboxApp.cpp">
@@ -48,11 +51,11 @@
     <ClCompile Include="..\..\..\src\txt\TextBox.cpp">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\txt\TextRendererGl.cpp">
-      <Filter>Blocks\Cinder-Txt</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\txt\TextLayout.cpp">
       <Filter>Blocks\Cinder-Txt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\txt\gl\TextureRenderer.cpp">
+      <Filter>Blocks\Cinder-Txt\gl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -68,9 +71,6 @@
     <ClInclude Include="..\..\..\src\txt\FontManager.h">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\txt\Renderer.h">
-      <Filter>Blocks\Cinder-Txt</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\txt\Shaper.h">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClInclude>
@@ -80,11 +80,14 @@
     <ClInclude Include="..\..\..\src\txt\TextBox.h">
       <Filter>Blocks\Cinder-Txt</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\txt\TextRendererGl.h">
-      <Filter>Blocks\Cinder-Txt</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\txt\TextLayout.h">
       <Filter>Blocks\Cinder-Txt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\TextRenderer.h">
+      <Filter>Blocks\Cinder-Txt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\txt\gl\TextureRenderer.h">
+      <Filter>Blocks\Cinder-Txt\gl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

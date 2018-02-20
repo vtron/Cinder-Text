@@ -3,6 +3,7 @@
 #include "txt/Font.h"
 #include "txt/TextLayout.h"
 #include "txt/TextRenderer.h"
+#include "txt/gl/TextureRenderer.h"
 
 namespace txt
 {
@@ -10,7 +11,7 @@ namespace txt
 	{
 		public:
 			TextBox();
-			TextBox( ci::vec2 size );
+			TextBox( ci::vec2 size, RendererRef renderer = std::make_shared<txt::gl::TextureRenderer>() );
 
 			ci::ivec2 getSize();
 			TextBox& setSize( ci::vec2 size );
@@ -25,6 +26,9 @@ namespace txt
 			TextBox& doLayout();
 
 			Layout& getLayout() { return mLayout; };
+
+			RendererRef getRenderer() { return mRenderer; }
+			void setRenderer( RendererRef renderer ) { mRenderer = renderer; }
 
 			void draw();
 

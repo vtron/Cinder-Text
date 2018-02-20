@@ -7,18 +7,29 @@
 
 namespace txt
 {
+	class Renderer;
+	typedef std::shared_ptr<Renderer> RendererRef;
+
 	class Renderer
 	{
 		public:
-			Renderer() { }
+			Renderer() {}
 
-			virtual void draw( const std::string& text, const ci::vec2& size = ci::vec2( 0 ) ) = 0;
-			virtual void draw( const std::string& text, const Font& font, const ci::vec2 size = ci::vec2( 0 ) ) = 0;
-			virtual void draw( const Layout& layout ) = 0;
+			//void draw( const Layout& layout )
+			//{
+			//	mLayout = layout;
+			//	draw();
+			//}
 
-			virtual void preloadFont( const Font& font ) = 0;
+			virtual void draw() = 0;
+
+			virtual void loadFont( const Font& font ) = 0;
+			virtual void unloadFont( const Font& font ) = 0;
+
+			virtual void setLayout( const Layout& layout ) { mLayout = layout; }
+			virtual const Layout& getLayout( const Layout& layout ) { return mLayout; }
 
 		protected:
-			virtual void drawGlyph( const Font& font, unsigned int glyphIndex ) = 0;
+			Layout mLayout;
 	};
 }

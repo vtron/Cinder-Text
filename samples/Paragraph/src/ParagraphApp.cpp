@@ -71,7 +71,6 @@ class CinderProjectApp : public App
 		//hb_script_t mScript = HB_SCRIPT_CYRILLIC;
 		//hb_direction_t mDirection = HB_DIRECTION_LTR;
 
-
 		std::string mTestText;
 };
 
@@ -82,7 +81,7 @@ void CinderProjectApp::setup()
 	setWindowSize( 1024.f, 768.f );
 
 	mFont = std::make_shared<txt::Font>( ci::app::loadAsset( fontName ), mFontSize );
-	txt::RendererGl::instance()->preloadFont( *mFont );
+	txt::RendererGl::instance()->loadFont( *mFont );
 	//mLineHeight = mFont->getLineHeight();
 
 	ci::FileWatcher::instance().watch( ci::app::getAssetPath( testTextFilename ), std::bind( &CinderProjectApp::textFileUpdated, this, std::placeholders::_1 ) );

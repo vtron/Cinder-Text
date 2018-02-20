@@ -1,5 +1,5 @@
 #include "txt/TextBox.h"
-#include "txt/TextRendererGl.h"
+#include "txt/gl/TextureRenderer.h"
 
 namespace txt
 {
@@ -7,11 +7,11 @@ namespace txt
 		: TextBox( ci::vec2( txt::GROW, txt::GROW ) )
 	{}
 
-	TextBox::TextBox( ci::vec2 size )
+	TextBox::TextBox( ci::vec2 size, RendererRef renderer )
 		: mFont( DefaultFont() )
 		, mSize( size )
 		, mColor( ci::Color::white() )
-		, mRenderer( txt::RendererGl::instance() )
+		, mRenderer( renderer )
 		, mNeedsLayout( true )
 		, mExternalAttributedString( false )
 	{
@@ -61,7 +61,6 @@ namespace txt
 		return *this;
 	}
 
-
 	TextBox& TextBox::setAlignment( Alignment alignment )
 	{
 		mLayout.setAlignment( alignment );
@@ -86,6 +85,7 @@ namespace txt
 
 		mLayout.setSize( mSize );
 		mLayout.calculateLayout( mAttrString );
+		mRenderer->setLayout( mLayout );
 		mNeedsLayout = false;
 
 		return *this;
@@ -94,6 +94,6 @@ namespace txt
 	void TextBox::draw()
 	{
 		layoutIfNeeded();
-		mRenderer->draw( mLayout );
+		mRenderer->draw();
 	}
 }
