@@ -5,7 +5,7 @@
 #include "cinder/Utilities.h"
 
 #include "txt/FontManager.h"
-#include "txt/TextRendererGl.h"
+#include "txt/gl/TextureRenderer.h"
 #include "txt/TextLayout.h"
 
 #include "cinder/Unicode.h"
@@ -32,6 +32,7 @@ class CinderProjectApp : public App
 
 		std::shared_ptr<txt::Font> mFont;
 
+		txt::gl::TextureRenderer mRenderer;
 		txt::Layout mLayout;
 
 		int mFontSize = 24.f;
@@ -81,7 +82,7 @@ void CinderProjectApp::setup()
 	setWindowSize( 1024.f, 768.f );
 
 	mFont = std::make_shared<txt::Font>( ci::app::loadAsset( fontName ), mFontSize );
-	txt::RendererGl::instance()->loadFont( *mFont );
+	mRenderer.loadFont( *mFont );
 	//mLineHeight = mFont->getLineHeight();
 
 	ci::FileWatcher::instance().watch( ci::app::getAssetPath( testTextFilename ), std::bind( &CinderProjectApp::textFileUpdated, this, std::placeholders::_1 ) );
@@ -101,8 +102,8 @@ void CinderProjectApp::draw()
 	ci::gl::color( 0.25, 0.25, 0.25 );
 	ci::gl::drawStrokedRect( ci::Rectf( ci::vec2( 0.f ), mLayout.measure() ) );
 
-	ci::gl::color( 0.f, 1, 1 );
-	txt::RendererGl::instance()->draw( mLayout );
+	ci::gl::color( 1.f, 1, 1 );
+	mRenderer.draw();
 }
 
 
@@ -119,6 +120,8 @@ void CinderProjectApp::updateLayout()
 	//mLayout.setLineHeight( mLineHeight );
 	mLayout.setLineHeight( txt::Unit( mLineHeight, txt::EM ) );
 	mLayout.calculateLayout( mTestText );
+
+	mRenderer.setLayout( mLayout );
 }
 
 std::string unescape( const std::string& s )
