@@ -90,21 +90,15 @@ namespace txt
 			Layout& setTracking( float tracking ) { mTracking = txt::Unit( tracking ); return *this; };
 			Layout& setTracking( const Unit& tracking ) { mTracking = tracking; return *this; };
 
-			std::string getLanguage() { return mLanguage; }
-			Layout& setLanguage( std::string language ) { mLanguage = language; return *this; }
-
-			hb_script_t getScript() { return mScript; }
-			Layout& setScript( hb_script_t script ) { mScript = script; return *this; }
-
-			hb_direction_t getDirection() { return mDirection; }
-			Layout& setDirection( hb_direction_t direction )
+			Layout& setShaperProperties( const Shaper::Properties& properties )
 			{
-				mDirection = direction;
+				mProperties = properties;
+				mUseDefaultProperties = false;
 
-				// If alignment isn't manually set, default to LEFT for LTR and RIGHT for RTL
-				if( mUseDefaultAlignment ) {
-					mAlignment = mDirection == HB_DIRECTION_LTR ? Alignment::LEFT : Alignment::RIGHT;
-				}
+				//// If alignment isn't manually set, default to LEFT for LTR and RIGHT for RTL
+				//if( mUseDefaultAlignment ) {
+				//	mAlignment = mDirection == HB_DIRECTION_LTR ? Alignment::LEFT : Alignment::RIGHT;
+				//}
 
 				return *this;
 			}
@@ -126,9 +120,8 @@ namespace txt
 			txt::Unit mLineHeight;
 			txt::Unit mTracking;
 
-			std::string mLanguage;
-			hb_script_t mScript;
-			hb_direction_t mDirection;
+			txt::Shaper::Properties mProperties;
+			bool mUseDefaultProperties;
 
 			ci::vec2 mSize;
 			ci::vec2 mLayoutSize;
@@ -142,7 +135,7 @@ namespace txt
 				int glyphBreakIndex = -1;
 				bool found = false;
 			};
-			BreakIndices getClosestBreakForShapedText( int startIndex, const std::vector<Shaper::Glyph>& shapedGlyphs, const std::vector<uint8_t> lineBreaks, const hb_direction_t& direction );
+			BreakIndices getClosestBreakForShapedText( int startIndex, const std::vector<Shaper::Glyph>& shapedGlyphs, const std::vector<uint8_t> lineBreaks );
 
 			ci::vec2 mCurDirection;
 			float mCharPos, mLinePos;

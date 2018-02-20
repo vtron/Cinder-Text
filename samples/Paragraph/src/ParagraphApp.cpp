@@ -61,9 +61,7 @@ class CinderProjectApp : public App
 		// Simplified Chinese
 		std::string fontName = "fonts/NotoChinese/NotoSansCJKsc-Regular.otf";
 		std::string testTextFilename = "text/simplifiedChinese.txt";
-		std::string mLanguage = "zh-Hans";
-		hb_script_t mScript = HB_SCRIPT_HAN;
-		hb_direction_t mDirection = HB_DIRECTION_LTR;
+		//Shaper::Properties mShaperProperties( HB_SCRIPT_HAN, HB_DIRECTION_LTR, "zh-Hans" );
 
 		// Cyrillic
 		//std::string fontName = "fonts/SourceSerifPro/SourceSerifPro-Regular.otf";
@@ -114,9 +112,7 @@ void CinderProjectApp::updateLayout()
 	mLayout.setFont( *mFont );
 	mLayout.setSize( mTextBoxSize );
 	mLayout.setTracking( mTracking );
-	mLayout.setLanguage( mLanguage );
-	mLayout.setScript( mScript );
-	mLayout.setDirection( mDirection );
+	//mLayout.setShaperProperties( mShaperProperties );
 	//mLayout.setLineHeight( mLineHeight );
 	mLayout.setLineHeight( txt::Unit( mLineHeight, txt::EM ) );
 	mLayout.calculateLayout( mTestText );

@@ -11,6 +11,7 @@
 
 #include "txt/Font.h"
 #include "txt/TextUnits.h"
+#include "txt/Shaper.h"
 
 namespace txt
 {
@@ -122,9 +123,6 @@ namespace txt
 			, color( color )
 			, opacity( 1.f )
 			, kerning( 0 )
-			, language( "" )
-			, script( HB_SCRIPT_INVALID )
-			, direction( HB_DIRECTION_INVALID )
 		{
 		}
 
@@ -139,9 +137,7 @@ namespace txt
 		float opacity = 1.f;
 
 		// Shaper properties
-		std::string language;
-		hb_script_t script;
-		hb_direction_t direction;
+		Shaper::Properties properties;
 
 		friend std::ostream& operator<< ( std::ostream& os, AttributeList const& attr )
 		{

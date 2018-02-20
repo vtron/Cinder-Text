@@ -73,9 +73,7 @@ namespace txt
 		, mAlignment( Alignment::LEFT )
 		, mUseDefaultAlignment( true )
 		, mSize( GROW )
-		, mLanguage( "en" )
-		, mScript( HB_SCRIPT_LATIN )
-		, mDirection( HB_DIRECTION_LTR )
+		, mUseDefaultProperties( true )
 		, mMaxLinesReached( false )
 	{
 		//const std::string testString( "testing test opportunity" );
@@ -134,6 +132,26 @@ namespace txt
 		resetLayout();
 
 		std::vector<AttributedString::Substring> substrings = attrString.getSubstrings();
+
+		// If our properties aren't set
+		// try to determine them from Harbuzz
+		if( mProperties.isDefault() ) {
+			// Find the first substring without properties set
+			// in order to define our properties
+			for( const auto& substring : substrings ) {
+				if( substring.attributes.properties.isDefault() ) {
+					mProperties = Shaper::getPropertiesForString( substring.text );
+
+					// Once we determine our props, if we don't have a user-set alignment
+					// set it based on text direction
+					if( mUseDefaultAlignment ) {
+						mAlignment = mProperties.getDirection() == HB_DIRECTION_LTR ? Alignment::LEFT : Alignment::RIGHT;
+					}
+
+					break;
+				}
+			}
+		}
 
 		// Go through each substring
 		for( int i = 0; i < substrings.size(); i++ ) {
@@ -201,11 +219,9 @@ namespace txt
 	void Layout::addSubstringToCurLine( AttributedString::Substring& substring )
 	{
 		// Determine direction, script and language with overrides
-		std::string language = substring.attributes.language == "" ? mLanguage : substring.attributes.language;
-		hb_script_t script = substring.attributes.script == HB_SCRIPT_INVALID ? mScript : substring.attributes.script;
-		hb_direction_t direction = substring.attributes.direction == HB_DIRECTION_INVALID ? mDirection : substring.attributes.direction;
+		Shaper::Properties properties = ( substring.attributes.properties.isDefault() == true ) ? mProperties : substring.attributes.properties;
 
-		mCurDirection.x = direction == HB_DIRECTION_LTR ? 1 : -1;
+		mCurDirection.x = properties.getDirection() == HB_DIRECTION_LTR ? 1 : -1;
 
 		// Create a run for this substring
 		const Font runFont( substring.attributes.fontFamily, substring.attributes.fontStyle, substring.attributes.fontSize );
@@ -239,14 +255,8 @@ namespace txt
 
 		// Shape the substring
 		Shaper shaper( runFont );
-		Shaper::Text shaperText = {
-			substring.text,
-			language,
-			script,
-			direction
-		};
-
-		std::vector<Shaper::Glyph> shapedGlyphs = shaper.getShapedText( shaperText );
+		shaper.setProperties( properties );
+		std::vector<Shaper::Glyph> shapedGlyphs = shaper.getShapedText( substring.text );
 
 		for( int i = 0; i < shapedGlyphs.size(); i++ ) {
 			// Get directional offset + advance
@@ -261,7 +271,7 @@ namespace txt
 			ci::vec2 glyphPos;
 			ci::Rectf glyphBBox;
 
-			if( direction == HB_DIRECTION_LTR ) {
+			if( properties.getDirection() == HB_DIRECTION_LTR ) {
 				glyphPos = pos + ci::vec2( bitmapGlyph->left, 0.f );
 				glyphBBox = ci::Rectf( glyphPos, glyphPos + ci::vec2( bitmapGlyph->bitmap.width, bitmapGlyph->bitmap.rows ) );
 			}
@@ -278,7 +288,7 @@ namespace txt
 			// Check for a new line
 			// TODO: Right to left + vertical
 			if( mSize.x != GROW && fabs( mCharPos ) > mSize.x ) {
-				BreakIndices breaks = getClosestBreakForShapedText( i, shapedGlyphs, lineBreaks, direction );
+				BreakIndices breaks = getClosestBreakForShapedText( i, shapedGlyphs, lineBreaks );
 
 				if( breaks.found ) {
 					// Clip the current run to the linebreak position
@@ -342,7 +352,7 @@ namespace txt
 		mCurLine.runs.push_back( run );
 
 		if( !run.glyphs.empty() ) {
-			mCurLineWidth = mDirection == HB_DIRECTION_RTL ? run.glyphs.back().bbox.x1 : run.glyphs.back().bbox.x2;
+			mCurLineWidth = mProperties.getDirection() == HB_DIRECTION_RTL ? run.glyphs.back().bbox.x1 : run.glyphs.back().bbox.x2;
 		}
 	}
 
@@ -354,7 +364,7 @@ namespace txt
 		// Set the Y glyph position based on culmulative line-height
 		for( auto& run : mCurLine.runs ) {
 			for( auto& glyph : run.glyphs ) {
-				float xOffset = ( mDirection == HB_DIRECTION_RTL ? mCurLineWidth : 0.0 );
+				float xOffset = ( mProperties.getDirection() == HB_DIRECTION_RTL ? mCurLineWidth : 0.0 );
 				float yOffset = mCurLineHeight - glyph.top;
 				glyph.bbox.offset( ci::vec2( xOffset, yOffset ) );
 			}
@@ -459,7 +469,7 @@ namespace txt
 		}
 	}
 
-	Layout::BreakIndices Layout::getClosestBreakForShapedText( int startIndex, const std::vector<Shaper::Glyph>& shapedGlyphs, const std::vector<uint8_t> lineBreaks, const hb_direction_t& direction )
+	Layout::BreakIndices Layout::getClosestBreakForShapedText( int startIndex, const std::vector<Shaper::Glyph>& shapedGlyphs, const std::vector<uint8_t> lineBreaks )
 	{
 		Layout::BreakIndices indices;
 
