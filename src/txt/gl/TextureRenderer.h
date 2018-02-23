@@ -27,6 +27,8 @@ namespace txt
 				static void loadFont( const Font& font );
 				static void unloadFont( const Font& font );
 
+				ci::gl::TextureRef getTexture();
+
 			private:
 				// Texture (FBO) caching
 				void renderToFbo();
