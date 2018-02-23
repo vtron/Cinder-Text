@@ -13,7 +13,7 @@ namespace txt
 	namespace gl
 	{
 		// Shared font cache
-		std::unordered_map<Font, TextureRenderer::FontCache> TextureRenderer::mFontCaches;
+		std::unordered_map<Font, TextureRenderer::FontCache> TextureRenderer::fontCache;
 
 		// Shader
 		const char* vertShader = R"V0G0N(
@@ -172,7 +172,7 @@ namespace txt
 
 		void TextureRenderer::loadFont( const Font& font )
 		{
-			if( !mFontCaches.count( font ) ) {
+			if( TextureRenderer::fontCache.count( font ) == 0 ) {
 				TextureRenderer::cacheFont( font );
 			}
 		}
@@ -184,11 +184,11 @@ namespace txt
 
 		TextureRenderer::FontCache& TextureRenderer::getCacheForFont( const Font& font )
 		{
-			if( !mFontCaches.count( font ) ) {
+			if( !TextureRenderer::fontCache.count( font ) ) {
 				TextureRenderer::cacheFont( font );
 			}
 
-			return mFontCaches[font];
+			return TextureRenderer::fontCache[font];
 		}
 
 		// Cache glyphs to gl texture array(s)
@@ -244,9 +244,9 @@ namespace txt
 				ci::Surface8u surface( *expandedChannel );
 				curTexArray->update( surface, curLayer );
 
-				mFontCaches[font].glyphs[glyphIndex].texArray = curTexArray;
-				mFontCaches[font].glyphs[glyphIndex].layer = curLayer;
-				mFontCaches[font].glyphs[glyphIndex].subTexSize = ci::vec2( glyphSize ) / ci::vec2( maxGlyphSize );
+				TextureRenderer::fontCache[font].glyphs[glyphIndex].texArray = curTexArray;
+				TextureRenderer::fontCache[font].glyphs[glyphIndex].layer = curLayer;
+				TextureRenderer::fontCache[font].glyphs[glyphIndex].subTexSize = ci::vec2( glyphSize ) / ci::vec2( maxGlyphSize );
 
 				curLayer++;
 				totalLayers = totalLayers + 1;
@@ -255,9 +255,9 @@ namespace txt
 
 		void TextureRenderer::uncacheFont( const Font& font )
 		{
-			if( !mFontCaches.count( font ) ) {
-				std::unordered_map<Font, FontCache>::iterator it = mFontCaches.find( font );
-				mFontCaches.erase( it );
+			if( !TextureRenderer::fontCache.count( font ) ) {
+				std::unordered_map<Font, FontCache>::iterator it = TextureRenderer::fontCache.find( font );
+				TextureRenderer::fontCache.erase( it );
 			}
 		}
 	}

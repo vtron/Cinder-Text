@@ -83,6 +83,7 @@ void CinderProjectApp::setup()
 
 	mFont = std::make_shared<txt::Font>( ci::app::loadAsset( fontName ), mFontSize );
 	txt::gl::TextureRenderer::loadFont( *mFont );
+	txt::gl::TextureRenderer::loadFont( *mFont ); // Testing caching, should be nearly a no-op
 	//mLineHeight = mFont->getLineHeight();
 
 	ci::FileWatcher::instance().watch( ci::app::getAssetPath( testTextFilename ), std::bind( &CinderProjectApp::textFileUpdated, this, std::placeholders::_1 ) );

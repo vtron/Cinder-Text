@@ -29,13 +29,8 @@ namespace txt
 
 				ci::gl::TextureRef getTexture();
 
-			private:
-				// Texture (FBO) caching
-				void renderToFbo();
-				void allocateFbo( int size );
-				ci::gl::FboRef mFbo;
+			protected:
 
-				ci::gl::BatchRef mBatch;
 
 				// Font + Glyph Caching (shared between all instances)
 				typedef struct {
@@ -48,11 +43,19 @@ namespace txt
 					std::map<uint32_t, GlyphCache > glyphs;
 				} FontCache;
 
+			private:
+				// Texture (FBO) caching
+				void renderToFbo();
+				void allocateFbo( int size );
+				ci::gl::FboRef mFbo;
+
+				ci::gl::BatchRef mBatch;
+
 				FontCache& getCacheForFont( const Font& font );
 				static void cacheFont( const Font& font );
 				static void uncacheFont( const Font& font );
 
-				static std::unordered_map<Font, FontCache> mFontCaches;
+				static std::unordered_map<Font, FontCache> fontCache;
 		};
 	}
 }
