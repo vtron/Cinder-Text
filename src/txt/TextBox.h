@@ -29,9 +29,10 @@ namespace txt
 			TextBox& layoutIfNeeded();
 			TextBox& doLayout();
 
-			Layout& getLayout() { return mLayout; };
+			Layout& getLayout()				{ return mLayout; };
+			const Layout& getLayout() const { return mLayout; };
 
-			RendererRef getRenderer() { return mRenderer; }
+			RendererRef getRenderer() const { return mRenderer; }
 			void setRenderer( RendererRef renderer ) { mRenderer = renderer; }
 
 			void draw();
