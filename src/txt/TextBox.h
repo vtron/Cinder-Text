@@ -16,8 +16,12 @@ namespace txt
 			ci::ivec2 getSize();
 			TextBox& setSize( ci::vec2 size );
 
+			const Font&	getFont() const	{ return mFont; }
 			TextBox& setFont( const Font& font );
+
+			const std::string&	getText() const	{ return mText; }
 			TextBox& setText( std::string text );
+
 			TextBox& setAttrString( AttributedString attrString );
 			TextBox& setColor( ci::ColorA color );
 			TextBox& setAlignment( Alignment alignment );
