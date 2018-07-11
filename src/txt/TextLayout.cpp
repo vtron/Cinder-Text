@@ -383,7 +383,7 @@ namespace txt
 		mCharPos = 0.f;
 		mLinePos += mCurLineHeight;
 
-		mCurLineHeight = mLineHeight.getValue( mFont.getSize() );
+		mCurLineHeight = ! mLineHeight.isDefault() ? mLineHeight.getValue( mFont.getSize() ) : mFont.getLineHeight();
 		mCurLineWidth = 0;
 	}
 
