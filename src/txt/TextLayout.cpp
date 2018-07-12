@@ -99,6 +99,7 @@ namespace txt
 
 	void Layout::resetLayout()
 	{
+		mGlyphBoxes.clear();
 		mLines.clear();
 		mCharPos = 0.f;
 		mLinePos = 0.f;
@@ -275,6 +276,8 @@ namespace txt
 				mCharPos += advance.x + kerning;
 			}
 
+			mGlyphBoxes.push_back( glyphBBox ); // store individual info
+ 
 			// Check for a new line
 			// TODO: Right to left + vertical
 			if( mSize.x != GROW && fabs( mCharPos ) > mSize.x ) {

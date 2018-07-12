@@ -82,6 +82,8 @@ namespace txt
 
 			const ci::vec2 measure();
 
+			const std::vector<ci::Rectf>& getGlyphBoxes() { return mGlyphBoxes; }
+
 			float getLineHeight() { return mLineHeight.getValue( getFont().getSize() ); }
 			Layout& setLineHeight( const float& lineHeight ) { mLineHeight = txt::Unit( lineHeight ); return *this; };
 			Layout& setLineHeight( const Unit& lineHeight ) { mLineHeight = lineHeight; return *this; };
@@ -149,6 +151,7 @@ namespace txt
 			Line mCurLine;
 			float mCurLineWidth = 0;
 			float mCurLineHeight = 0;
+			std::vector<ci::Rectf> mGlyphBoxes;
 
 			float getLineHeightForSubstring( const AttributedString::Substring& substring, const Font& runFont );
 
