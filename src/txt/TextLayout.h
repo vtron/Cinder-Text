@@ -71,34 +71,34 @@ namespace txt
 			std::vector<Line>& getLines() { return mLines; };
 
 			// Layout Attributes
-			const Font& getFont() { return mFont; }
+			const Font& getFont() const { return mFont; }
 			Layout& setFont( const Font& font ) { mFont = font; return *this; }
 
-			const ci::Color& getColor() { return mColor; }
+			const ci::Color& getColor() const { return mColor; }
 			Layout& setColor( const ci::Color& color ) { mColor = color; }
 
-			const ci::vec2& getSize() { return mSize; }
+			const ci::vec2& getSize() const { return mSize; }
 			Layout& setSize( ci::vec2 size ) { mSize = size; return *this; }
 
 			const ci::vec2 measure();
 
-			const std::vector<ci::Rectf>& getGlyphBoxes() { return mGlyphBoxes; }
+			const std::vector<ci::Rectf>& getGlyphBoxes() const { return mGlyphBoxes; }
 
-			float getLineHeight() { return mLineHeight.getValue( getFont().getSize() ); }
+			float getLineHeight() const { return mLineHeight.getValue( getFont().getSize() ); }
 			Layout& setLineHeight( const float& lineHeight ) { mLineHeight = txt::Unit( lineHeight ); return *this; };
 			Layout& setLineHeight( const Unit& lineHeight ) { mLineHeight = lineHeight; return *this; };
 
-			float getTracking() { return mTracking.getValue( getFont().getSize() ); }
+			float getTracking() const { return mTracking.getValue( getFont().getSize() ); }
 			Layout& setTracking( float tracking ) { mTracking = txt::Unit( tracking ); return *this; };
 			Layout& setTracking( const Unit& tracking ) { mTracking = tracking; return *this; };
 
-			std::string getLanguage() { return mLanguage; }
+			std::string getLanguage() const { return mLanguage; }
 			Layout& setLanguage( std::string language ) { mLanguage = language; return *this; }
 
-			hb_script_t getScript() { return mScript; }
+			hb_script_t getScript() const { return mScript; }
 			Layout& setScript( hb_script_t script ) { mScript = script; return *this; }
 
-			hb_direction_t getDirection() { return mDirection; }
+			hb_direction_t getDirection() const { return mDirection; }
 			Layout& setDirection( hb_direction_t direction )
 			{
 				mDirection = direction;
@@ -111,7 +111,7 @@ namespace txt
 				return *this;
 			}
 
-			const Alignment& getAlignment() { return mAlignment; }
+			const Alignment& getAlignment() const { return mAlignment; }
 			Layout& setAlignment( Alignment alignment )
 			{
 				mAlignment = alignment;
