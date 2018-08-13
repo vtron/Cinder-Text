@@ -70,6 +70,9 @@ namespace txt
 		: mFont( DefaultFont() )
 		, mColor( ci::Color( 1.f, 1.f, 1.f ) )
 		, mTracking( 0 )
+		, mUseLigatures( true )
+		, mUseKerning( true )
+		, mUseClig( true )
 		, mAlignment( Alignment::LEFT )
 		, mUseDefaultAlignment( true )
 		, mSize( GROW )
@@ -240,6 +243,20 @@ namespace txt
 
 		// Shape the substring
 		Shaper shaper( runFont );
+
+		//	Remove features if necessary
+		if( !mUseLigatures ) {
+			shaper.removeFeature( txt::Shaper::Feature::LIGATURES );
+		}
+
+		if( !mUseKerning ) {
+			shaper.removeFeature( txt::Shaper::Feature::KERNING );
+		}
+
+		if( !mUseClig ) {
+			shaper.removeFeature( txt::Shaper::Feature::CLIG );
+		}
+
 		Shaper::Text shaperText = {
 			substring.text,
 			language,
@@ -277,7 +294,7 @@ namespace txt
 			}
 
 			mGlyphBoxes.push_back( glyphBBox ); // store individual info
- 
+
 			// Check for a new line
 			// TODO: Right to left + vertical
 			if( mSize.x != GROW && fabs( mCharPos ) > mSize.x ) {

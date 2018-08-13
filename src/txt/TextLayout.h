@@ -92,6 +92,10 @@ namespace txt
 			Layout& setTracking( float tracking ) { mTracking = txt::Unit( tracking ); return *this; };
 			Layout& setTracking( const Unit& tracking ) { mTracking = tracking; return *this; };
 
+			Layout& setUseLigatures( const bool useLigatures ) { mUseLigatures = useLigatures; return *this; };
+			Layout& setUseKerning( const bool useKerning ) { mUseKerning = useKerning; return *this; };
+			Layout& setUseClig( const bool useClig ) { mUseClig = useClig; return *this; };
+
 			std::string getLanguage() const { return mLanguage; }
 			Layout& setLanguage( std::string language ) { mLanguage = language; return *this; }
 
@@ -127,6 +131,10 @@ namespace txt
 			bool mUseDefaultAlignment;
 			txt::Unit mLineHeight;
 			txt::Unit mTracking;
+
+			bool mUseLigatures;
+			bool mUseKerning;
+			bool mUseClig;
 
 			std::string mLanguage;
 			hb_script_t mScript;
