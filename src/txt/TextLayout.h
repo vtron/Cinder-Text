@@ -95,6 +95,7 @@ namespace txt
 			Layout& setUseLigatures( const bool useLigatures ) { mUseLigatures = useLigatures; return *this; };
 			Layout& setUseKerning( const bool useKerning ) { mUseKerning = useKerning; return *this; };
 			Layout& setUseClig( const bool useClig ) { mUseClig = useClig; return *this; };
+			Layout& setUseCalt( const bool useCalt ) { mUseCalt = useCalt; return *this; };
 
 			std::string getLanguage() const { return mLanguage; }
 			Layout& setLanguage( std::string language ) { mLanguage = language; return *this; }
@@ -135,6 +136,7 @@ namespace txt
 			bool mUseLigatures;
 			bool mUseKerning;
 			bool mUseClig;
+			bool mUseCalt;
 
 			std::string mLanguage;
 			hb_script_t mScript;

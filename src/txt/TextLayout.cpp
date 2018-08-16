@@ -257,6 +257,10 @@ namespace txt
 			shaper.removeFeature( txt::Shaper::Feature::CLIG );
 		}
 
+		if( !mUseCalt ) {
+			shaper.removeFeature( txt::Shaper::Feature::CALT );
+		}
+
 		Shaper::Text shaperText = {
 			substring.text,
 			language,

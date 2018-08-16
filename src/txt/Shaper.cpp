@@ -13,6 +13,8 @@ namespace txt
 		const hb_tag_t KernTag = HB_TAG( 'k', 'e', 'r', 'n' ); // kerning operations
 		const hb_tag_t LigaTag = HB_TAG( 'l', 'i', 'g', 'a' ); // standard ligature substitution
 		const hb_tag_t CligTag = HB_TAG( 'c', 'l', 'i', 'g' ); // contextual ligature substitution
+		const hb_tag_t CaltTag = HB_TAG( 'c', 'a', 'l', 't' ); // contextual alternative
+
 
 		static hb_feature_t LigatureOff = { LigaTag, 0, 0, std::numeric_limits<unsigned int>::max() };
 		static hb_feature_t LigatureOn = { LigaTag, 1, 0, std::numeric_limits<unsigned int>::max() };
@@ -20,6 +22,9 @@ namespace txt
 		static hb_feature_t KerningOn = { KernTag, 1, 0, std::numeric_limits<unsigned int>::max() };
 		static hb_feature_t CligOff = { CligTag, 0, 0, std::numeric_limits<unsigned int>::max() };
 		static hb_feature_t CligOn = { CligTag, 1, 0, std::numeric_limits<unsigned int>::max() };
+		static hb_feature_t CaltOff = { CaltTag, 0, 0, std::numeric_limits<unsigned int>::max() };
+		static hb_feature_t CaltOn = { CaltTag, 1, 0, std::numeric_limits<unsigned int>::max() };
+
 	}
 
 	Shaper::Shaper( const Font& font )
@@ -52,6 +57,10 @@ namespace txt
 			case CLIG:
 				mFeatures.push_back( CligOn );
 				break;
+
+			case CALT:
+				mFeatures.push_back( CaltOn );
+				break;
 		}
 	}
 
@@ -68,6 +77,10 @@ namespace txt
 
 			case CLIG:
 				mFeatures.push_back( CligOff );
+				break;
+
+			case CALT:
+				mFeatures.push_back( CaltOff );
 				break;
 		}
 	}
