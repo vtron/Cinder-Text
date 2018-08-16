@@ -190,7 +190,7 @@ EXIT /B 0
 
 ::Download a file and clean up
 :download_pkg URL, FOLDER_NAME, FOLDER_PATH
-powershell -command "& { (New-Object Net.WebClient).DownloadFile('%~1 ', '%~2.tar.bz2') }"
+powershell -command "[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12; & { (New-Object Net.WebClient).DownloadFile('%~1 ', '%~2.tar.bz2') }"
 
 7z x %~2.tar.bz2
 7z x %~2.tar

@@ -34,6 +34,12 @@ namespace txt
 
 	std::string FontManager::getFontFamily( const Font& font )
 	{
+		auto faceID = ( FTC_FaceID )font.getFaceId();
+
+		if( mFamilyAndStyleForFaceIDs.count( faceID ) != 0 ) {
+			return mFamilyAndStyleForFaceIDs[faceID].family;
+		}
+
 		FaceFamilyAndStyle familyStyle( getFace( font ) );
 		return familyStyle.family;
 	}

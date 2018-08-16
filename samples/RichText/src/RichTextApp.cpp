@@ -6,7 +6,7 @@
 
 #include "txt/FontManager.h"
 #include "txt/TextLayout.h"
-#include "txt/TextRendererGl.h"
+#include "txt/gl/TextureRenderer.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -26,6 +26,7 @@ class RichTextApp : public App
 		//std::string mAttrText = "<span font-family=\"HelveticaRounded LT Std Blk\" font-style=\"Black\">This is system \ntext</span><span font-family=\"Source Serif Pro\" font-style=\"Regular\" font-size=\"20\" color=\"#ff0000\"><span font-size=\"20\">Ligatures like \"fi tf\"</span> This is a test of mixing<br/>font attributes like <i>italics</i>, <span color=\"#0000FF\">color</span> and <b>Bold!</b> </span><span font-family=\"Source Serif Pro\"> Here is some white serif text at <span font-size=\"30\">different</span><span font-size=\"10\"> sizes</span></span>";
 
 		txt::Layout mLayout;
+		txt::gl::TextureRenderer mRenderer;
 
 		ci::Rectf mTextBox;
 
@@ -49,10 +50,6 @@ void RichTextApp::setup()
 	txt::FontManager::get()->loadFace( getAssetPath( "fonts/SourceSansPro/SourceSansPro-It.otf" ) );
 	txt::FontManager::get()->loadFace( getAssetPath( "fonts/SourceSansPro/SourceSansPro-Bold.otf" ) );
 
-	txt::FontManager::get()->loadFace( getAssetPath( "fonts/SourceSerifPro/SourceSerifPro-Regular.otf" ) );
-	txt::FontManager::get()->loadFace( getAssetPath( "fonts/SourceSerifPro/SourceSerifPro-Black.otf" ) );
-	txt::FontManager::get()->loadFace( getAssetPath( "fonts/SourceSerifPro/SourceSerifPro-Bold.otf" ) );
-
 	ci::FileWatcher::instance().watch( ci::app::getAssetPath( testTextFilename ), std::bind( &RichTextApp::textFileUpdated, this, std::placeholders::_1 ) );
 }
 
@@ -69,9 +66,15 @@ void RichTextApp::textFileUpdated( const ci::WatchEvent& watchEvent )
 	// Layout text
 	txt::RichText richText( ci::loadString( ci::loadFile( watchEvent.getFile() ) ) );
 	txt::AttributedString attr( richText );
-	//attr << txt::RichText( mAttrText );
+
+	//attr << txt::AttributeFontFamily( "test" )
+	//     << txt::AttributeFontStyle( "italic" )
+	//     << txt::AttributeFontSize( 28 )
+	//     << txt::RichText( "HELLO!" );
+
 	mLayout.setSize( mTextBox.getSize() );
 	mLayout.calculateLayout( attr );
+	mRenderer.setLayout( mLayout );
 }
 
 void RichTextApp::draw()
@@ -85,8 +88,7 @@ void RichTextApp::draw()
 	ci::gl::drawStrokedRect( ci::Rectf( ci::vec2( 0.f ), mTextBox.getSize() ) );
 
 	ci::gl::color( 1, 1, 1 );
-	txt::RendererGl::instance()->draw( mLayout );
-
+	mRenderer.draw();
 }
 
 CINDER_APP( RichTextApp, RendererGl )

@@ -95,8 +95,11 @@ namespace txt
 
 				// Allocate
 				ci::gl::Fbo::Format fboFormat;
-				fboFormat.setColorTextureFormat( ci::gl::Texture2d::Format().internalFormat( GL_RGBA32F ) );
-				fboFormat.setSamples( 1 );
+				ci::gl::Texture::Format texFormat;
+				texFormat.setMagFilter( GL_NEAREST );
+				texFormat.setMinFilter( GL_LINEAR );
+				//fboFormat.setColorTextureFormat( ci::gl::Texture2d::Format().internalFormat( GL_RGBA32F ) );
+				fboFormat.setColorTextureFormat( texFormat );
 
 				mFbo = ci::gl::Fbo::create( fboSize, fboSize, fboFormat );
 			}

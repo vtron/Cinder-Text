@@ -71,32 +71,39 @@ namespace txt
 			std::vector<Line>& getLines() { return mLines; };
 
 			// Layout Attributes
-			const Font& getFont() { return mFont; }
+			const Font& getFont() const { return mFont; }
 			Layout& setFont( const Font& font ) { mFont = font; return *this; }
 
-			const ci::Color& getColor() { return mColor; }
+			const ci::Color& getColor() const { return mColor; }
 			Layout& setColor( const ci::Color& color ) { mColor = color; }
 
-			const ci::vec2& getSize() { return mSize; }
+			const ci::vec2& getSize() const { return mSize; }
 			Layout& setSize( ci::vec2 size ) { mSize = size; return *this; }
 
 			const ci::vec2 measure();
 
-			float getLineHeight() { return mLineHeight.getValue( getFont().getSize() ); }
+			const std::vector<ci::Rectf>& getGlyphBoxes() const { return mGlyphBoxes; }
+
+			float getLineHeight() const { return mLineHeight.getValue( getFont().getSize() ); }
 			Layout& setLineHeight( const float& lineHeight ) { mLineHeight = txt::Unit( lineHeight ); return *this; };
 			Layout& setLineHeight( const Unit& lineHeight ) { mLineHeight = lineHeight; return *this; };
 
-			float getTracking() { return mTracking.getValue( getFont().getSize() ); }
+			float getTracking() const { return mTracking.getValue( getFont().getSize() ); }
 			Layout& setTracking( float tracking ) { mTracking = txt::Unit( tracking ); return *this; };
 			Layout& setTracking( const Unit& tracking ) { mTracking = tracking; return *this; };
 
-			std::string getLanguage() { return mLanguage; }
+			Layout& setUseLigatures( const bool useLigatures ) { mUseLigatures = useLigatures; return *this; };
+			Layout& setUseKerning( const bool useKerning ) { mUseKerning = useKerning; return *this; };
+			Layout& setUseClig( const bool useClig ) { mUseClig = useClig; return *this; };
+			Layout& setUseCalt( const bool useCalt ) { mUseCalt = useCalt; return *this; };
+
+			std::string getLanguage() const { return mLanguage; }
 			Layout& setLanguage( std::string language ) { mLanguage = language; return *this; }
 
-			hb_script_t getScript() { return mScript; }
+			hb_script_t getScript() const { return mScript; }
 			Layout& setScript( hb_script_t script ) { mScript = script; return *this; }
 
-			hb_direction_t getDirection() { return mDirection; }
+			hb_direction_t getDirection() const { return mDirection; }
 			Layout& setDirection( hb_direction_t direction )
 			{
 				mDirection = direction;
@@ -109,7 +116,7 @@ namespace txt
 				return *this;
 			}
 
-			const Alignment& getAlignment() { return mAlignment; }
+			const Alignment& getAlignment() const { return mAlignment; }
 			Layout& setAlignment( Alignment alignment )
 			{
 				mAlignment = alignment;
@@ -125,6 +132,11 @@ namespace txt
 			bool mUseDefaultAlignment;
 			txt::Unit mLineHeight;
 			txt::Unit mTracking;
+
+			bool mUseLigatures;
+			bool mUseKerning;
+			bool mUseClig;
+			bool mUseCalt;
 
 			std::string mLanguage;
 			hb_script_t mScript;
@@ -149,6 +161,7 @@ namespace txt
 			Line mCurLine;
 			float mCurLineWidth = 0;
 			float mCurLineHeight = 0;
+			std::vector<ci::Rectf> mGlyphBoxes;
 
 			float getLineHeightForSubstring( const AttributedString::Substring& substring, const Font& runFont );
 

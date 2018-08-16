@@ -17,7 +17,8 @@ namespace txt
 			enum Feature {
 				LIGATURES,
 				KERNING,
-				CLIG
+				CLIG,
+				CALT
 			};
 
 			typedef struct {

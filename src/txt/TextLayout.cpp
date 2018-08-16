@@ -70,6 +70,9 @@ namespace txt
 		: mFont( DefaultFont() )
 		, mColor( ci::Color( 1.f, 1.f, 1.f ) )
 		, mTracking( 0 )
+		, mUseLigatures( true )
+		, mUseKerning( true )
+		, mUseClig( true )
 		, mAlignment( Alignment::LEFT )
 		, mUseDefaultAlignment( true )
 		, mSize( GROW )
@@ -99,6 +102,7 @@ namespace txt
 
 	void Layout::resetLayout()
 	{
+		mGlyphBoxes.clear();
 		mLines.clear();
 		mCharPos = 0.f;
 		mLinePos = 0.f;
@@ -239,6 +243,24 @@ namespace txt
 
 		// Shape the substring
 		Shaper shaper( runFont );
+
+		//	Remove features if necessary
+		if( !mUseLigatures ) {
+			shaper.removeFeature( txt::Shaper::Feature::LIGATURES );
+		}
+
+		if( !mUseKerning ) {
+			shaper.removeFeature( txt::Shaper::Feature::KERNING );
+		}
+
+		if( !mUseClig ) {
+			shaper.removeFeature( txt::Shaper::Feature::CLIG );
+		}
+
+		if( !mUseCalt ) {
+			shaper.removeFeature( txt::Shaper::Feature::CALT );
+		}
+
 		Shaper::Text shaperText = {
 			substring.text,
 			language,
@@ -274,6 +296,8 @@ namespace txt
 			if( mCharPos != 0 || !isWhitespace( runFont, shapedGlyphs[i].index ) ) {
 				mCharPos += advance.x + kerning;
 			}
+
+			mGlyphBoxes.push_back( glyphBBox ); // store individual info
 
 			// Check for a new line
 			// TODO: Right to left + vertical
@@ -380,7 +404,7 @@ namespace txt
 		mCharPos = 0.f;
 		mLinePos += mCurLineHeight;
 
-		mCurLineHeight = mLineHeight.getValue( mFont.getSize() );
+		mCurLineHeight = ! mLineHeight.isDefault() ? mLineHeight.getValue( mFont.getSize() ) : mFont.getLineHeight();
 		mCurLineWidth = 0;
 	}
 
@@ -392,7 +416,7 @@ namespace txt
 
 		// Align in frame (if necessary)
 		for( int i = 0; i < mLines.size(); i++ ) {
-			ci::app::console() << mLines[i].width << std::endl;
+			//ci::app::console() << mLines[i].width << std::endl;
 			float remainingWidth = mSize.x - mLines[i].width;
 
 			switch( mAlignment ) {
@@ -401,7 +425,7 @@ namespace txt
 
 				case CENTER:
 				case RIGHT: {
-					float xOffset = ( mAlignment == CENTER ) ? remainingWidth / 2.f : remainingWidth;
+					int xOffset = ( mAlignment == CENTER ) ? remainingWidth / 2.f : remainingWidth;
 
 					for( auto& run : mLines[i].runs ) {
 						for( auto& glyph : run.glyphs ) {

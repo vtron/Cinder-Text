@@ -16,7 +16,9 @@ namespace txt
 		public:
 			Unit() :
 				mType( UnitType::PX ),
-				mIsDefault( true ) {}
+				mIsDefault( true ),
+				mValue( 0 )
+			{}
 
 			Unit( float value, UnitType type = UnitType::PX )
 			{
