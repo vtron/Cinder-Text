@@ -392,7 +392,7 @@ namespace txt
 
 		// Align in frame (if necessary)
 		for( int i = 0; i < mLines.size(); i++ ) {
-			ci::app::console() << mLines[i].width << std::endl;
+			//ci::app::console() << mLines[i].width << std::endl;
 			float remainingWidth = mSize.x - mLines[i].width;
 
 			switch( mAlignment ) {
@@ -401,7 +401,7 @@ namespace txt
 
 				case CENTER:
 				case RIGHT: {
-					float xOffset = ( mAlignment == CENTER ) ? remainingWidth / 2.f : remainingWidth;
+					int xOffset = ( mAlignment == CENTER ) ? remainingWidth / 2.f : remainingWidth;
 
 					for( auto& run : mLines[i].runs ) {
 						for( auto& glyph : run.glyphs ) {
